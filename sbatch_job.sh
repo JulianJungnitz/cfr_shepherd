@@ -17,7 +17,7 @@
 echo "Job started"
 
 cd /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd
-bash predict.sh
-
+# bash predict.sh
+ls -a
 
 echo "Job finished"
