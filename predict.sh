@@ -10,7 +10,7 @@
 #SBATCH -C avx512
 #SBATCH -n 1
 #SBATCH --mem-per-cpu=64G
-#SBATCH --time=00:30:00
+#SBATCH --time=00:32:00
 #SBATCH --cpus-per-task=4
 #SBATCH -A kurs00084
 #SBATCH -p kurs00084
