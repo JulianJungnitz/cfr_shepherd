@@ -209,7 +209,7 @@ def get_predict_hparams(args):
     hparams = {
                'seed': 33,
                'n_gpus': 0, # NOTE: currently predict scripts only work with CPU
-               'num_workers': 1, 
+               'num_workers': 4, 
                'profiler': 'simple',
                'pin_memory': False,
                'time': False,
