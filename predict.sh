@@ -9,7 +9,7 @@
 #SBATCH -o /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/o.txt
 #SBATCH -C avx512
 #SBATCH -n 1
-#SBATCH --mem-per-cpu=1024
+#SBATCH --mem-per-cpu=32000
 #SBATCH --time=5
 #SBATCH --cpus-per-task=1
 #SBATCH -A kurs00084
