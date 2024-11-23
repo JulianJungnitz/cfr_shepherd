@@ -1,13 +1,13 @@
 cd SHEPHERD
 
-conda init
-source /home/kurse/kurs00084/tb89zyce/.bashrc
-conda env create -f environment.yml
+set -e
+
+source /work/scratch/kurse/kurs00084/tb89zyce/ba/miniconda3/etc/profile.d/conda.sh
+
 conda activate shepherd
 bash install_pyg.sh
 
 
-set -e
 
 CURRENT_DIR=$(pwd)
 ESCAPED_DIR=$(echo "$CURRENT_DIR" | sed 's/\//\\\//g')
