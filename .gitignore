@@ -2,6 +2,7 @@ __pycache__/
 */data/*
 data.zip
 env/
+*/lightning_logs/*
 
 
 # Byte-compiled / optimized / DLL files
@@ -133,3 +134,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+SHEPHERD/shepherd/lightning_logs/*
