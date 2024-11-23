@@ -16,8 +16,7 @@
 #SBATCH -p kurs00084
 #SBATCH --reservation=kurs00084
 
-rm /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/e.txt
-rm /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/o.txt
+
 
 echo "Job started"
 
