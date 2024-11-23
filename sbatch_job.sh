@@ -2,8 +2,7 @@
 
 
 # remove old output files
-rm /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/e.txt
-rm /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/o.txt
+
 
 #SBATCH -J parprogprak1
 #SBATCH -e /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/e.txt
@@ -17,7 +16,8 @@ rm /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/o.txt
 #SBATCH -p kurs00084
 #SBATCH --reservation=kurs00084
 
-
+rm /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/e.txt
+rm /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/o.txt
 
 echo "Job started"
 
