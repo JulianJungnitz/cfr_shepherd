@@ -1,5 +1,6 @@
 cd SHEPHERD
 
+conda init
 conda env create -f environment.yml
 conda activate shepherd
 bash install_pyg.sh
