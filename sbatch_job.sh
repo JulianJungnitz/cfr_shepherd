@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH -J parprogprak1
-#SBATCH -e /work/scratch/kurse/kurs00084/tb89zyce/ba/output/e_%j.txt
-#SBATCH -o /work/scratch/kurse/kurs00084/tb89zyce/ba/output/o_%j.txt
+#SBATCH -e /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/output/e_%j.txt
+#SBATCH -o /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/output/o_%j.txt
 #SBATCH -C avx512
 #SBATCH -n 1
 #SBATCH --mem-per-cpu=1024
