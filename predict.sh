@@ -1,6 +1,7 @@
 cd SHEPHERD
 
 conda init
+source /home/kurse/kurs00084/tb89zyce/.bashrc
 conda env create -f environment.yml
 conda activate shepherd
 bash install_pyg.sh
