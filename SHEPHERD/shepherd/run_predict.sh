@@ -17,7 +17,7 @@
 # --saved_node_embeddings_path checkpoints/pretrain.ckpt \
 # --best_ckpt checkpoints/causal_gene_discovery.ckpt
 
-cd shepherd
+
 
  python predict.py \
     --run_type patients_like_me \
