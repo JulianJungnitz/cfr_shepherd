@@ -208,7 +208,8 @@ class CombinedPatientNCA(pl.LightningModule):
     def write_results_to_file(self, batch, softmax, correct_ranks, labels, phenotype_mask, disease_mask, attn_weights,  gat_attn, node_embeddings, phenotype_embeddings, disease_embeddings, save=True, loop_type='predict'):
         
         if save:
-            run_folder = Path(project_config.PROJECT_DIR) / 'checkpoints' / 'patient_NCA' / self.hparams.hparams['run_name'] / (Path(self.test_dataloader.dataloader.dataset.filepath).stem ) #.replce('/', '_')
+            datetime = time.strftime("%Y%m%d-%H%M%S")
+            run_folder = Path(project_config.PROJECT_DIR) / 'checkpoints' / 'patient_NCA' / self.hparams.hparams['run_name'] / datetime
             run_folder.mkdir(parents=True, exist_ok=True)
             print('run_folder', run_folder)
         
