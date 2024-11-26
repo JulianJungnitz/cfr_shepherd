@@ -1,8 +1,10 @@
 __pycache__/
 */data/*
+app/SHEPHERD/data/*
 data.zip
 env/
 */lightning_logs/*
+config.yml
 
 
 # Byte-compiled / optimized / DLL files

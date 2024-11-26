@@ -23,7 +23,7 @@ echo "Job started"
 # cd /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd
 cd /home/julian/Documents/cfr_shepherd/
 
-cd SHEPHERD
+cd app/SHEPHERD
 
 set -e
 
@@ -53,13 +53,7 @@ cd shepherd
 echo "Memory usage before running predict.py:"
 free -h
 
-python predict.py \
-    --run_type patients_like_me \
-    --patient_data my_data          \
-    --edgelist KG_edgelist_mask.txt     \
-    --node_map KG_node_map.txt          \
-    --saved_node_embeddings_path checkpoints/pretrain.ckpt    \
-    --best_ckpt checkpoints/patients_like_me.ckpt/patients_like_me.ckpt
+# start docker and run run predict
 
 echo "Memory usage after running predict.py:"
 free -h
