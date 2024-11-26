@@ -1,3 +1,0 @@
-
-bash predict.sh
-

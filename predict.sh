@@ -20,13 +20,15 @@
 
 echo "Job started"
 
-cd /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd
+# cd /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd
+cd /home/julian/Documents/cfr_shepherd/
 
 cd SHEPHERD
 
 set -e
 
-source /work/scratch/kurse/kurs00084/tb89zyce/ba/miniconda3/etc/profile.d/conda.sh
+# source /work/scratch/kurse/kurs00084/tb89zyce/ba/miniconda3/etc/profile.d/conda.sh
+source ~/anaconda3/etc/profile.d/conda.sh
 
 conda activate shepherd
 bash install_pyg.sh
