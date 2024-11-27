@@ -3,6 +3,7 @@ import yaml
 import colorama
 from neo4j import GraphDatabase
 import os
+import subprocess
 
 APP_DIR  = os.path.dirname(os.path.realpath(__file__))
 SHEPHERD_DIR = APP_DIR + "/SHEPHERD"
@@ -89,3 +90,21 @@ def document(y_pred, y_true,):
     # accuracy + precision + recall
     # f1 score
     pass
+
+
+
+def run_subprocess(command):
+    try:
+        result = subprocess.run(
+            command,
+            text=True,
+            check=True 
+        )
+        print('Command executed successfully.')
+        print('Output:')
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print('An error occurred while executing the command.')
+        print('Return code:', e.returncode)
+        print('Error output:')
+        print(e.stderr)
