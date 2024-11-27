@@ -1,5 +1,5 @@
 from FeatureCloud.app.engine.app import AppState, app_state, Role
-import app.shepherd as shepherd
+import shepherd as shepherd
 from FeatureCloud.app.engine.app import AppState, app_state
 
 
@@ -10,5 +10,7 @@ class ExecuteState(AppState):
         self.register_transition("terminal", Role.BOTH)
 
     def run(self):
-        shepherd.main()
+        print("Running app state: initial")
+        # shepherd.main()
+        print("TEST 1234")
         return "terminal"

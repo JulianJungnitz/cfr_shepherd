@@ -1,8 +1,32 @@
 from pathlib import Path
+import os
+
+
+def is_running_in_docker():
+    if os.path.exists('/.dockerenv'):
+        return True
+    try:
+        with open('/proc/1/cgroup', 'rt') as f:
+            for line in f:
+                if 'docker' in line:
+                    return True
+    except Exception:
+        pass
+    return False
+
+if is_running_in_docker():
+    INPUT_DIR = '/mnt/input'
+    OUTPUT_DIR = '/mnt/output'
+    print("Running inside Docker container.")
+else:
+    INPUT_DIR = './..'
+    OUTPUT_DIR = './..'
+    print("Running on local machine.")
+current_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 #PROJECT_DIR = Path("/home/ema30/zaklab/rare_disease_dx/test_camera_ready") # Path('PATH/TO/SHEPHERD')
-PROJECT_DIR = Path("/home/julian/Documents/cfr_shepherd/SHEPHERD/data")
+PROJECT_DIR = Path(current_dir + "/data")
 CURR_KG = '8.9.21_kg' 
 KG_DIR = PROJECT_DIR / 'knowledge_graph' / CURR_KG
 PREDICT_RESULTS_DIR = PROJECT_DIR / 'results'

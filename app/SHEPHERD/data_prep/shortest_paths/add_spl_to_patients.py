@@ -4,10 +4,17 @@ import sys
 from tqdm import tqdm
 import pickle
 import argparse
-sys.path.insert(0, '../..') # add config to path
 sys.path.insert(0, '..')
+sys.path.insert(0, '../..')
+sys.path.insert(0, '../../..')
+import os
+current_path = os.path.dirname(os.path.realpath(__file__))
+print("# directory: ", current_path)
+new_path = current_path + "/../../"
+sys.path.insert(0, new_path)
 import project_config
 from project_utils import read_patients, write_patients, read_dicts
+
 
 '''
 python add_spl_to_patients.py  \

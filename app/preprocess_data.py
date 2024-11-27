@@ -12,7 +12,7 @@ def query_data(driver, limit = None):
     OPTIONAL MATCH (s)-[:HAS_PHENOTYPE]->(p:Phenotype)
     RETURN id(s) as id, genes as all_candidate_genes, collect(DISTINCT p.id) AS positive_phenotypes
     """ + (f"LIMIT {limit}" if limit else "")
-    result = utils.request(driver, query)
+    result = utils.execute_query(driver, query)
     print(result)
     return result
 

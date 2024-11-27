@@ -5,6 +5,7 @@ data.zip
 env/
 */lightning_logs/*
 config.yml
+careforrare/*
 
 
 # Byte-compiled / optimized / DLL files
@@ -137,3 +138,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 SHEPHERD/shepherd/lightning_logs/*
+app/e_log.txt
+app/i_log.txt
