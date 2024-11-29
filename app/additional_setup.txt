@@ -118,12 +118,17 @@ pretrain.ckpt fehlt - einfügen und nochmal laufen lassen
 
 
 remove github build 
-build self and push to feature cloud
+
+build self and push to feature cloud <---------------
+
+wenn build über feature cloud nicht geht direkt pushen
 
 
 
 
-Direkter install über binary
+Files bennenung anpassen + dockerfile anpassen
+
+github actions einrichten mit large file in seperate dir or remote on s3
 
 
 conda install mamba -n base -c conda-forge
