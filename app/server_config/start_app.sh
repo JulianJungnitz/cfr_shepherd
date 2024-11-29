@@ -2,8 +2,11 @@
 
 source /opt/conda/etc/profile.d/conda.sh
 
-conda activate shepherd
+conda activate test_shepherd
 
-export PYTHONUNBUFFERED=1
+pip show numpy
+pip show jsonnet
+python --version
+# export PYTHONUNBUFFERED=1
 
-exec python -u /app/main.py
+# exec python -u /app/main.py

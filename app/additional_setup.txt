@@ -1,0 +1,124 @@
+
+pytorch-sparse hat gefehlt. wird installiert in:
+bash ./SHEPHERD/install_pyg.sh 
+
+needed packages
+
+
+
+vieleicht pythorch-lightning mit zu  passender version installieren
+
+
+pip install torch==1.8.0 pytorch-lightning==1.4.5 pyyaml jsonlines colorama neo4j pandas
+
+
+einfach alle aus conda env mit pip installieren und dann die fehlenden nachinstallieren
+
+oder die packages installieren und torch dabei forcen.
+
+
+
+----------------------------------------------------------------------------------------------------------------------------
+mit test_req.txt installieren und dann die fehlenden nachinstallieren:
+conda install allennlp -c pytorch -c allennlp -c conda-forge 
+
+
+
+
+conda env besser installieren 
+conda export x - jsonnet error
+conda export --no-build x version solving from pip failed (package is availble in pip though)
+conda export explicit  x env key fehler - mamba
+- changed to miniconda x anscheind trd nicht möglich
+environment edit run withoud jsonnet and pickle5 x pip error
+
+remove pip part from test_env_edit.yml and install seperately - braucht ewig > 30 min
+
+pip install req im docker file - cant find version for python-graphviz==0.20.3
+removed: 
+- python-graphviz==0.20.3 - x jsonnet error
+
+nochmal mit frischen pip section von SHEPHERD gestartet - jsonnet
+entfernt:
+jsonnet==0.17.0
+pickle5==0.0.11
+-> jsonnet error
+neue apt get installs hinzufügen
+
+nur allennlp installieren - jsonnet error
+
+nur jsonnet installieren - funktioniert lokal aber nicht im docker container
+
+conda anstatt miniconda - jsonnet error
+
+laufen lassen als base image ubuntu 24 - danach alles andere zu pip hinzufügen - jsonnet failed trotzdem
+
+jsonnet mit apt-get installieren 
+- noch: # Install necessary tools to manage repositories
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository universe && \
+    apt-get update && \
+    apt-get install -y jsonnet
+
+Läuft durch mit nur apt-get update und install jsonnet - über pip failed es trotzdem
+
+Test mit:
+RUN rm -rf $CONDA_DIR/compiler_compat
+ENV CONDA_BUILD_SYSROOT=/
+vor SHELL ["conda", "run", "-n", "shepherd", "/bin/bash", "-c"] 
+
+
+mit befehl aus stack overflow: 
+RUN apt update -y && apt -y install build-essential git && git clone https://github.com/google/jsonnet.git && cd jsonnet && make   ---- Kommand funktioniert auf jeden fall
+
+remove befehl angepasst (ANacona home auf opt/conda verwendet) - jsonnet error
+
+pip install jsonnet alleine probieren - fails
+
+zuerst pyg_install.sh ausführen - läuft durch nach copy einfügung - jsonnet error
+
+
+ENV PATH=$CONDA_DIR/bin:$PATH - hinzugefügt - jsonnet error
+
+--no-cache-dir zu pip install hinzugefügt  - jsonnet error
+
+install with command from reddit:
+wget https://github.com/google/jsonnet/releases/download/v0.17.0/jsonnet-bin-v0.17.0-linux.tar.gz
+tar -xzf jsonnet-bin-v0.17.0-linux.tar.gz 
+sudo mv jsonnet /usr/local/bin/ -- jsonnet error
+
+conda install -c conda-forge jsonnet -- lädt sehr lange und läuft durch
+ - hat das problem gefixed
+
+ --> neu aufsetzen mit conda install jsonnet anstatt den umwegen
+
+ Shell activation fehlt noch  - war nur falsches cd im predict.sh file
+
+ Versions/outdatedprobleme mit numpy:
+ - np.object durch object ersetzen
+ - allte version laufen lassen 
+    - pip packages installieren nachdem jsonnet über conda installiert wurde
+
+
+
+jsonnet aus req file entfernen?
+
+
+
+jsonnet pber conda installieren
+
+
+
+Direkter install über binary
+
+
+conda install mamba -n base -c conda-forge
+mamba install --yes --file app/test_req_pip_shepherd.txt
+
+
+
+über nacht den solve laufen lassen
+
+copy the build conda env into the docker file
+conda export no chanel prio?

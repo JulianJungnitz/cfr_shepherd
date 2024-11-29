@@ -26,6 +26,7 @@ def start_preprocessing_data(config):
 
 def predict_patients_like_me():
     dir = utils.SHEPHERD_DIR 
+    print("Predicting patients like me. Dir: "+dir)
     command = [
         'bash',
         dir + '/predict.sh',
