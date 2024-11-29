@@ -1,0 +1,317 @@
+.
+|-- SHEPHERD
+|   |-- Inference-README.md
+|   |-- LICENSE
+|   |-- README.md
+|   |-- __init__.py
+|   |-- __pycache__
+|   |   |-- project_config.cpython-38.pyc
+|   |   `-- project_utils.cpython-38.pyc
+|   |-- activate.sh
+|   |-- data
+|   |   |-- checkpoints
+|   |   |   |-- patient_NCA
+|   |   |   |   `-- 04_26_22:17:38:30_lr_5e-05_val_simulated_pats.disease_split_val_sim_pats_kg_8.9.21_kg_losstype_patient_patient_NCA
+|   |   |   |       |-- 20241123-182041
+|   |   |   |       |   |-- gat_attn_layer=0.csv
+|   |   |   |       |   |-- gat_attn_layer=1.csv
+|   |   |   |       |   |-- gat_attn_layer=2.csv
+|   |   |   |       |   |-- node_embeddings.pth
+|   |   |   |       |   |-- node_embeddings_idx.pth
+|   |   |   |       |   |-- phenotype_attention.csv
+|   |   |   |       |   |-- phenotype_embeddings.pth
+|   |   |   |       |   `-- scores.csv
+|   |   |   |       `-- 20241126-184224
+|   |   |   |           |-- gat_attn_layer=0.csv
+|   |   |   |           |-- gat_attn_layer=1.csv
+|   |   |   |           |-- gat_attn_layer=2.csv
+|   |   |   |           |-- node_embeddings.pth
+|   |   |   |           |-- node_embeddings_idx.pth
+|   |   |   |           |-- phenotype_attention.csv
+|   |   |   |           |-- phenotype_embeddings.pth
+|   |   |   |           `-- scores.csv
+|   |   |   |-- patients_like_me.ckpt
+|   |   |   |   |-- patients_like_me
+|   |   |   |   |   `-- archive
+|   |   |   |   |       |-- data
+|   |   |   |   |       |   |-- 94509391920400
+|   |   |   |   |       |   |-- 94509391938048
+|   |   |   |   |       |   |-- 94509443816112
+|   |   |   |   |       |   |-- 94509450172944
+|   |   |   |   |       |   |-- 94509452739088
+|   |   |   |   |       |   |-- 94509458000512
+|   |   |   |   |       |   |-- 94509458710768
+|   |   |   |   |       |   |-- 94509458739248
+|   |   |   |   |       |   |-- 94509458761392
+|   |   |   |   |       |   |-- 94509459218080
+|   |   |   |   |       |   |-- 94509459494480
+|   |   |   |   |       |   |-- 94509459642464
+|   |   |   |   |       |   |-- 94509460003264
+|   |   |   |   |       |   |-- 94509460022400
+|   |   |   |   |       |   |-- 94509460339440
+|   |   |   |   |       |   |-- 94509460348384
+|   |   |   |   |       |   |-- 94509460429824
+|   |   |   |   |       |   |-- 94509460739488
+|   |   |   |   |       |   |-- 94509460792400
+|   |   |   |   |       |   |-- 94509460800192
+|   |   |   |   |       |   |-- 94509460802192
+|   |   |   |   |       |   |-- 94509465175584
+|   |   |   |   |       |   |-- 94509465188880
+|   |   |   |   |       |   |-- 94509467216624
+|   |   |   |   |       |   |-- 94509467226672
+|   |   |   |   |       |   |-- 94509467226816
+|   |   |   |   |       |   |-- 94509467254752
+|   |   |   |   |       |   |-- 94509467257456
+|   |   |   |   |       |   |-- 94509467258672
+|   |   |   |   |       |   |-- 94509467258768
+|   |   |   |   |       |   |-- 94509469062064
+|   |   |   |   |       |   |-- 94509527676688
+|   |   |   |   |       |   |-- 94509527852048
+|   |   |   |   |       |   |-- 94509528040192
+|   |   |   |   |       |   |-- 94509528076480
+|   |   |   |   |       |   |-- 94509528436832
+|   |   |   |   |       |   |-- 94509528498880
+|   |   |   |   |       |   |-- 94509528499728
+|   |   |   |   |       |   |-- 94509529148352
+|   |   |   |   |       |   |-- 94509529307776
+|   |   |   |   |       |   |-- 94509530709936
+|   |   |   |   |       |   |-- 94509656816976
+|   |   |   |   |       |   |-- 94509656827216
+|   |   |   |   |       |   |-- 94509656827568
+|   |   |   |   |       |   |-- 94512078466944
+|   |   |   |   |       |   |-- 94512174399952
+|   |   |   |   |       |   |-- 94512177677856
+|   |   |   |   |       |   |-- 94512200027312
+|   |   |   |   |       |   |-- 94512200029008
+|   |   |   |   |       |   |-- 94512200043744
+|   |   |   |   |       |   |-- 94512200047552
+|   |   |   |   |       |   |-- 94512201301424
+|   |   |   |   |       |   |-- 94512203112624
+|   |   |   |   |       |   |-- 94512204076080
+|   |   |   |   |       |   |-- 94512205226208
+|   |   |   |   |       |   |-- 94512206189152
+|   |   |   |   |       |   |-- 94512206189248
+|   |   |   |   |       |   |-- 94512207193504
+|   |   |   |   |       |   |-- 94512208871424
+|   |   |   |   |       |   |-- 94512210089600
+|   |   |   |   |       |   |-- 94512210151664
+|   |   |   |   |       |   |-- 94512210295968
+|   |   |   |   |       |   |-- 94512210336112
+|   |   |   |   |       |   |-- 94512210396528
+|   |   |   |   |       |   |-- 94512210401344
+|   |   |   |   |       |   |-- 94512210403328
+|   |   |   |   |       |   |-- 94512210405872
+|   |   |   |   |       |   |-- 94512210407648
+|   |   |   |   |       |   |-- 94512210409888
+|   |   |   |   |       |   |-- 94512210413504
+|   |   |   |   |       |   |-- 94512210425936
+|   |   |   |   |       |   |-- 94512210438512
+|   |   |   |   |       |   |-- 94512210442608
+|   |   |   |   |       |   |-- 94512210445232
+|   |   |   |   |       |   |-- 94512210446544
+|   |   |   |   |       |   |-- 94512210450800
+|   |   |   |   |       |   |-- 94512210455664
+|   |   |   |   |       |   |-- 94512210468976
+|   |   |   |   |       |   |-- 94512210469232
+|   |   |   |   |       |   |-- 94512210470544
+|   |   |   |   |       |   |-- 94512210472304
+|   |   |   |   |       |   |-- 94512210473408
+|   |   |   |   |       |   |-- 94512210477168
+|   |   |   |   |       |   |-- 94512210571440
+|   |   |   |   |       |   |-- 94512210716544
+|   |   |   |   |       |   |-- 94512211482784
+|   |   |   |   |       |   |-- 94512213790544
+|   |   |   |   |       |   |-- 94512214063600
+|   |   |   |   |       |   |-- 94512214067104
+|   |   |   |   |       |   |-- 94512214093744
+|   |   |   |   |       |   |-- 94512214096064
+|   |   |   |   |       |   |-- 94512214103136
+|   |   |   |   |       |   |-- 94512215829648
+|   |   |   |   |       |   |-- 94512216600608
+|   |   |   |   |       |   |-- 94512216696096
+|   |   |   |   |       |   |-- 94512216760928
+|   |   |   |   |       |   |-- 94512216774080
+|   |   |   |   |       |   |-- 94512216949824
+|   |   |   |   |       |   |-- 94512216950080
+|   |   |   |   |       |   |-- 94512217104816
+|   |   |   |   |       |   |-- 94512218615488
+|   |   |   |   |       |   |-- 94512218649056
+|   |   |   |   |       |   |-- 94512218747808
+|   |   |   |   |       |   |-- 94512218767648
+|   |   |   |   |       |   |-- 94512220101744
+|   |   |   |   |       |   |-- 94512220141008
+|   |   |   |   |       |   |-- 94512220399776
+|   |   |   |   |       |   |-- 94512221361632
+|   |   |   |   |       |   |-- 94512247994480
+|   |   |   |   |       |   |-- 94513057356768
+|   |   |   |   |       |   |-- 94515173604976
+|   |   |   |   |       |   |-- 94515890600928
+|   |   |   |   |       |   `-- 94516079116880
+|   |   |   |   |       |-- data.pkl
+|   |   |   |   |       `-- version
+|   |   |   |   `-- patients_like_me.ckpt
+|   |   |   |-- pretrain.ckpt
+|   |   |   `-- pretrain.zip
+|   |   |-- checkpoints.zip
+|   |   |-- disease_coverage.csv
+|   |   |-- knowledge_graph
+|   |   |   `-- 8.9.21_kg
+|   |   |       |-- KG_edgelist_mask.txt
+|   |   |       |-- KG_node_map.txt
+|   |   |       |-- KG_node_map_ensembl_ids.txt
+|   |   |       |-- KG_shortest_path_matrix_onlyphenotypes.npy
+|   |   |       |-- KG_shortest_path_matrix_onlyphenotypes.npy.zip
+|   |   |       |-- degree_dict_8.9.21_kg.pkl
+|   |   |       |-- ensembl_to_idx_dict_8.9.21_kg.pkl
+|   |   |       |-- gene_symbol_to_idx_dict_8.9.21_kg.pkl
+|   |   |       |-- hpo_to_idx_dict_8.9.21_kg.pkl
+|   |   |       |-- hpo_to_name_dict_8.9.21_kg.pkl
+|   |   |       |-- kg_giant_orphanet.csv
+|   |   |       |-- mondo_to_idx_dict_8.9.21_kg.pkl
+|   |   |       `-- mondo_to_name_dict_8.9.21_kg.pkl
+|   |   |-- knowledge_graph.zip
+|   |   |-- patients
+|   |   |   |-- hauner_data
+|   |   |   |   |-- data.txt
+|   |   |   |   |-- disease_split_all_sim_patients_kg_8.9.21_kg_agg=mean_spl_matrix.npy
+|   |   |   |   `-- disease_split_all_sim_patients_kg_8.9.21_kg_spl_index_dict.pkl
+|   |   |   `-- mygene2_patients
+|   |   |       `-- mygene2_5.7.22.txt
+|   |   |-- patients.zip
+|   |   |-- preprocess
+|   |   |   |-- hp_terms.csv
+|   |   |   |-- mondo
+|   |   |   |   |-- mondo.obo
+|   |   |   |   |-- mondo2hpo.csv
+|   |   |   |   `-- mondo_references.csv
+|   |   |   `-- orphanet
+|   |   |       |-- categorization_of_orphanet_diseases.csv
+|   |   |       |-- orphanet_final_disease_metadata.tsv
+|   |   |       |-- orphanet_to_mondo_dict.pkl
+|   |   |       `-- orphanet_to_omim_mapping_df.csv
+|   |   |-- results
+|   |   |   |-- checkpoints.patients_like_me_phenotype_attn.csv
+|   |   |   |-- checkpoints.patients_like_me_phenotype_embeddings.pth
+|   |   |   `-- checkpoints.patients_like_me_scores.csv
+|   |   `-- simulated_patients
+|   |       |-- disease_split_all_sim_patients_8.9.21_kg_spl_matrix.npy
+|   |       |-- disease_split_all_sim_patients_8.9.21_kg_spl_matrix.npy.zip
+|   |       |-- disease_split_train_sim_patients_8.9.21_kg.txt
+|   |       |-- disease_split_val_sim_patients_8.9.21_kg.txt
+|   |       `-- simulated_patients_formatted.jsonl
+|   |-- data1.zip
+|   |-- data_prep
+|   |   |-- README.md
+|   |   |-- construct_kg
+|   |   |   |-- README.md
+|   |   |   |-- add_orphanet_data_to_kg.py
+|   |   |   |-- build_graph.ipynb
+|   |   |   `-- prepare_graph.py
+|   |   |-- create_mygene2_cohort
+|   |   |   |-- README.md
+|   |   |   |-- mygene2.html
+|   |   |   |-- preprocess_mygene2.py
+|   |   |   |-- retrieve_mygene2.py
+|   |   |   `-- retrieve_mygene2.sh
+|   |   |-- create_udn_cohort
+|   |   |   |-- README.md
+|   |   |   `-- create_exomiser_cohort
+|   |   |       |-- README.md
+|   |   |       |-- run_exomiser.sh
+|   |   |       `-- udn-analysis-exome.yml
+|   |   |-- get_orpha_disease_categories.py
+|   |   |-- preprocess.py
+|   |   |-- preprocess_patients_and_kg.py
+|   |   |-- process_orpha_to_omim_map.py
+|   |   `-- shortest_paths
+|   |       |-- README.md
+|   |       |-- add_spl_to_patients.py
+|   |       `-- shortest_paths.py
+|   |-- environment.yml
+|   |-- img
+|   |   |-- rare_diseases_pipeline.png
+|   |   `-- shepherd_overview.png
+|   |-- install_pyg.sh
+|   |-- project_config.py
+|   |-- project_utils.py
+|   `-- shepherd
+|       |-- __init__.py
+|       |-- __pycache__
+|       |   |-- __init__.cpython-38.pyc
+|       |   |-- dataset.cpython-38.pyc
+|       |   |-- decoders.cpython-38.pyc
+|       |   |-- gene_prioritization_model.cpython-38.pyc
+|       |   |-- hparams.cpython-38.pyc
+|       |   |-- node_embedder_model.cpython-38.pyc
+|       |   |-- patient_nca_model.cpython-38.pyc
+|       |   |-- preprocess.cpython-38.pyc
+|       |   |-- samplers.cpython-38.pyc
+|       |   `-- train.cpython-38.pyc
+|       |-- dataset.py
+|       |-- decoders.py
+|       |-- gene_prioritization_model.py
+|       |-- hparams.py
+|       |-- lightning_logs
+|       |   |-- version_46780966
+|       |   |   |-- events.out.tfevents.1732380112.mpsc0042.1221013.0
+|       |   |   `-- hparams.yaml
+|       |   |-- version_46780971
+|       |   |   |-- events.out.tfevents.1732380343.mpsc0042.1230805.0
+|       |   |   `-- hparams.yaml
+|       |   |-- version_46780973
+|       |   |   |-- events.out.tfevents.1732380510.mpsc0042.1231499.0
+|       |   |   `-- hparams.yaml
+|       |   |-- version_46780982
+|       |   |   |-- events.out.tfevents.1732381227.mpsc0042.1233637.0
+|       |   |   `-- hparams.yaml
+|       |   |-- version_46780992
+|       |   |   |-- events.out.tfevents.1732382180.mpsc0042.1236201.0
+|       |   |   `-- hparams.yaml
+|       |   `-- version_46792342
+|       |       |-- events.out.tfevents.1732642686.mpsc0042.1813946.0
+|       |       `-- hparams.yaml
+|       |-- node_embedder_model.py
+|       |-- patient_nca_model.py
+|       |-- predict.py
+|       |-- preprocess.py
+|       |-- pretrain.py
+|       |-- run_causal_gene_discovery.sh
+|       |-- run_disease_characterization.sh
+|       |-- run_patients_like_me.sh
+|       |-- run_predict.sh
+|       |-- run_pretrain.sh
+|       |-- samplers.py
+|       |-- task_heads
+|       |   |-- __init__.py
+|       |   |-- __pycache__
+|       |   |   |-- __init__.cpython-38.pyc
+|       |   |   |-- gp_aligner.cpython-38.pyc
+|       |   |   `-- patient_nca.cpython-38.pyc
+|       |   |-- gp_aligner.py
+|       |   `-- patient_nca.py
+|       |-- train.py
+|       `-- utils
+|           |-- __init__.py
+|           |-- __pycache__
+|           |   |-- __init__.cpython-38.pyc
+|           |   |-- loss_utils.cpython-38.pyc
+|           |   |-- pretrain_utils.cpython-38.pyc
+|           |   `-- train_utils.cpython-38.pyc
+|           |-- loss_utils.py
+|           |-- pretrain_utils.py
+|           `-- train_utils.py
+|-- data
+|   `-- simulated_data
+|       `-- data.jsonl
+|-- e.txt
+|-- o.txt
+|-- output
+|   |-- e_46780810.txt
+|   |-- e_46780817.txt
+|   |-- o_46780810.txt
+|   `-- o_46780817.txt
+|-- predict.sh
+|-- preprocess_data.py
+|-- sbatch_job.sh
+`-- utils.py
+

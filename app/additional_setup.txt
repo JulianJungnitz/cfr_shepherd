@@ -106,7 +106,20 @@ jsonnet aus req file entfernen?
 
 
 
-jsonnet pber conda installieren
+jsonnet pber conda installieren - fixt das problem
+
+fehler noch bei packages beim ausführen
+- ohne die future cloud packages laufen lassen 
+packages von future cloud installieren - mit --no-deps - funktionert
+
+speicherplatzprobleme - 
+docker builder prune - entfernt nicht die genutzen build caches - rebuld dauert 160s - update apt wirt neu gemacht
+pretrain.ckpt fehlt - einfügen und nochmal laufen lassen
+
+
+remove github build 
+build self and push to feature cloud
+
 
 
 

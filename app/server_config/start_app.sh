@@ -7,6 +7,6 @@ conda activate test_shepherd
 pip show numpy
 pip show jsonnet
 python --version
-# export PYTHONUNBUFFERED=1
+pip check  
 
-# exec python -u /app/main.py
+python -u /app/main.py
