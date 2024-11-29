@@ -23,8 +23,8 @@ RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-${ANACONDA_VERSION}
     rm /tmp/anaconda.sh && \
     ln -s $ANACONDA_PREFIX/bin/conda /usr/local/bin/conda
 RUN conda update -n base -c defaults conda
-COPY /app/test_env_edit.yml /app/test_env_edit.yml
-RUN conda env create --name test_shepherd --file /app/test_env_edit.yml && \
+COPY /app/env_without_pip.yml /app/env_without_pip.yml
+RUN conda env create --name test_shepherd --file /app/env_without_pip.yml && \
     conda clean -a -y
 ENV PATH=$ANACONDA_PREFIX/envs/test_shepherd/bin:$PATH
 
@@ -42,7 +42,7 @@ RUN conda install -c conda-forge jsonnet
 RUN conda run -n test_shepherd pip install bottle
 
 # Shepherd requirements
-COPY /app/test_req_pip_shepherd.txt /app/test_req_pip_shepherd.txt
+COPY /app/additional_pip_requirements_shepherd.txt /app/pip_shepherd.txt
 RUN pip install jsonnet
 
 SHELL ["bash", "-c"]
@@ -71,10 +71,10 @@ RUN apt-get update && \
 
 SHELL ["conda", "run", "-n", "test_shepherd", "/bin/bash", "-c"]
 
-RUN pip install --no-cache-dir -r /app/test_req_pip_shepherd.txt
+RUN pip install --no-cache-dir -r /app/pip_shepherd.txt
 
 
-COPY requirements.txt requirements.txt
+COPY cfr_requirements.txt requirements.txt
 RUN pip install --no-deps --no-cache-dir -r requirements.txt
 
 COPY ./app/SHEPHERD/data/checkpoints /app/SHEPHERD/data/checkpoints
