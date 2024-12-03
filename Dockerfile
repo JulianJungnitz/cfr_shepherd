@@ -82,7 +82,7 @@ COPY ./app/SHEPHERD/data/knowledge_graph /app/SHEPHERD/data/knowledge_graph
 COPY ./app/server_config/supervisord.conf /supervisord.conf
 COPY ./app/server_config/nginx /etc/nginx/sites-available/default
 COPY ./app/server_config/docker-entrypoint.sh /entrypoint.sh
-COPY ./app/server_config/start_app.sh /start_app.sh
+COPY ./start_app.sh /start_app.sh
 
 RUN chmod +x /entrypoint.sh /start_app.sh
 

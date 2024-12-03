@@ -1,11 +1,6 @@
 
 cd app/SHEPHERD/shepherd
 
-#echo current path
-
-pwd
-
-conda info --envs
 
 
 python predict.py \

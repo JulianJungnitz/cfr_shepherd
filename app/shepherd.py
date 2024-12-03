@@ -29,7 +29,7 @@ def predict_patients_like_me():
     print("Predicting patients like me. Dir: "+dir)
     command = [
         'bash',
-        dir + '/predict.sh',
+        dir + '/predict_patients_like_me.sh',
         
     ]
     utils.run_subprocess(command)

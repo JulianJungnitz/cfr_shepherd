@@ -135,6 +135,6 @@ def get_all_patients_diseases(df):
 
 
 if __name__ == "__main__":
-    
+    ### EXCLUDE CONTROL DISEASE?? ###
     evaluate_patients_like_me("SHEPHERD/data/results/checkpoints.patients_like_me_scores.csv")
 # %%
