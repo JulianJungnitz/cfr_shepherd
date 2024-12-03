@@ -1,4 +1,6 @@
 #!/bin/bash
+#SBATCH -A project02537
+#SBATCH -J cfr_shepherd
 #SBATCH -e /work/home/jj56rivo/cfr_shepherd/e.txt
 #SBATCH -o /work/home/jj56rivo/cfr_shepherd/o.txt
 #SBATCH -C avx512
@@ -6,7 +8,6 @@
 #SBATCH --mem-per-cpu=64G
 #SBATCH --time=00:32:00
 #SBATCH --cpus-per-task=4
-#SBATCH -A project02537
 
 
 
