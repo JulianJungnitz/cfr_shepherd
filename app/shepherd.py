@@ -35,7 +35,25 @@ def predict_patients_like_me():
     utils.run_subprocess(command)
 
 
+def predict_causal_gene_discovery():
+    dir = utils.SHEPHERD_DIR 
+    print("Predicting causal gene discovery. Dir: "+dir)
+    command = [
+        'bash',
+        dir + '/predict_causal_gene.sh',
+        
+    ]
+    utils.run_subprocess(command)
 
+def predict_disease_categorization():
+    dir = utils.SHEPHERD_DIR 
+    print("Predicting disease categorization. Dir: "+dir)
+    command = [
+        'bash',
+        dir + '/predict_disease_categorization.sh',
+        
+    ]
+    utils.run_subprocess(command)
 
     
 
@@ -49,8 +67,17 @@ def main():
     config = utils.read_config()
     start_preprocessing_data(config)
 
-    predict_patients_like_me()
+    RUN_PATIENTS_LIKE_ME = config["shepherd"]["RUN_PATIENTS_LIKE_ME"]
+    if(RUN_PATIENTS_LIKE_ME):
+        predict_patients_like_me()
 
+    RUN_CAUSAL_GENE_DISCOVERY = config["shepherd"]["RUN_CAUSAL_GENE_DISCOVERY"]
+    if (RUN_CAUSAL_GENE_DISCOVERY):
+        predict_causal_gene_discovery()
+
+    RUN_DISEASE_CATEGORIZATION = config["shepherd"]["RUN_DISEASE_CATEGORIZATION"]
+    if (RUN_DISEASE_CATEGORIZATION):
+        predict_disease_categorization()
 
     
 

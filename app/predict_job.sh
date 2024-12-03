@@ -1,37 +1,28 @@
 #!/bin/bash
-
-
-# remove old output files
-
-
-#SBATCH -J parprogprak1
-#SBATCH -e /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/e.txt
-#SBATCH -o /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd/o.txt
+#SBATCH -e /work/home/jj56rivo/cfr_shepherd/e.txt
+#SBATCH -o /work/home/jj56rivo/cfr_shepherd/o.txt
 #SBATCH -C avx512
 #SBATCH -n 1
 #SBATCH --mem-per-cpu=64G
 #SBATCH --time=00:32:00
 #SBATCH --cpus-per-task=4
-#SBATCH -A kurs00084
-#SBATCH -p kurs00084
-#SBATCH --reservation=kurs00084
+#SBATCH -A project02537
 
 
 
 echo "Job started"
 
-# cd /work/scratch/kurse/kurs00084/tb89zyce/ba/cfr_shepherd
-cd /home/julian/Documents/cfr_shepherd/
+cd /work/home/jj56rivo/cfr_shepherd
 
 cd app/SHEPHERD
 
 set -e
 
-# source /work/scratch/kurse/kurs00084/tb89zyce/ba/miniconda3/etc/profile.d/conda.sh
-source ~/anaconda3/etc/profile.d/conda.sh
+source /work/home/jj56rivo/miniconda3/etc/profile.d/conda.sh
+# source ~/anaconda3/etc/profile.d/conda.sh
 
 conda activate shepherd
-bash install_pyg.sh
+# bash install_pyg.sh
 
 
 
@@ -48,18 +39,13 @@ sed -i "s/^PROJECT_DIR *= *.*/PROJECT_DIR = Path(\"$ESCAPED_DIR\/data\")/" "$CON
 
 
 
-cd shepherd
+
 
 echo "Memory usage before running predict.py:"
 free -h
 
-python predict.py \
-    --run_type patients_like_me \
-    --patient_data my_data          \
-    --edgelist KG_edgelist_mask.txt     \
-    --node_map KG_node_map.txt          \
-    --saved_node_embeddings_path checkpoints/pretrain.ckpt    \
-    --best_ckpt checkpoints/patients_like_me.ckpt/patients_like_me.ckpt
+bash predict_patients_like_me.sh
+
 
 echo "Memory usage after running predict.py:"
 free -h
