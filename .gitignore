@@ -6,6 +6,10 @@ env/
 */lightning_logs/*
 config.yml
 careforrare/*
+app/SHEPHERD/project_config.py
+
+e.txt
+o.txt
 
 
 # Byte-compiled / optimized / DLL files
