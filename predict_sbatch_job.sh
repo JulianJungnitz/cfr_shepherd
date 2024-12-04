@@ -45,7 +45,8 @@ sed -i "s/^PROJECT_DIR *= *.*/PROJECT_DIR = Path(\"$ESCAPED_DIR\/data\")/" "$CON
 echo "Memory usage before running predict.py:"
 free -h
 
-bash predict_patients_like_me.sh
+cd ../..
+bash app/SHEPHERD/predict_patients_like_me.sh
 
 
 echo "Memory usage after running predict.py:"

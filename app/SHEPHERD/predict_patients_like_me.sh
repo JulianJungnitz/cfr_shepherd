@@ -1,4 +1,4 @@
-
+pwd
 cd app/SHEPHERD/shepherd
 
 

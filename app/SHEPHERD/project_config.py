@@ -26,7 +26,7 @@ current_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 #PROJECT_DIR = Path("/home/ema30/zaklab/rare_disease_dx/test_camera_ready") # Path('PATH/TO/SHEPHERD')
-PROJECT_DIR = Path(current_dir + "/data")
+PROJECT_DIR = Path("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data")
 CURR_KG = '8.9.21_kg' 
 KG_DIR = PROJECT_DIR / 'knowledge_graph' / CURR_KG
 PREDICT_RESULTS_DIR = PROJECT_DIR / 'results'
