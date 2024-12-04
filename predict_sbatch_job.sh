@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH -A project02537
 #SBATCH -J cfr_shepherd
-#SBATCH -e /work/home/jj56rivo/cfr_shepherd/e.txt
-#SBATCH -o /work/home/jj56rivo/cfr_shepherd/o.txt
+#SBATCH -e /work/home/jj56rivo/cfr_shepherd/e_%j.txt
+#SBATCH -o /work/home/jj56rivo/cfr_shepherd/o_%j.txt
 #SBATCH -C avx512
 #SBATCH -n 1
 #SBATCH --mem-per-cpu=64G
