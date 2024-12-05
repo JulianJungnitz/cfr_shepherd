@@ -51,8 +51,8 @@ def read_config(file_path=f"{INPUT_DIR}/config.yml",):
 
 
 
-def get_neo4j_credentials():
-    config = read_config()
+def get_neo4j_credentials(use_shepherd_config=False):
+    config = read_config(file_path=f"{APP_DIR}/kg_generation/shepherd_db_config.yml") if use_shepherd_config else read_config()
     neo4j_credentials = config.get("neo4j_credentials", {})
     NEO4J_URI = neo4j_credentials.get("NEO4J_URI", "")
     NEO4J_USERNAME = neo4j_credentials.get("NEO4J_USERNAME", "")
@@ -62,9 +62,10 @@ def get_neo4j_credentials():
     return NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD, NEO4J_DB
 
 
-def connect_to_neo4j():
+
+def connect_to_neo4j(use_shepherd_db=False):
     print("Connecting to Neo4j")
-    config = get_neo4j_credentials()
+    config = get_neo4j_credentials(use_shepherd_config=use_shepherd_db)
     global NEO4J_DB
     NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD, NEO4J_DB = config
     driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))
@@ -72,12 +73,14 @@ def connect_to_neo4j():
     
     return driver
 
-def execute_query(driver, query):
+def execute_query(driver, query, debug=True):
     with driver.session(database=NEO4J_DB) as session:
         try:
-            print(query)
+            if(debug):
+                print(query)
             res = session.run(query).data()
-            print(f"Query returned {len(res)} records")
+            if(debug):
+                print(f"Query returned {len(res)} records")
             return res
         except Exception as e:
             print(f"Error: {e}")
