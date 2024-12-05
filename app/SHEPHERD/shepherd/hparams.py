@@ -229,8 +229,31 @@ def get_predict_hparams(args):
                'patient_similarity_type': 'gene', # How we determine labels for similar patients in "Patients Like Me"
                'n_similar_patients': 2, # (Patients Like Me only) Number of patients with the same gene/disease that we add to the batch
     
+                # Set by Julian
+               'attention_type': 'bilinear',
 
-               'attention_type': 'bilinear',# Set by Julian
+                'decoder_type': 'bilinear',
+               'norm_method': "batch_layer",
+               'loss': 'max-margin',
+               'pred_threshold': 0.5,
+               'negative_sampler_approach': 'by_edge_type',
+               'filter_edges': True,
+               
+               'batch_size': 512,
+               'inference_batch_size': 64,
+               'neighbor_sampler_sizes': [15, 10, 5],
+               'max_epochs': 200,
+            #    'gradclip': 1.0,
+            #    'lr_factor': 0.01,
+            #    'lr_patience': 1000,
+            #    'lr_threshold': 1e-4,
+            #    'lr_threshold_mode': 'rel',
+            #    'lr_cooldown': 0,
+            #    'min_lr': 0,
+            #    'eps': 1e-8,
+            #    'profiler': None,
+            #    'wandb_save_dir': project_config.PROJECT_DIR / 'wandb' / 'preprocess',
+            #    'log_every_n_steps': 10,
     }
 
     # Get hyperparameters based on run type arguments
