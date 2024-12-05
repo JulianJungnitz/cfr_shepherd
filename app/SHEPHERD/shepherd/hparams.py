@@ -103,7 +103,7 @@ def get_train_hparams(args):
                'candidate_disease_type': 'all_kg_nodes',
                'patient_similarity_type': 'gene', # How we determine labels for similar patients in "Patients Like Me"
                'n_similar_patients': 2, # Number of patients with the same gene/disease that we add to the batch
-               'only_hard_distractors': False, # Flag when true only uses the curated hard distractors at train time
+               'only_hard_distractors': False, # Flag wattention_typehen true only uses the curated hard distractors at train time
                'sample_edges_from_train_patients': False, # Preferentially sample edges connected to training patients
                'gradclip': 1.0,
                'inference_batch_size': 64,
@@ -228,6 +228,9 @@ def get_predict_hparams(args):
                'only_hard_distractors': False, # Flag when true only uses the curated hard distractors at train time
                'patient_similarity_type': 'gene', # How we determine labels for similar patients in "Patients Like Me"
                'n_similar_patients': 2, # (Patients Like Me only) Number of patients with the same gene/disease that we add to the batch
+    
+
+               'attention_type': 'bilinear',# Set by Julian
     }
 
     # Get hyperparameters based on run type arguments
