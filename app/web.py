@@ -1,20 +1,23 @@
 import os
-from bottle import Bottle, run, request, response, static_file
-
-FLUTTER_BUILD_DIR = 'frontend/build/web'
-
-web_server= Bottle()
-
-@web_server.route('/')
-def index():
-    return static_file('index.html', root=FLUTTER_BUILD_DIR)
+from bottle import Bottle, request, response
 
 
-@web_server.route('/<filepath:path>')
-def serve_static(filepath):
-    file_path = os.path.join(FLUTTER_BUILD_DIR, filepath)
-    
-    if os.path.exists(file_path) and os.path.isfile(file_path):
-        return static_file(filepath, root=FLUTTER_BUILD_DIR)
+
+cfr_api_server = Bottle()
+
+@cfr_api_server.hook('after_request')
+def enable_cors():
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    requested_headers = request.headers.get('Access-Control-Request-Headers')
+    if requested_headers:
+        response.headers['Access-Control-Allow-Headers'] = requested_headers
     else:
-        return static_file('index.html', root=FLUTTER_BUILD_DIR)
+        response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
+        
+@cfr_api_server.route('/', method=['OPTIONS', 'GET'])
+def api_root():
+    if request.method == 'OPTIONS':
+        response.status = 204
+        return
+    return 'API'
