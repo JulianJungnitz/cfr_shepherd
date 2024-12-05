@@ -86,7 +86,7 @@ def predict(args):
     
     # Hyperparameters
     hparams = get_predict_hparams(args)
-    # print("HPARAMS:", hparams)
+    print("HPARAMS after getting them:", hparams)
 
     # Seed
     pl.seed_everything(hparams['seed'])
