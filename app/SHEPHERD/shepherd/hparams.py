@@ -233,28 +233,47 @@ def get_predict_hparams(args):
                'attention_type': 'bilinear',
 
                 'decoder_type': 'bilinear',
-                'leaky_relu': 0.1,
-            #    'norm_method': "batch_layer",
-            #    'loss': 'max-margin',
-            #    'pred_threshold': 0.5,
-            #    'negative_sampler_approach': 'by_edge_type',
-            #    'filter_edges': True,
-               
-            #    'batch_size': 512,
-            #    'inference_batch_size': 64,
-            #    'neighbor_sampler_sizes': [15, 10, 5],
-            #    'max_epochs': 200,
-            #    'gradclip': 1.0,
-            #    'lr_factor': 0.01,
-            #    'lr_patience': 1000,
-            #    'lr_threshold': 1e-4,
-            #    'lr_threshold_mode': 'rel',
-            #    'lr_cooldown': 0,
-            #    'min_lr': 0,
-            #    'eps': 1e-8,
-            #    'profiler': None,
-            #    'wandb_save_dir': project_config.PROJECT_DIR / 'wandb' / 'preprocess',
-            #    'log_every_n_steps': 10,
+                'pos_weight': 1,
+               'neg_weight': 20,
+               'margin': 0.4,
+               'thresh': 1,
+               'filter_edges': False,
+               'softmax_scale': 1,
+               'leaky_relu': 0.1,
+               'decoder_type': 'bilinear',
+               'combined_training': True,
+               'sample_from_gpd': True,
+               'attention_type': 'bilinear',
+               'n_cand_diseases': 1000,
+               'test_n_cand_diseases': -1, 
+               'candidate_disease_type': 'all_kg_nodes',
+               'patient_similarity_type': 'gene', # How we determine labels for similar patients in "Patients Like Me"
+               'n_similar_patients': 2, # Number of patients with the same gene/disease that we add to the batch
+               'only_hard_distractors': False, # Flag wattention_typehen true only uses the curated hard distractors at train time
+               'sample_edges_from_train_patients': False, # Preferentially sample edges connected to training patients
+               'gradclip': 1.0,
+               'inference_batch_size': 64,
+               'max_epochs': 100, 
+               'n_gpus': 1, 
+               'num_workers': 4,
+               'precision': 16, 
+               'reload_dataloaders_every_n_epochs': 0,
+               'profiler': 'simple',
+               'pin_memory': False,
+               'log_gpu_memory': True,
+               'debug': False, 
+               'plot_softmax': False,
+               'plot_intrain': False, # Flag to plot gene rank vs. in train sets
+               'plot_PG_embed': False, # Flag to plot embeddings with phenotype and gene labels
+               'plot_disease_embed': False, # Flag to plot embeddings with disease labels
+               'plot_patient_embed': False, # Flag to plot embeddings for patients
+               'plot_degree_rank': False, # Flag to plot degree vs. gene rank
+               'plot_nhops_rank': False, # Flag to plot nhops vs. gene rank
+               'plot_frac_rank': False, # Flag to plot fraction of ___ vs. gene rank
+               'plot_gradients': False, # Flag to plot gradients
+               'plot_attn_nhops': False, # Flag to plot attn weights vs. nhops
+               'plot_phen_gene_sims': False, # Flag to plot phenotype-gene similarities
+               'mrr_vs_percent_overlap': False, # Flag to plot MRR vs. percent overlap of phenotypes
     }
 
     # Get hyperparameters based on run type arguments
