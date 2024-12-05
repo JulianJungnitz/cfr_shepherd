@@ -234,7 +234,7 @@ def get_predict_hparams(args):
 
                 'decoder_type': 'bilinear',
                 'pos_weight': 1,
-            #    'neg_weight': 20,
+               'neg_weight': 20,
             #    'margin': 0.4,
             #    'thresh': 1,
             #    'filter_edges': False,
