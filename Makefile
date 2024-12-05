@@ -31,6 +31,9 @@ start_task:
 	curl --location 'http://localhost:9000/setup' --header 'Content-Type: application/json' --data '{"id": "0000000000000000","coordinator": false,"coordinatorID": "0000000000000000","clients": []}'
 	docker logs -f $(DOCKER_IMAGE_NAME)
 
+show_logs:
+	docker logs -f $(DOCKER_IMAGE_NAME)
+	
 
 rmi: ## remove the image
 	docker rmi -f $(DOCKER_IMAGE_TAGNAME)

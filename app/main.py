@@ -5,7 +5,7 @@ from FeatureCloud.app.engine.app import app
 
 import states
 
-from web import  cfr_api_server
+from app.cfr_api import  cfr_api_server
 
 
 server = Bottle()
