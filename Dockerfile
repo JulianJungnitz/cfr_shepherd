@@ -92,6 +92,7 @@ RUN --mount=type=bind,source=./app,target=/src_app \
               --exclude='SHEPHERD/data/knowledge_graph' \
               /src_app/ /app/
 
+COPY ./frontend/build/web /frontend/build/web
 
 # RUN pip install numpy==1.22.4
 
