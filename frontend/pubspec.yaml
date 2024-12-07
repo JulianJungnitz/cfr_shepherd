@@ -41,6 +41,9 @@ dependencies:
   build_runner: ^2.4.13
   freezed: ^2.5.7
   json_serializable: ^6.9.0
+  fl_chart: ^0.69.2
+  flutter_charts: ^0.5.2
+  syncfusion_flutter_charts: ^27.2.5
 
 dev_dependencies:
   flutter_test:

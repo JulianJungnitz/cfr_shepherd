@@ -21,11 +21,11 @@ Patient _$PatientFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Patient {
   @JsonKey(name: 'biological_sample')
-  String? get biologicalSample => throw _privateConstructorUsedError;
+  BiologicalSample? get biologicalSample => throw _privateConstructorUsedError;
   @JsonKey(name: 'genes')
-  String? get genes => throw _privateConstructorUsedError;
+  List<Gene>? get genes => throw _privateConstructorUsedError;
   @JsonKey(name: 'phenotypes')
-  String? get phenotypes => throw _privateConstructorUsedError;
+  List<Phenotype>? get phenotypes => throw _privateConstructorUsedError;
   @JsonKey(name: 'subject_id')
   int? get subjectId => throw _privateConstructorUsedError;
 
@@ -44,10 +44,12 @@ abstract class $PatientCopyWith<$Res> {
       _$PatientCopyWithImpl<$Res, Patient>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'biological_sample') String? biologicalSample,
-      @JsonKey(name: 'genes') String? genes,
-      @JsonKey(name: 'phenotypes') String? phenotypes,
+      {@JsonKey(name: 'biological_sample') BiologicalSample? biologicalSample,
+      @JsonKey(name: 'genes') List<Gene>? genes,
+      @JsonKey(name: 'phenotypes') List<Phenotype>? phenotypes,
       @JsonKey(name: 'subject_id') int? subjectId});
+
+  $BiologicalSampleCopyWith<$Res>? get biologicalSample;
 }
 
 /// @nodoc
@@ -74,20 +76,34 @@ class _$PatientCopyWithImpl<$Res, $Val extends Patient>
       biologicalSample: freezed == biologicalSample
           ? _value.biologicalSample
           : biologicalSample // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BiologicalSample?,
       genes: freezed == genes
           ? _value.genes
           : genes // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as List<Gene>?,
       phenotypes: freezed == phenotypes
           ? _value.phenotypes
           : phenotypes // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as List<Phenotype>?,
       subjectId: freezed == subjectId
           ? _value.subjectId
           : subjectId // ignore: cast_nullable_to_non_nullable
               as int?,
     ) as $Val);
+  }
+
+  /// Create a copy of Patient
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $BiologicalSampleCopyWith<$Res>? get biologicalSample {
+    if (_value.biologicalSample == null) {
+      return null;
+    }
+
+    return $BiologicalSampleCopyWith<$Res>(_value.biologicalSample!, (value) {
+      return _then(_value.copyWith(biologicalSample: value) as $Val);
+    });
   }
 }
 
@@ -99,10 +115,13 @@ abstract class _$$PatientImplCopyWith<$Res> implements $PatientCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'biological_sample') String? biologicalSample,
-      @JsonKey(name: 'genes') String? genes,
-      @JsonKey(name: 'phenotypes') String? phenotypes,
+      {@JsonKey(name: 'biological_sample') BiologicalSample? biologicalSample,
+      @JsonKey(name: 'genes') List<Gene>? genes,
+      @JsonKey(name: 'phenotypes') List<Phenotype>? phenotypes,
       @JsonKey(name: 'subject_id') int? subjectId});
+
+  @override
+  $BiologicalSampleCopyWith<$Res>? get biologicalSample;
 }
 
 /// @nodoc
@@ -127,15 +146,15 @@ class __$$PatientImplCopyWithImpl<$Res>
       biologicalSample: freezed == biologicalSample
           ? _value.biologicalSample
           : biologicalSample // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as BiologicalSample?,
       genes: freezed == genes
-          ? _value.genes
+          ? _value._genes
           : genes // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as List<Gene>?,
       phenotypes: freezed == phenotypes
-          ? _value.phenotypes
+          ? _value._phenotypes
           : phenotypes // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as List<Phenotype>?,
       subjectId: freezed == subjectId
           ? _value.subjectId
           : subjectId // ignore: cast_nullable_to_non_nullable
@@ -149,22 +168,40 @@ class __$$PatientImplCopyWithImpl<$Res>
 class _$PatientImpl implements _Patient {
   const _$PatientImpl(
       {@JsonKey(name: 'biological_sample') this.biologicalSample,
-      @JsonKey(name: 'genes') this.genes,
-      @JsonKey(name: 'phenotypes') this.phenotypes,
-      @JsonKey(name: 'subject_id') this.subjectId});
+      @JsonKey(name: 'genes') final List<Gene>? genes,
+      @JsonKey(name: 'phenotypes') final List<Phenotype>? phenotypes,
+      @JsonKey(name: 'subject_id') this.subjectId})
+      : _genes = genes,
+        _phenotypes = phenotypes;
 
   factory _$PatientImpl.fromJson(Map<String, dynamic> json) =>
       _$$PatientImplFromJson(json);
 
   @override
   @JsonKey(name: 'biological_sample')
-  final String? biologicalSample;
+  final BiologicalSample? biologicalSample;
+  final List<Gene>? _genes;
   @override
   @JsonKey(name: 'genes')
-  final String? genes;
+  List<Gene>? get genes {
+    final value = _genes;
+    if (value == null) return null;
+    if (_genes is EqualUnmodifiableListView) return _genes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<Phenotype>? _phenotypes;
   @override
   @JsonKey(name: 'phenotypes')
-  final String? phenotypes;
+  List<Phenotype>? get phenotypes {
+    final value = _phenotypes;
+    if (value == null) return null;
+    if (_phenotypes is EqualUnmodifiableListView) return _phenotypes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey(name: 'subject_id')
   final int? subjectId;
@@ -181,17 +218,21 @@ class _$PatientImpl implements _Patient {
             other is _$PatientImpl &&
             (identical(other.biologicalSample, biologicalSample) ||
                 other.biologicalSample == biologicalSample) &&
-            (identical(other.genes, genes) || other.genes == genes) &&
-            (identical(other.phenotypes, phenotypes) ||
-                other.phenotypes == phenotypes) &&
+            const DeepCollectionEquality().equals(other._genes, _genes) &&
+            const DeepCollectionEquality()
+                .equals(other._phenotypes, _phenotypes) &&
             (identical(other.subjectId, subjectId) ||
                 other.subjectId == subjectId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, biologicalSample, genes, phenotypes, subjectId);
+  int get hashCode => Object.hash(
+      runtimeType,
+      biologicalSample,
+      const DeepCollectionEquality().hash(_genes),
+      const DeepCollectionEquality().hash(_phenotypes),
+      subjectId);
 
   /// Create a copy of Patient
   /// with the given fields replaced by the non-null parameter values.
@@ -211,22 +252,23 @@ class _$PatientImpl implements _Patient {
 
 abstract class _Patient implements Patient {
   const factory _Patient(
-      {@JsonKey(name: 'biological_sample') final String? biologicalSample,
-      @JsonKey(name: 'genes') final String? genes,
-      @JsonKey(name: 'phenotypes') final String? phenotypes,
+      {@JsonKey(name: 'biological_sample')
+      final BiologicalSample? biologicalSample,
+      @JsonKey(name: 'genes') final List<Gene>? genes,
+      @JsonKey(name: 'phenotypes') final List<Phenotype>? phenotypes,
       @JsonKey(name: 'subject_id') final int? subjectId}) = _$PatientImpl;
 
   factory _Patient.fromJson(Map<String, dynamic> json) = _$PatientImpl.fromJson;
 
   @override
   @JsonKey(name: 'biological_sample')
-  String? get biologicalSample;
+  BiologicalSample? get biologicalSample;
   @override
   @JsonKey(name: 'genes')
-  String? get genes;
+  List<Gene>? get genes;
   @override
   @JsonKey(name: 'phenotypes')
-  String? get phenotypes;
+  List<Phenotype>? get phenotypes;
   @override
   @JsonKey(name: 'subject_id')
   int? get subjectId;

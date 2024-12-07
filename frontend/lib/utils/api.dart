@@ -6,16 +6,18 @@ abstract class APIPaths {
   static const patientsLikeMe = '/patients_like_me';
   static const causalGeneDiscovery = '/causal_gene_discovery';
   static const diseaseCharacterization = '/disease_characterization';
-
+  static const query = '/query';
 }
 
 class API {
   static const String baseUrl = 'http://0.0.0.0:9001/cfr_api';
 
   static Future<APIResult> post(String path,
-      {Map<String, dynamic> body = const {}, bool rawString = false}) async {
+      {Map<String, dynamic> body = const {},
+      bool rawString = false,
+      bool debug = false}) async {
     var headers = {
-      // 'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
     };
 
@@ -32,8 +34,7 @@ class API {
         ),
         data: json.encode(body),
       );
-
-      print("API $path: response: " + response.data.toString());
+      if (debug) print("API $path: response: " + response.data.toString());
 
       if (response.statusCode != 200) {
         return APIResult(false, null, message: response.statusMessage);
@@ -54,11 +55,10 @@ class API {
   }
 
   static Future<APIResult> get(String path,
-      {bool asUint8List = false, bool noPrint = false}) async {
+      {bool asUint8List = false, bool noPrint = true}) async {
     var headers = {
-      // 'Content-Type': 'application/json',
+      'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
-      'Origin': '*',
     };
 
     String apiPath = baseUrl + path;

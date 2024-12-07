@@ -3,6 +3,8 @@ import os
 from functools import wraps
 from bottle import Bottle, request, response
 import pandas as pd
+from typing import Callable, Any
+import utils as utils
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 RESULTS_DIR = os.path.join(current_dir, "SHEPHERD/data/results")
@@ -33,34 +35,61 @@ def api_root():
     )
 
 
-def handle_request(func):
+def handle_request(func: Callable) -> Callable:
+    """Base decorator for handling API requests"""
     @wraps(func)
-    def wrapper(patient_id, *args, **kwargs):
+    def wrapper(*args, **kwargs) -> dict:
+        # Handle OPTIONS request
         if request.method == "OPTIONS":
             response.status = 204
             return
-
-        if not patient_id:
-            response.status = 400
-            return {"error": "Patient ID is required"}
-
+            
         try:
-            return func(int(patient_id), *args, **kwargs)
+            result = func(*args, **kwargs)
+            return {"data": result}
         except Exception as e:
             response.status = 500
-            return {"error": str(e)}
+            return {"message": str(e)}
+            
+    return wrapper
+
+def handle_patient_request(func: Callable) -> Callable:
+    """Decorator for handling patient-specific API requests"""
+    @handle_request
+    @wraps(func)
+    def wrapper(patient_id: str, *args, **kwargs) -> Any:
+        # Validate patient_id
+        if not patient_id:
+            response.status = 400
+            return {"message": "Patient ID is required"}
+            
+        return func(int(patient_id), *args, **kwargs)
+            
+    return wrapper
 
     return wrapper
 
-
 def create_patient_result_endpoint(route, response_key, filename):
     @cfr_api_server.route(f"/{route}/<patient_id>", method=["OPTIONS", "GET", "POST"])
-    @handle_request
+    @handle_patient_request
     def endpoint(patient_id):
         data = _read_patient_data_from_file(patient_id, filename)
         return {"patient_id": patient_id, response_key: data}
 
     return endpoint
+
+@cfr_api_server.route(f"/query", method=["OPTIONS", "POST"])
+@handle_request
+def endpoint():
+    data = request.json
+    query = data.get("query")
+    if not query:
+        response.status = 400
+        return {"message": "Query is required"}
+    driver = utils.connect_to_neo4j()
+    result = utils.execute_query(driver, query)
+    return result
+    
 
 
 def _read_patient_data_from_file(patient_id=None, file=None):
