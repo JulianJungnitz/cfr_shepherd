@@ -88,7 +88,7 @@ class _PatientAnalysisScreenState extends State<PatientAnalysisScreen> {
                   comparisonPatient as Patient;
                   List<String?> genes =
                       comparisonPatient.genes!.map((e) => e.id).toList();
-                  List<String?> sharedGenes = patient!.genes!
+                  List<String?> sharedGenes = (patient?.genes??[])
                       .map((e) => e.id)
                       .where((element) => genes.contains(element))
                       .toList();
