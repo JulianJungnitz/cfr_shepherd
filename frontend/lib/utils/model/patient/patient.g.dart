@@ -21,7 +21,7 @@ _$PatientImpl _$$PatientImplFromJson(Map<String, dynamic> json) =>
       diseases: (json['diseases'] as List<dynamic>?)
           ?.map((e) => Disease.fromJson(e as Map<String, dynamic>))
           .toList(),
-      subjectId: (json['subject_id'] as num?)?.toInt(),
+      sampleId: (json['sample_id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$PatientImplToJson(_$PatientImpl instance) =>
@@ -30,5 +30,5 @@ Map<String, dynamic> _$$PatientImplToJson(_$PatientImpl instance) =>
       'genes': instance.genes,
       'phenotypes': instance.phenotypes,
       'diseases': instance.diseases,
-      'subject_id': instance.subjectId,
+      'sample_id': instance.sampleId,
     };

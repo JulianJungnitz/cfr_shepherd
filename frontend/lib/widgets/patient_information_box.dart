@@ -28,7 +28,20 @@ class PatientInformationBox extends StatelessWidget {
                 ),
               )
                   : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    'Subject ID: ${patient!.biologicalSample?.subjectid}',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  Text(
+                    'Biological Sample ID: ${patient!.sampleId}',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  Divider(),
+                  SizedBox(
+                    height: 16,
+                  ),
                   ExpandableTextSection(
                     title: 'Genes',
                     text: patient!.genes!

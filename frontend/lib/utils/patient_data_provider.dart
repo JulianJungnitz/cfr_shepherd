@@ -13,6 +13,48 @@ class PatientDataProvider extends ChangeNotifier {
   List<DiseaseCharacterization> diseaseCharacterization = [];
   List<CausalGene> causalGeneDiscovery = [];
 
+  List<Patient> patientsLikeMeWholeInfo = [];
+
+  int defaultShowNumber = 5;
+
+  int shownPatientsLikeMe = 5;
+  int shownDiseaseCharacterization = 5;
+  int shownCausalGeneDiscovery = 5;
+
+  void setShownPatientsLikeMe(int number) {
+    shownPatientsLikeMe = number;
+    loadPatientsLikeMeWholeInfo();
+    notifyListeners();
+  }
+
+  void setShownDiseaseCharacterization(int number) {
+    shownDiseaseCharacterization = number;
+    notifyListeners();
+  }
+
+  void setShownCausalGeneDiscovery(int number) {
+    shownCausalGeneDiscovery = number;
+    notifyListeners();
+  }
+
+  void loadPatientsLikeMeWholeInfo() async {
+    patientsLikeMeWholeInfo = [];
+    int index = 0;
+    for (var patient in patientsLikeMe) {
+      print("Loading patient information: ${patient.candidate_patients}");
+      var p = await getPatientInformation(patient.candidate_patients!);
+      if (p != null) {
+        patientsLikeMeWholeInfo.add(p);
+      }
+      index += 1;
+      if (index >= shownPatientsLikeMe) {
+        break;
+      }
+    }
+    print("Patients like me whole info loaded: ${patientsLikeMeWholeInfo.length}");
+    notifyListeners();
+  }
+
   void getPatientsLikeMe(int patientId) async {
     var response = await API.get('${APIPaths.patientsLikeMe}/$patientId');
     if (response.success) {
@@ -21,6 +63,7 @@ class PatientDataProvider extends ChangeNotifier {
         patientsLikeMe.add(PatientLikeMe.fromJson(item));
       }
       patientsLikeMe.sort((a, b) => a.similarities!.compareTo(b.similarities!));
+      loadPatientsLikeMeWholeInfo();
       notifyListeners();
     }
   }
@@ -60,22 +103,17 @@ class PatientDataProvider extends ChangeNotifier {
   Future<Patient?> getPatientInformation(int patientId) async {
     String query = """
     Match (bs:Biological_sample) 
+    WHERE id(bs) = $patientId
     Optional Match (bs)-[:HAS_DAMAGE]->(g:Gene)
     Optional Match (bs)-[:HAS_PHENOTYPE]->(p:Phenotype)
     Optional Match (bs)-[:HAS_DISEASE]->(d:Disease)
     Optional Match (bs)-[:BELONGS_TO_SUBJECT]-(s:Subject)
-    WHERE id(bs) = $patientId
-    return bs as biological_sample ,collect(distinct g) as genes, collect(distinct d) as diseases,collect(distinct p) as phenotypes ,id(s) as subject_id limit 1
+    return bs as biological_sample ,collect(distinct g) as genes, collect(distinct d) as diseases,collect(distinct p) as phenotypes ,id(s) as sample_id limit 1
     """;
     var response = await _queryNeo4J(query);
     if (!response.success) {
       return null;
     }
-
-    print(response.data[0]['biological_sample']);
-    print(response.data[0]['genes']);
-    print(response.data[0]['phenotypes']);
-    print(response.data[0]['diseases']);
 
     Patient p = Patient.fromJson(response.data[0]);
     return p;

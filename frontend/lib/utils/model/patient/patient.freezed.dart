@@ -28,8 +28,8 @@ mixin _$Patient {
   List<Phenotype>? get phenotypes => throw _privateConstructorUsedError;
   @JsonKey(name: 'diseases')
   List<Disease>? get diseases => throw _privateConstructorUsedError;
-  @JsonKey(name: 'subject_id')
-  int? get subjectId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sample_id')
+  int? get sampleId => throw _privateConstructorUsedError;
 
   /// Serializes this Patient to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -50,7 +50,7 @@ abstract class $PatientCopyWith<$Res> {
       @JsonKey(name: 'genes') List<Gene>? genes,
       @JsonKey(name: 'phenotypes') List<Phenotype>? phenotypes,
       @JsonKey(name: 'diseases') List<Disease>? diseases,
-      @JsonKey(name: 'subject_id') int? subjectId});
+      @JsonKey(name: 'sample_id') int? sampleId});
 
   $BiologicalSampleCopyWith<$Res>? get biologicalSample;
 }
@@ -74,7 +74,7 @@ class _$PatientCopyWithImpl<$Res, $Val extends Patient>
     Object? genes = freezed,
     Object? phenotypes = freezed,
     Object? diseases = freezed,
-    Object? subjectId = freezed,
+    Object? sampleId = freezed,
   }) {
     return _then(_value.copyWith(
       biologicalSample: freezed == biologicalSample
@@ -93,9 +93,9 @@ class _$PatientCopyWithImpl<$Res, $Val extends Patient>
           ? _value.diseases
           : diseases // ignore: cast_nullable_to_non_nullable
               as List<Disease>?,
-      subjectId: freezed == subjectId
-          ? _value.subjectId
-          : subjectId // ignore: cast_nullable_to_non_nullable
+      sampleId: freezed == sampleId
+          ? _value.sampleId
+          : sampleId // ignore: cast_nullable_to_non_nullable
               as int?,
     ) as $Val);
   }
@@ -127,7 +127,7 @@ abstract class _$$PatientImplCopyWith<$Res> implements $PatientCopyWith<$Res> {
       @JsonKey(name: 'genes') List<Gene>? genes,
       @JsonKey(name: 'phenotypes') List<Phenotype>? phenotypes,
       @JsonKey(name: 'diseases') List<Disease>? diseases,
-      @JsonKey(name: 'subject_id') int? subjectId});
+      @JsonKey(name: 'sample_id') int? sampleId});
 
   @override
   $BiologicalSampleCopyWith<$Res>? get biologicalSample;
@@ -150,7 +150,7 @@ class __$$PatientImplCopyWithImpl<$Res>
     Object? genes = freezed,
     Object? phenotypes = freezed,
     Object? diseases = freezed,
-    Object? subjectId = freezed,
+    Object? sampleId = freezed,
   }) {
     return _then(_$PatientImpl(
       biologicalSample: freezed == biologicalSample
@@ -169,9 +169,9 @@ class __$$PatientImplCopyWithImpl<$Res>
           ? _value._diseases
           : diseases // ignore: cast_nullable_to_non_nullable
               as List<Disease>?,
-      subjectId: freezed == subjectId
-          ? _value.subjectId
-          : subjectId // ignore: cast_nullable_to_non_nullable
+      sampleId: freezed == sampleId
+          ? _value.sampleId
+          : sampleId // ignore: cast_nullable_to_non_nullable
               as int?,
     ));
   }
@@ -185,7 +185,7 @@ class _$PatientImpl implements _Patient {
       @JsonKey(name: 'genes') final List<Gene>? genes,
       @JsonKey(name: 'phenotypes') final List<Phenotype>? phenotypes,
       @JsonKey(name: 'diseases') final List<Disease>? diseases,
-      @JsonKey(name: 'subject_id') this.subjectId})
+      @JsonKey(name: 'sample_id') this.sampleId})
       : _genes = genes,
         _phenotypes = phenotypes,
         _diseases = diseases;
@@ -230,12 +230,12 @@ class _$PatientImpl implements _Patient {
   }
 
   @override
-  @JsonKey(name: 'subject_id')
-  final int? subjectId;
+  @JsonKey(name: 'sample_id')
+  final int? sampleId;
 
   @override
   String toString() {
-    return 'Patient(biologicalSample: $biologicalSample, genes: $genes, phenotypes: $phenotypes, diseases: $diseases, subjectId: $subjectId)';
+    return 'Patient(biologicalSample: $biologicalSample, genes: $genes, phenotypes: $phenotypes, diseases: $diseases, sampleId: $sampleId)';
   }
 
   @override
@@ -249,8 +249,8 @@ class _$PatientImpl implements _Patient {
             const DeepCollectionEquality()
                 .equals(other._phenotypes, _phenotypes) &&
             const DeepCollectionEquality().equals(other._diseases, _diseases) &&
-            (identical(other.subjectId, subjectId) ||
-                other.subjectId == subjectId));
+            (identical(other.sampleId, sampleId) ||
+                other.sampleId == sampleId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -261,7 +261,7 @@ class _$PatientImpl implements _Patient {
       const DeepCollectionEquality().hash(_genes),
       const DeepCollectionEquality().hash(_phenotypes),
       const DeepCollectionEquality().hash(_diseases),
-      subjectId);
+      sampleId);
 
   /// Create a copy of Patient
   /// with the given fields replaced by the non-null parameter values.
@@ -286,7 +286,7 @@ abstract class _Patient implements Patient {
       @JsonKey(name: 'genes') final List<Gene>? genes,
       @JsonKey(name: 'phenotypes') final List<Phenotype>? phenotypes,
       @JsonKey(name: 'diseases') final List<Disease>? diseases,
-      @JsonKey(name: 'subject_id') final int? subjectId}) = _$PatientImpl;
+      @JsonKey(name: 'sample_id') final int? sampleId}) = _$PatientImpl;
 
   factory _Patient.fromJson(Map<String, dynamic> json) = _$PatientImpl.fromJson;
 
@@ -303,8 +303,8 @@ abstract class _Patient implements Patient {
   @JsonKey(name: 'diseases')
   List<Disease>? get diseases;
   @override
-  @JsonKey(name: 'subject_id')
-  int? get subjectId;
+  @JsonKey(name: 'sample_id')
+  int? get sampleId;
 
   /// Create a copy of Patient
   /// with the given fields replaced by the non-null parameter values.

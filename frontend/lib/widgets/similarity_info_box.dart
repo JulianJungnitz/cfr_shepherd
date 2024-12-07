@@ -7,10 +7,14 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 class SimilarityInfoBox extends StatefulWidget {
   final List<dynamic> data;
+  final List<dynamic> comparisonData;
   final String title;
   final String firstLabel;
   final String lastLabel;
+  final int itemsToShow;
+  final Function(int) setShown;
   final Function(BuildContext, dynamic) labelBuilder;
+  final Function(BuildContext, dynamic) comparisonWidgetBuilder;
 
   const SimilarityInfoBox(
       {super.key,
@@ -18,14 +22,17 @@ class SimilarityInfoBox extends StatefulWidget {
       required this.title,
       required this.firstLabel,
       required this.lastLabel,
-      required this.labelBuilder});
+      required this.labelBuilder,
+      required this.itemsToShow,
+      required this.setShown,
+      required this.comparisonWidgetBuilder,
+      required this.comparisonData});
 
   @override
   State<SimilarityInfoBox> createState() => _SimilarityInfoBoxState();
 }
 
 class _SimilarityInfoBoxState extends State<SimilarityInfoBox> {
-  int itemsToShow = 5;
   int _dropDownValue = 5;
 
   @override
@@ -58,10 +65,7 @@ class _SimilarityInfoBoxState extends State<SimilarityInfoBox> {
                       _dropDownValue = val!;
                     });
                     val = min(val!, widget.data.length);
-                    print(val);
-                    setState(() {
-                      itemsToShow = val!;
-                    });
+                    widget.setShown(val);
                   },
                 ),
               ),
@@ -81,31 +85,37 @@ class _SimilarityInfoBoxState extends State<SimilarityInfoBox> {
                             widget.firstLabel,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
-                          Spacer(),
-                          Text(
-                            'Similarity Score',
-                            style: Theme.of(context).textTheme.titleMedium,
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                'Similarity Score',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
                           ),
-                          Spacer(),
-                          Text(
-                            widget.lastLabel,
-                            style: Theme.of(context).textTheme.titleMedium,
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                widget.lastLabel,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
                           ),
-                          Spacer(),
                         ],
                       ),
                       Row(
                         children: [
                           Container(
-                            height: barHeight * itemsToShow,
+                            height: barHeight * widget.itemsToShow,
                             child: Padding(
                               padding:
                                   const EdgeInsets.only(top: 10.0, bottom: 34),
                               child: Column(
                                 children: List.generate(
-                                  itemsToShow,
+                                  widget.itemsToShow,
                                   (index) => Container(
-                                    height: barHeight - (44 / itemsToShow),
+                                    height:
+                                        barHeight - (44 / widget.itemsToShow),
                                     width: 150,
                                     child: (widget.labelBuilder(
                                         context, widget.data[index])),
@@ -114,8 +124,40 @@ class _SimilarityInfoBoxState extends State<SimilarityInfoBox> {
                               ),
                             ),
                           ),
-                          SimilarityChart(
-                              data: widget.data, itemsToShow: itemsToShow),
+                          Expanded(
+                            child: SimilarityChart(
+                                data: widget.data,
+                                itemsToShow: widget.itemsToShow),
+                          ),
+                          Expanded(
+                            child: Container(
+                              height: barHeight * widget.itemsToShow,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10.0, bottom: 34),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: List.generate(
+                                    widget.itemsToShow,
+                                    (index) => Container(
+                                        height: barHeight -
+                                            (44 / widget.itemsToShow),
+                                        child: widget.comparisonData.length <=
+                                                index
+                                            ? Container(
+                                                child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                ),
+                                              )
+                                            : (widget.comparisonWidgetBuilder(
+                                                context,
+                                                widget.comparisonData[index]))),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -140,7 +182,6 @@ class SimilarityChart extends StatelessWidget {
     List data = List.from(this.data);
     data = data.sublist(data.length - itemsToShow, data.length);
     return AnimatedContainer(
-      width: MediaQuery.of(context).size.width / 2,
       duration: const Duration(milliseconds: 500),
       height: data.length * barHeight,
       child: SfCartesianChart(

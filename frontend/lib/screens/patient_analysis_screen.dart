@@ -5,6 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/utils/model/disease_characterization/disease_characterization.dart';
 import 'package:frontend/utils/model/causal_gene_discovery/causal_gene.dart';
+import 'package:frontend/utils/model/gene/gene.dart';
 import 'package:frontend/utils/model/patient/patient.dart';
 import 'package:frontend/utils/model/patient_like_me/patient_like_me.dart';
 import 'package:frontend/widgets/patient_information_box.dart';
@@ -58,11 +59,22 @@ class _PatientAnalysisScreenState extends State<PatientAnalysisScreen> {
               SizedBox(
                 height: 32,
               ),
+              Divider(),
+              SizedBox(
+                height: 32,
+              ),
               SimilarityInfoBox(
+                itemsToShow:
+                    context.watch<PatientDataProvider>().shownPatientsLikeMe,
+                setShown: (val) {
+                  context
+                      .read<PatientDataProvider>()
+                      .setShownPatientsLikeMe(val);
+                },
                 data: context.watch<PatientDataProvider>().patientsLikeMe,
                 title: 'Patients Like Me',
                 firstLabel: "Patient ID",
-                lastLabel: 'Patient Information',
+                lastLabel: 'Shared with Patient',
                 labelBuilder: (context, dataSet) {
                   dataSet as PatientLikeMe;
                   return Center(
@@ -72,8 +84,53 @@ class _PatientAnalysisScreenState extends State<PatientAnalysisScreen> {
                     ),
                   );
                 },
+                comparisonData: context
+                    .watch<PatientDataProvider>()
+                    .patientsLikeMeWholeInfo,
+                comparisonWidgetBuilder: (context, comparisonPatient) {
+                  comparisonPatient as Patient;
+                  List<String?> genes =
+                      comparisonPatient.genes!.map((e) => e.id)!.toList();
+                  List<String?> sharedGenes = patient!.genes!
+                      .map((e) => e.id)!
+                      .where((element) => genes.contains(element))
+                      .toList();
+                  List<String> sharedPhenotypes = patient!.phenotypes!
+                      .map((e) => e.name!)
+                      .where((element) =>
+                          comparisonPatient.phenotypes!
+                              .map((e) => e.name!)
+                              .contains(element))
+                      .toList();
+                  List<String> sharedDiseases = patient!.diseases!
+                      .map((e) => e.name!)
+                      .where((element) =>
+                          comparisonPatient.diseases!
+                              .map((e) => e.name!)
+                              .contains(element))
+                      .toList();
+                  return Column(
+                    children: [
+                      ExpandableText(
+                            'Genes:  ${sharedGenes.isEmpty?"No Genes shared": sharedGenes.join(", ")}' +
+                            '\nPhenotypes: ${sharedPhenotypes.isEmpty?"No Phenotypes shared": sharedPhenotypes.join(", ")}' +
+                            '\nDiseases: ${sharedDiseases.isEmpty?"No Diseases shared": sharedDiseases.join(", ")}',
+                        maxLines: 3,
+                        style: Theme.of(context).textTheme.bodyMedium, expandText: 'Show More', collapseText: 'Show Less',
+                      ),
+                    ],
+                  );
+                },
               ),
               SimilarityInfoBox(
+                itemsToShow: context
+                    .watch<PatientDataProvider>()
+                    .shownCausalGeneDiscovery,
+                setShown: (val) {
+                  context
+                      .read<PatientDataProvider>()
+                      .setShownCausalGeneDiscovery(val);
+                },
                 data: context.watch<PatientDataProvider>().causalGeneDiscovery,
                 title: 'Causal Gene Discovery',
                 firstLabel: "Ensamble ID",
@@ -87,8 +144,38 @@ class _PatientAnalysisScreenState extends State<PatientAnalysisScreen> {
                     ),
                   );
                 },
+                comparisonData:
+                    context.watch<PatientDataProvider>().causalGeneDiscovery,
+                comparisonWidgetBuilder: (context, gene) {
+                  gene as CausalGene;
+                  List<Patient> patientsWithGene = context
+                      .watch<PatientDataProvider>()
+                      .patientsLikeMeWholeInfo
+                      .where((element) => element.genes!
+                          .map((e) => e.synonyms![1])
+                          .contains(gene.genes))
+                      .toList();
+
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${patientsWithGene.isEmpty ? "No Patients" : patientsWithGene}',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  );
+                },
               ),
               SimilarityInfoBox(
+                itemsToShow: context
+                    .watch<PatientDataProvider>()
+                    .shownDiseaseCharacterization,
+                setShown: (val) {
+                  context
+                      .read<PatientDataProvider>()
+                      .setShownDiseaseCharacterization(val);
+                },
                 data: context
                     .watch<PatientDataProvider>()
                     .diseaseCharacterization,
@@ -97,6 +184,8 @@ class _PatientAnalysisScreenState extends State<PatientAnalysisScreen> {
                 lastLabel: 'Shared with Patient',
                 labelBuilder: (context, dataSet) {
                   dataSet as DiseaseCharacterization;
+
+
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -106,6 +195,27 @@ class _PatientAnalysisScreenState extends State<PatientAnalysisScreen> {
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
+                    ],
+                  );
+                },
+                comparisonData: context
+                    .watch<PatientDataProvider>()
+                    .diseaseCharacterization,
+                comparisonWidgetBuilder: (context, dataSet) {
+                  dataSet as DiseaseCharacterization;
+                  List<Patient> patientsWithDisease = context
+                      .watch<PatientDataProvider>()
+                      .patientsLikeMeWholeInfo
+                      .where((element) => element.diseases!
+                      .map((e) => e.name)
+                      .contains(dataSet.diseases))
+                      .toList();
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${patientsWithDisease.isEmpty ? "No Patients" : patientsWithDisease}',
+                          style: Theme.of(context).textTheme.bodyMedium),
                     ],
                   );
                 },

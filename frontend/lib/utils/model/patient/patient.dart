@@ -14,7 +14,7 @@ class Patient with _$Patient {
     @JsonKey(name: 'genes') List<Gene>? genes,
     @JsonKey(name: 'phenotypes') List<Phenotype>? phenotypes,
     @JsonKey(name: 'diseases') List<Disease>? diseases,
-    @JsonKey(name: 'subject_id') int? subjectId,
+    @JsonKey(name: 'sample_id') int? sampleId,
   }) = _Patient;
 
   factory Patient.fromJson(Map<String, Object?> json) => _$PatientFromJson(json);
