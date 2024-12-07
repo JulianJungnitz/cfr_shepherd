@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:frontend/screens/patient_analysis_screen.dart';
+import 'package:frontend/widgets/patient_information_box.dart';
 import 'package:frontend/widgets/rounded_container.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -37,46 +39,33 @@ class _SimilarityInfoBoxState extends State<SimilarityInfoBox> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 50,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    widget.title,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  DropdownButtonHideUnderline(
-                    child: DropdownButton<int>(
-                      borderRadius: BorderRadius.circular(8),
-                      value: _dropDownValue,
-                      items: [3, 5, 10, 15]
-                          .map((v) => DropdownMenuItem(
-                              value: v,
-                              child: Text(
-                                '$v',
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall,
-                              )))
-                          .toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          _dropDownValue = val!;
-                        });
-                        val = min(val!, widget.data.length);
-                        print(val);
-                        setState(() {
-                          itemsToShow = val!;
-                        });
-                      },
-                    ),
-                  )
-                ],
+            InformationBoxHeader(
+              title: widget.title,
+              trailing: DropdownButtonHideUnderline(
+                child: DropdownButton<int>(
+                  borderRadius: BorderRadius.circular(8),
+                  value: _dropDownValue,
+                  items: [3, 5, 10, 15]
+                      .map((v) => DropdownMenuItem(
+                          value: v,
+                          child: Text(
+                            '$v',
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          )))
+                      .toList(),
+                  onChanged: (val) {
+                    setState(() {
+                      _dropDownValue = val!;
+                    });
+                    val = min(val!, widget.data.length);
+                    print(val);
+                    setState(() {
+                      itemsToShow = val!;
+                    });
+                  },
+                ),
               ),
             ),
-            Divider(),
-            SizedBox(height: 16),
             widget.data.isEmpty
                 ? Center(
                     child: Padding(

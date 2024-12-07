@@ -20,14 +20,16 @@ Gene _$GeneFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Gene {
-  @JsonKey(name: 'identity')
-  int? get identity => throw _privateConstructorUsedError;
-  @JsonKey(name: 'labels')
-  List<String>? get labels => throw _privateConstructorUsedError;
-  @JsonKey(name: 'properties')
-  Properties? get properties => throw _privateConstructorUsedError;
-  @JsonKey(name: 'elementId')
-  String? get elementId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'taxid')
+  String? get taxid => throw _privateConstructorUsedError;
+  @JsonKey(name: 'synonyms')
+  List<String>? get synonyms => throw _privateConstructorUsedError;
+  @JsonKey(name: 'name')
+  String? get name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'id')
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'family')
+  String? get family => throw _privateConstructorUsedError;
 
   /// Serializes this Gene to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -44,12 +46,11 @@ abstract class $GeneCopyWith<$Res> {
       _$GeneCopyWithImpl<$Res, Gene>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'identity') int? identity,
-      @JsonKey(name: 'labels') List<String>? labels,
-      @JsonKey(name: 'properties') Properties? properties,
-      @JsonKey(name: 'elementId') String? elementId});
-
-  $PropertiesCopyWith<$Res>? get properties;
+      {@JsonKey(name: 'taxid') String? taxid,
+      @JsonKey(name: 'synonyms') List<String>? synonyms,
+      @JsonKey(name: 'name') String? name,
+      @JsonKey(name: 'id') String? id,
+      @JsonKey(name: 'family') String? family});
 }
 
 /// @nodoc
@@ -67,262 +68,11 @@ class _$GeneCopyWithImpl<$Res, $Val extends Gene>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? identity = freezed,
-    Object? labels = freezed,
-    Object? properties = freezed,
-    Object? elementId = freezed,
-  }) {
-    return _then(_value.copyWith(
-      identity: freezed == identity
-          ? _value.identity
-          : identity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      labels: freezed == labels
-          ? _value.labels
-          : labels // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      properties: freezed == properties
-          ? _value.properties
-          : properties // ignore: cast_nullable_to_non_nullable
-              as Properties?,
-      elementId: freezed == elementId
-          ? _value.elementId
-          : elementId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
-  }
-
-  /// Create a copy of Gene
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $PropertiesCopyWith<$Res>? get properties {
-    if (_value.properties == null) {
-      return null;
-    }
-
-    return $PropertiesCopyWith<$Res>(_value.properties!, (value) {
-      return _then(_value.copyWith(properties: value) as $Val);
-    });
-  }
-}
-
-/// @nodoc
-abstract class _$$GeneImplCopyWith<$Res> implements $GeneCopyWith<$Res> {
-  factory _$$GeneImplCopyWith(
-          _$GeneImpl value, $Res Function(_$GeneImpl) then) =
-      __$$GeneImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: 'identity') int? identity,
-      @JsonKey(name: 'labels') List<String>? labels,
-      @JsonKey(name: 'properties') Properties? properties,
-      @JsonKey(name: 'elementId') String? elementId});
-
-  @override
-  $PropertiesCopyWith<$Res>? get properties;
-}
-
-/// @nodoc
-class __$$GeneImplCopyWithImpl<$Res>
-    extends _$GeneCopyWithImpl<$Res, _$GeneImpl>
-    implements _$$GeneImplCopyWith<$Res> {
-  __$$GeneImplCopyWithImpl(_$GeneImpl _value, $Res Function(_$GeneImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of Gene
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? identity = freezed,
-    Object? labels = freezed,
-    Object? properties = freezed,
-    Object? elementId = freezed,
-  }) {
-    return _then(_$GeneImpl(
-      identity: freezed == identity
-          ? _value.identity
-          : identity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      labels: freezed == labels
-          ? _value._labels
-          : labels // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      properties: freezed == properties
-          ? _value.properties
-          : properties // ignore: cast_nullable_to_non_nullable
-              as Properties?,
-      elementId: freezed == elementId
-          ? _value.elementId
-          : elementId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$GeneImpl implements _Gene {
-  const _$GeneImpl(
-      {@JsonKey(name: 'identity') this.identity,
-      @JsonKey(name: 'labels') final List<String>? labels,
-      @JsonKey(name: 'properties') this.properties,
-      @JsonKey(name: 'elementId') this.elementId})
-      : _labels = labels;
-
-  factory _$GeneImpl.fromJson(Map<String, dynamic> json) =>
-      _$$GeneImplFromJson(json);
-
-  @override
-  @JsonKey(name: 'identity')
-  final int? identity;
-  final List<String>? _labels;
-  @override
-  @JsonKey(name: 'labels')
-  List<String>? get labels {
-    final value = _labels;
-    if (value == null) return null;
-    if (_labels is EqualUnmodifiableListView) return _labels;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  @override
-  @JsonKey(name: 'properties')
-  final Properties? properties;
-  @override
-  @JsonKey(name: 'elementId')
-  final String? elementId;
-
-  @override
-  String toString() {
-    return 'Gene(identity: $identity, labels: $labels, properties: $properties, elementId: $elementId)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$GeneImpl &&
-            (identical(other.identity, identity) ||
-                other.identity == identity) &&
-            const DeepCollectionEquality().equals(other._labels, _labels) &&
-            (identical(other.properties, properties) ||
-                other.properties == properties) &&
-            (identical(other.elementId, elementId) ||
-                other.elementId == elementId));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, identity,
-      const DeepCollectionEquality().hash(_labels), properties, elementId);
-
-  /// Create a copy of Gene
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$GeneImplCopyWith<_$GeneImpl> get copyWith =>
-      __$$GeneImplCopyWithImpl<_$GeneImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$GeneImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _Gene implements Gene {
-  const factory _Gene(
-      {@JsonKey(name: 'identity') final int? identity,
-      @JsonKey(name: 'labels') final List<String>? labels,
-      @JsonKey(name: 'properties') final Properties? properties,
-      @JsonKey(name: 'elementId') final String? elementId}) = _$GeneImpl;
-
-  factory _Gene.fromJson(Map<String, dynamic> json) = _$GeneImpl.fromJson;
-
-  @override
-  @JsonKey(name: 'identity')
-  int? get identity;
-  @override
-  @JsonKey(name: 'labels')
-  List<String>? get labels;
-  @override
-  @JsonKey(name: 'properties')
-  Properties? get properties;
-  @override
-  @JsonKey(name: 'elementId')
-  String? get elementId;
-
-  /// Create a copy of Gene
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$GeneImplCopyWith<_$GeneImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-Properties _$PropertiesFromJson(Map<String, dynamic> json) {
-  return _Properties.fromJson(json);
-}
-
-/// @nodoc
-mixin _$Properties {
-  @JsonKey(name: 'taxid')
-  String? get taxid => throw _privateConstructorUsedError;
-  @JsonKey(name: 'synonyms')
-  List<String>? get synonyms => throw _privateConstructorUsedError;
-  @JsonKey(name: 'name')
-  String? get name => throw _privateConstructorUsedError;
-  @JsonKey(name: 'id')
-  String? get id => throw _privateConstructorUsedError;
-
-  /// Serializes this Properties to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of Properties
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $PropertiesCopyWith<Properties> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $PropertiesCopyWith<$Res> {
-  factory $PropertiesCopyWith(
-          Properties value, $Res Function(Properties) then) =
-      _$PropertiesCopyWithImpl<$Res, Properties>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: 'taxid') String? taxid,
-      @JsonKey(name: 'synonyms') List<String>? synonyms,
-      @JsonKey(name: 'name') String? name,
-      @JsonKey(name: 'id') String? id});
-}
-
-/// @nodoc
-class _$PropertiesCopyWithImpl<$Res, $Val extends Properties>
-    implements $PropertiesCopyWith<$Res> {
-  _$PropertiesCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of Properties
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
     Object? taxid = freezed,
     Object? synonyms = freezed,
     Object? name = freezed,
     Object? id = freezed,
+    Object? family = freezed,
   }) {
     return _then(_value.copyWith(
       taxid: freezed == taxid
@@ -341,34 +91,37 @@ class _$PropertiesCopyWithImpl<$Res, $Val extends Properties>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
+      family: freezed == family
+          ? _value.family
+          : family // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$PropertiesImplCopyWith<$Res>
-    implements $PropertiesCopyWith<$Res> {
-  factory _$$PropertiesImplCopyWith(
-          _$PropertiesImpl value, $Res Function(_$PropertiesImpl) then) =
-      __$$PropertiesImplCopyWithImpl<$Res>;
+abstract class _$$GeneImplCopyWith<$Res> implements $GeneCopyWith<$Res> {
+  factory _$$GeneImplCopyWith(
+          _$GeneImpl value, $Res Function(_$GeneImpl) then) =
+      __$$GeneImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {@JsonKey(name: 'taxid') String? taxid,
       @JsonKey(name: 'synonyms') List<String>? synonyms,
       @JsonKey(name: 'name') String? name,
-      @JsonKey(name: 'id') String? id});
+      @JsonKey(name: 'id') String? id,
+      @JsonKey(name: 'family') String? family});
 }
 
 /// @nodoc
-class __$$PropertiesImplCopyWithImpl<$Res>
-    extends _$PropertiesCopyWithImpl<$Res, _$PropertiesImpl>
-    implements _$$PropertiesImplCopyWith<$Res> {
-  __$$PropertiesImplCopyWithImpl(
-      _$PropertiesImpl _value, $Res Function(_$PropertiesImpl) _then)
+class __$$GeneImplCopyWithImpl<$Res>
+    extends _$GeneCopyWithImpl<$Res, _$GeneImpl>
+    implements _$$GeneImplCopyWith<$Res> {
+  __$$GeneImplCopyWithImpl(_$GeneImpl _value, $Res Function(_$GeneImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of Properties
+  /// Create a copy of Gene
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -377,8 +130,9 @@ class __$$PropertiesImplCopyWithImpl<$Res>
     Object? synonyms = freezed,
     Object? name = freezed,
     Object? id = freezed,
+    Object? family = freezed,
   }) {
-    return _then(_$PropertiesImpl(
+    return _then(_$GeneImpl(
       taxid: freezed == taxid
           ? _value.taxid
           : taxid // ignore: cast_nullable_to_non_nullable
@@ -395,22 +149,27 @@ class __$$PropertiesImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String?,
+      family: freezed == family
+          ? _value.family
+          : family // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$PropertiesImpl implements _Properties {
-  const _$PropertiesImpl(
+class _$GeneImpl implements _Gene {
+  const _$GeneImpl(
       {@JsonKey(name: 'taxid') this.taxid,
       @JsonKey(name: 'synonyms') final List<String>? synonyms,
       @JsonKey(name: 'name') this.name,
-      @JsonKey(name: 'id') this.id})
+      @JsonKey(name: 'id') this.id,
+      @JsonKey(name: 'family') this.family})
       : _synonyms = synonyms;
 
-  factory _$PropertiesImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PropertiesImplFromJson(json);
+  factory _$GeneImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GeneImplFromJson(json);
 
   @override
   @JsonKey(name: 'taxid')
@@ -432,53 +191,57 @@ class _$PropertiesImpl implements _Properties {
   @override
   @JsonKey(name: 'id')
   final String? id;
+  @override
+  @JsonKey(name: 'family')
+  final String? family;
 
   @override
   String toString() {
-    return 'Properties(taxid: $taxid, synonyms: $synonyms, name: $name, id: $id)';
+    return 'Gene(taxid: $taxid, synonyms: $synonyms, name: $name, id: $id, family: $family)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PropertiesImpl &&
+            other is _$GeneImpl &&
             (identical(other.taxid, taxid) || other.taxid == taxid) &&
             const DeepCollectionEquality().equals(other._synonyms, _synonyms) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.id, id) || other.id == id));
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.family, family) || other.family == family));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, taxid,
-      const DeepCollectionEquality().hash(_synonyms), name, id);
+      const DeepCollectionEquality().hash(_synonyms), name, id, family);
 
-  /// Create a copy of Properties
+  /// Create a copy of Gene
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$PropertiesImplCopyWith<_$PropertiesImpl> get copyWith =>
-      __$$PropertiesImplCopyWithImpl<_$PropertiesImpl>(this, _$identity);
+  _$$GeneImplCopyWith<_$GeneImpl> get copyWith =>
+      __$$GeneImplCopyWithImpl<_$GeneImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PropertiesImplToJson(
+    return _$$GeneImplToJson(
       this,
     );
   }
 }
 
-abstract class _Properties implements Properties {
-  const factory _Properties(
+abstract class _Gene implements Gene {
+  const factory _Gene(
       {@JsonKey(name: 'taxid') final String? taxid,
       @JsonKey(name: 'synonyms') final List<String>? synonyms,
       @JsonKey(name: 'name') final String? name,
-      @JsonKey(name: 'id') final String? id}) = _$PropertiesImpl;
+      @JsonKey(name: 'id') final String? id,
+      @JsonKey(name: 'family') final String? family}) = _$GeneImpl;
 
-  factory _Properties.fromJson(Map<String, dynamic> json) =
-      _$PropertiesImpl.fromJson;
+  factory _Gene.fromJson(Map<String, dynamic> json) = _$GeneImpl.fromJson;
 
   @override
   @JsonKey(name: 'taxid')
@@ -492,11 +255,14 @@ abstract class _Properties implements Properties {
   @override
   @JsonKey(name: 'id')
   String? get id;
+  @override
+  @JsonKey(name: 'family')
+  String? get family;
 
-  /// Create a copy of Properties
+  /// Create a copy of Gene
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$PropertiesImplCopyWith<_$PropertiesImpl> get copyWith =>
+  _$$GeneImplCopyWith<_$GeneImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

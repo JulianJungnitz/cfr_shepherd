@@ -18,6 +18,9 @@ _$PatientImpl _$$PatientImplFromJson(Map<String, dynamic> json) =>
       phenotypes: (json['phenotypes'] as List<dynamic>?)
           ?.map((e) => Phenotype.fromJson(e as Map<String, dynamic>))
           .toList(),
+      diseases: (json['diseases'] as List<dynamic>?)
+          ?.map((e) => Disease.fromJson(e as Map<String, dynamic>))
+          .toList(),
       subjectId: (json['subject_id'] as num?)?.toInt(),
     );
 
@@ -26,5 +29,6 @@ Map<String, dynamic> _$$PatientImplToJson(_$PatientImpl instance) =>
       'biological_sample': instance.biologicalSample,
       'genes': instance.genes,
       'phenotypes': instance.phenotypes,
+      'diseases': instance.diseases,
       'subject_id': instance.subjectId,
     };

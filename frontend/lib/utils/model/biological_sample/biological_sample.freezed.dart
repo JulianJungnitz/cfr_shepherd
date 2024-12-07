@@ -20,14 +20,10 @@ BiologicalSample _$BiologicalSampleFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$BiologicalSample {
-  @JsonKey(name: 'identity')
-  int? get identity => throw _privateConstructorUsedError;
-  @JsonKey(name: 'labels')
-  List<String>? get labels => throw _privateConstructorUsedError;
-  @JsonKey(name: 'properties')
-  Properties? get properties => throw _privateConstructorUsedError;
-  @JsonKey(name: 'elementId')
-  String? get elementId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'external_id')
+  String? get externalId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'subjectid')
+  int? get subjectid => throw _privateConstructorUsedError;
 
   /// Serializes this BiologicalSample to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,12 +42,8 @@ abstract class $BiologicalSampleCopyWith<$Res> {
       _$BiologicalSampleCopyWithImpl<$Res, BiologicalSample>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'identity') int? identity,
-      @JsonKey(name: 'labels') List<String>? labels,
-      @JsonKey(name: 'properties') Properties? properties,
-      @JsonKey(name: 'elementId') String? elementId});
-
-  $PropertiesCopyWith<$Res>? get properties;
+      {@JsonKey(name: 'external_id') String? externalId,
+      @JsonKey(name: 'subjectid') int? subjectid});
 }
 
 /// @nodoc
@@ -69,43 +61,19 @@ class _$BiologicalSampleCopyWithImpl<$Res, $Val extends BiologicalSample>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? identity = freezed,
-    Object? labels = freezed,
-    Object? properties = freezed,
-    Object? elementId = freezed,
+    Object? externalId = freezed,
+    Object? subjectid = freezed,
   }) {
     return _then(_value.copyWith(
-      identity: freezed == identity
-          ? _value.identity
-          : identity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      labels: freezed == labels
-          ? _value.labels
-          : labels // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      properties: freezed == properties
-          ? _value.properties
-          : properties // ignore: cast_nullable_to_non_nullable
-              as Properties?,
-      elementId: freezed == elementId
-          ? _value.elementId
-          : elementId // ignore: cast_nullable_to_non_nullable
+      externalId: freezed == externalId
+          ? _value.externalId
+          : externalId // ignore: cast_nullable_to_non_nullable
               as String?,
+      subjectid: freezed == subjectid
+          ? _value.subjectid
+          : subjectid // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
-  }
-
-  /// Create a copy of BiologicalSample
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $PropertiesCopyWith<$Res>? get properties {
-    if (_value.properties == null) {
-      return null;
-    }
-
-    return $PropertiesCopyWith<$Res>(_value.properties!, (value) {
-      return _then(_value.copyWith(properties: value) as $Val);
-    });
   }
 }
 
@@ -118,13 +86,8 @@ abstract class _$$BiologicalSampleImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'identity') int? identity,
-      @JsonKey(name: 'labels') List<String>? labels,
-      @JsonKey(name: 'properties') Properties? properties,
-      @JsonKey(name: 'elementId') String? elementId});
-
-  @override
-  $PropertiesCopyWith<$Res>? get properties;
+      {@JsonKey(name: 'external_id') String? externalId,
+      @JsonKey(name: 'subjectid') int? subjectid});
 }
 
 /// @nodoc
@@ -140,28 +103,18 @@ class __$$BiologicalSampleImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? identity = freezed,
-    Object? labels = freezed,
-    Object? properties = freezed,
-    Object? elementId = freezed,
+    Object? externalId = freezed,
+    Object? subjectid = freezed,
   }) {
     return _then(_$BiologicalSampleImpl(
-      identity: freezed == identity
-          ? _value.identity
-          : identity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      labels: freezed == labels
-          ? _value._labels
-          : labels // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      properties: freezed == properties
-          ? _value.properties
-          : properties // ignore: cast_nullable_to_non_nullable
-              as Properties?,
-      elementId: freezed == elementId
-          ? _value.elementId
-          : elementId // ignore: cast_nullable_to_non_nullable
+      externalId: freezed == externalId
+          ? _value.externalId
+          : externalId // ignore: cast_nullable_to_non_nullable
               as String?,
+      subjectid: freezed == subjectid
+          ? _value.subjectid
+          : subjectid // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -170,39 +123,22 @@ class __$$BiologicalSampleImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$BiologicalSampleImpl implements _BiologicalSample {
   const _$BiologicalSampleImpl(
-      {@JsonKey(name: 'identity') this.identity,
-      @JsonKey(name: 'labels') final List<String>? labels,
-      @JsonKey(name: 'properties') this.properties,
-      @JsonKey(name: 'elementId') this.elementId})
-      : _labels = labels;
+      {@JsonKey(name: 'external_id') this.externalId,
+      @JsonKey(name: 'subjectid') this.subjectid});
 
   factory _$BiologicalSampleImpl.fromJson(Map<String, dynamic> json) =>
       _$$BiologicalSampleImplFromJson(json);
 
   @override
-  @JsonKey(name: 'identity')
-  final int? identity;
-  final List<String>? _labels;
+  @JsonKey(name: 'external_id')
+  final String? externalId;
   @override
-  @JsonKey(name: 'labels')
-  List<String>? get labels {
-    final value = _labels;
-    if (value == null) return null;
-    if (_labels is EqualUnmodifiableListView) return _labels;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  @override
-  @JsonKey(name: 'properties')
-  final Properties? properties;
-  @override
-  @JsonKey(name: 'elementId')
-  final String? elementId;
+  @JsonKey(name: 'subjectid')
+  final int? subjectid;
 
   @override
   String toString() {
-    return 'BiologicalSample(identity: $identity, labels: $labels, properties: $properties, elementId: $elementId)';
+    return 'BiologicalSample(externalId: $externalId, subjectid: $subjectid)';
   }
 
   @override
@@ -210,19 +146,15 @@ class _$BiologicalSampleImpl implements _BiologicalSample {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$BiologicalSampleImpl &&
-            (identical(other.identity, identity) ||
-                other.identity == identity) &&
-            const DeepCollectionEquality().equals(other._labels, _labels) &&
-            (identical(other.properties, properties) ||
-                other.properties == properties) &&
-            (identical(other.elementId, elementId) ||
-                other.elementId == elementId));
+            (identical(other.externalId, externalId) ||
+                other.externalId == externalId) &&
+            (identical(other.subjectid, subjectid) ||
+                other.subjectid == subjectid));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, identity,
-      const DeepCollectionEquality().hash(_labels), properties, elementId);
+  int get hashCode => Object.hash(runtimeType, externalId, subjectid);
 
   /// Create a copy of BiologicalSample
   /// with the given fields replaced by the non-null parameter values.
@@ -243,201 +175,12 @@ class _$BiologicalSampleImpl implements _BiologicalSample {
 
 abstract class _BiologicalSample implements BiologicalSample {
   const factory _BiologicalSample(
-          {@JsonKey(name: 'identity') final int? identity,
-          @JsonKey(name: 'labels') final List<String>? labels,
-          @JsonKey(name: 'properties') final Properties? properties,
-          @JsonKey(name: 'elementId') final String? elementId}) =
+          {@JsonKey(name: 'external_id') final String? externalId,
+          @JsonKey(name: 'subjectid') final int? subjectid}) =
       _$BiologicalSampleImpl;
 
   factory _BiologicalSample.fromJson(Map<String, dynamic> json) =
       _$BiologicalSampleImpl.fromJson;
-
-  @override
-  @JsonKey(name: 'identity')
-  int? get identity;
-  @override
-  @JsonKey(name: 'labels')
-  List<String>? get labels;
-  @override
-  @JsonKey(name: 'properties')
-  Properties? get properties;
-  @override
-  @JsonKey(name: 'elementId')
-  String? get elementId;
-
-  /// Create a copy of BiologicalSample
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$BiologicalSampleImplCopyWith<_$BiologicalSampleImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-Properties _$PropertiesFromJson(Map<String, dynamic> json) {
-  return _Properties.fromJson(json);
-}
-
-/// @nodoc
-mixin _$Properties {
-  @JsonKey(name: 'external_id')
-  String? get externalId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'subjectid')
-  int? get subjectid => throw _privateConstructorUsedError;
-
-  /// Serializes this Properties to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of Properties
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $PropertiesCopyWith<Properties> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $PropertiesCopyWith<$Res> {
-  factory $PropertiesCopyWith(
-          Properties value, $Res Function(Properties) then) =
-      _$PropertiesCopyWithImpl<$Res, Properties>;
-  @useResult
-  $Res call(
-      {@JsonKey(name: 'external_id') String? externalId,
-      @JsonKey(name: 'subjectid') int? subjectid});
-}
-
-/// @nodoc
-class _$PropertiesCopyWithImpl<$Res, $Val extends Properties>
-    implements $PropertiesCopyWith<$Res> {
-  _$PropertiesCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of Properties
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? externalId = freezed,
-    Object? subjectid = freezed,
-  }) {
-    return _then(_value.copyWith(
-      externalId: freezed == externalId
-          ? _value.externalId
-          : externalId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      subjectid: freezed == subjectid
-          ? _value.subjectid
-          : subjectid // ignore: cast_nullable_to_non_nullable
-              as int?,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$PropertiesImplCopyWith<$Res>
-    implements $PropertiesCopyWith<$Res> {
-  factory _$$PropertiesImplCopyWith(
-          _$PropertiesImpl value, $Res Function(_$PropertiesImpl) then) =
-      __$$PropertiesImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {@JsonKey(name: 'external_id') String? externalId,
-      @JsonKey(name: 'subjectid') int? subjectid});
-}
-
-/// @nodoc
-class __$$PropertiesImplCopyWithImpl<$Res>
-    extends _$PropertiesCopyWithImpl<$Res, _$PropertiesImpl>
-    implements _$$PropertiesImplCopyWith<$Res> {
-  __$$PropertiesImplCopyWithImpl(
-      _$PropertiesImpl _value, $Res Function(_$PropertiesImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of Properties
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? externalId = freezed,
-    Object? subjectid = freezed,
-  }) {
-    return _then(_$PropertiesImpl(
-      externalId: freezed == externalId
-          ? _value.externalId
-          : externalId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      subjectid: freezed == subjectid
-          ? _value.subjectid
-          : subjectid // ignore: cast_nullable_to_non_nullable
-              as int?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$PropertiesImpl implements _Properties {
-  const _$PropertiesImpl(
-      {@JsonKey(name: 'external_id') this.externalId,
-      @JsonKey(name: 'subjectid') this.subjectid});
-
-  factory _$PropertiesImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PropertiesImplFromJson(json);
-
-  @override
-  @JsonKey(name: 'external_id')
-  final String? externalId;
-  @override
-  @JsonKey(name: 'subjectid')
-  final int? subjectid;
-
-  @override
-  String toString() {
-    return 'Properties(externalId: $externalId, subjectid: $subjectid)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$PropertiesImpl &&
-            (identical(other.externalId, externalId) ||
-                other.externalId == externalId) &&
-            (identical(other.subjectid, subjectid) ||
-                other.subjectid == subjectid));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, externalId, subjectid);
-
-  /// Create a copy of Properties
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$PropertiesImplCopyWith<_$PropertiesImpl> get copyWith =>
-      __$$PropertiesImplCopyWithImpl<_$PropertiesImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PropertiesImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _Properties implements Properties {
-  const factory _Properties(
-      {@JsonKey(name: 'external_id') final String? externalId,
-      @JsonKey(name: 'subjectid') final int? subjectid}) = _$PropertiesImpl;
-
-  factory _Properties.fromJson(Map<String, dynamic> json) =
-      _$PropertiesImpl.fromJson;
 
   @override
   @JsonKey(name: 'external_id')
@@ -446,10 +189,10 @@ abstract class _Properties implements Properties {
   @JsonKey(name: 'subjectid')
   int? get subjectid;
 
-  /// Create a copy of Properties
+  /// Create a copy of BiologicalSample
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$PropertiesImplCopyWith<_$PropertiesImpl> get copyWith =>
+  _$$BiologicalSampleImplCopyWith<_$BiologicalSampleImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

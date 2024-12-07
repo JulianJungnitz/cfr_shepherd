@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'phenotype.dart';
+part of 'disease.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,12 +14,12 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-Phenotype _$PhenotypeFromJson(Map<String, dynamic> json) {
-  return _Phenotype.fromJson(json);
+Disease _$DiseaseFromJson(Map<String, dynamic> json) {
+  return _Disease.fromJson(json);
 }
 
 /// @nodoc
-mixin _$Phenotype {
+mixin _$Disease {
   @JsonKey(name: 'synonyms')
   List<String>? get synonyms => throw _privateConstructorUsedError;
   @JsonKey(name: 'name')
@@ -31,20 +31,19 @@ mixin _$Phenotype {
   @JsonKey(name: 'type')
   String? get type => throw _privateConstructorUsedError;
 
-  /// Serializes this Phenotype to a JSON map.
+  /// Serializes this Disease to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of Phenotype
+  /// Create a copy of Disease
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $PhenotypeCopyWith<Phenotype> get copyWith =>
-      throw _privateConstructorUsedError;
+  $DiseaseCopyWith<Disease> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $PhenotypeCopyWith<$Res> {
-  factory $PhenotypeCopyWith(Phenotype value, $Res Function(Phenotype) then) =
-      _$PhenotypeCopyWithImpl<$Res, Phenotype>;
+abstract class $DiseaseCopyWith<$Res> {
+  factory $DiseaseCopyWith(Disease value, $Res Function(Disease) then) =
+      _$DiseaseCopyWithImpl<$Res, Disease>;
   @useResult
   $Res call(
       {@JsonKey(name: 'synonyms') List<String>? synonyms,
@@ -55,16 +54,16 @@ abstract class $PhenotypeCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$PhenotypeCopyWithImpl<$Res, $Val extends Phenotype>
-    implements $PhenotypeCopyWith<$Res> {
-  _$PhenotypeCopyWithImpl(this._value, this._then);
+class _$DiseaseCopyWithImpl<$Res, $Val extends Disease>
+    implements $DiseaseCopyWith<$Res> {
+  _$DiseaseCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of Phenotype
+  /// Create a copy of Disease
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -101,11 +100,10 @@ class _$PhenotypeCopyWithImpl<$Res, $Val extends Phenotype>
 }
 
 /// @nodoc
-abstract class _$$PhenotypeImplCopyWith<$Res>
-    implements $PhenotypeCopyWith<$Res> {
-  factory _$$PhenotypeImplCopyWith(
-          _$PhenotypeImpl value, $Res Function(_$PhenotypeImpl) then) =
-      __$$PhenotypeImplCopyWithImpl<$Res>;
+abstract class _$$DiseaseImplCopyWith<$Res> implements $DiseaseCopyWith<$Res> {
+  factory _$$DiseaseImplCopyWith(
+          _$DiseaseImpl value, $Res Function(_$DiseaseImpl) then) =
+      __$$DiseaseImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -117,14 +115,14 @@ abstract class _$$PhenotypeImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$PhenotypeImplCopyWithImpl<$Res>
-    extends _$PhenotypeCopyWithImpl<$Res, _$PhenotypeImpl>
-    implements _$$PhenotypeImplCopyWith<$Res> {
-  __$$PhenotypeImplCopyWithImpl(
-      _$PhenotypeImpl _value, $Res Function(_$PhenotypeImpl) _then)
+class __$$DiseaseImplCopyWithImpl<$Res>
+    extends _$DiseaseCopyWithImpl<$Res, _$DiseaseImpl>
+    implements _$$DiseaseImplCopyWith<$Res> {
+  __$$DiseaseImplCopyWithImpl(
+      _$DiseaseImpl _value, $Res Function(_$DiseaseImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of Phenotype
+  /// Create a copy of Disease
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -135,7 +133,7 @@ class __$$PhenotypeImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? type = freezed,
   }) {
-    return _then(_$PhenotypeImpl(
+    return _then(_$DiseaseImpl(
       synonyms: freezed == synonyms
           ? _value._synonyms
           : synonyms // ignore: cast_nullable_to_non_nullable
@@ -162,8 +160,8 @@ class __$$PhenotypeImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$PhenotypeImpl implements _Phenotype {
-  const _$PhenotypeImpl(
+class _$DiseaseImpl implements _Disease {
+  const _$DiseaseImpl(
       {@JsonKey(name: 'synonyms') final List<String>? synonyms,
       @JsonKey(name: 'name') this.name,
       @JsonKey(name: 'description') this.description,
@@ -171,8 +169,8 @@ class _$PhenotypeImpl implements _Phenotype {
       @JsonKey(name: 'type') this.type})
       : _synonyms = synonyms;
 
-  factory _$PhenotypeImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PhenotypeImplFromJson(json);
+  factory _$DiseaseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$DiseaseImplFromJson(json);
 
   final List<String>? _synonyms;
   @override
@@ -200,14 +198,14 @@ class _$PhenotypeImpl implements _Phenotype {
 
   @override
   String toString() {
-    return 'Phenotype(synonyms: $synonyms, name: $name, description: $description, id: $id, type: $type)';
+    return 'Disease(synonyms: $synonyms, name: $name, description: $description, id: $id, type: $type)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$PhenotypeImpl &&
+            other is _$DiseaseImpl &&
             const DeepCollectionEquality().equals(other._synonyms, _synonyms) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
@@ -226,32 +224,31 @@ class _$PhenotypeImpl implements _Phenotype {
       id,
       type);
 
-  /// Create a copy of Phenotype
+  /// Create a copy of Disease
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$PhenotypeImplCopyWith<_$PhenotypeImpl> get copyWith =>
-      __$$PhenotypeImplCopyWithImpl<_$PhenotypeImpl>(this, _$identity);
+  _$$DiseaseImplCopyWith<_$DiseaseImpl> get copyWith =>
+      __$$DiseaseImplCopyWithImpl<_$DiseaseImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PhenotypeImplToJson(
+    return _$$DiseaseImplToJson(
       this,
     );
   }
 }
 
-abstract class _Phenotype implements Phenotype {
-  const factory _Phenotype(
+abstract class _Disease implements Disease {
+  const factory _Disease(
       {@JsonKey(name: 'synonyms') final List<String>? synonyms,
       @JsonKey(name: 'name') final String? name,
       @JsonKey(name: 'description') final String? description,
       @JsonKey(name: 'id') final String? id,
-      @JsonKey(name: 'type') final String? type}) = _$PhenotypeImpl;
+      @JsonKey(name: 'type') final String? type}) = _$DiseaseImpl;
 
-  factory _Phenotype.fromJson(Map<String, dynamic> json) =
-      _$PhenotypeImpl.fromJson;
+  factory _Disease.fromJson(Map<String, dynamic> json) = _$DiseaseImpl.fromJson;
 
   @override
   @JsonKey(name: 'synonyms')
@@ -269,10 +266,10 @@ abstract class _Phenotype implements Phenotype {
   @JsonKey(name: 'type')
   String? get type;
 
-  /// Create a copy of Phenotype
+  /// Create a copy of Disease
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$PhenotypeImplCopyWith<_$PhenotypeImpl> get copyWith =>
+  _$$DiseaseImplCopyWith<_$DiseaseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

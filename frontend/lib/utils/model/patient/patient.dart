@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:frontend/utils/model/biological_sample/biological_sample.dart';
+import 'package:frontend/utils/model/disease/disease.dart';
 import 'package:frontend/utils/model/gene/gene.dart';
 import 'package:frontend/utils/model/phenotype/phenotype.dart';
 
@@ -12,6 +13,7 @@ class Patient with _$Patient {
     @JsonKey(name: 'biological_sample') BiologicalSample? biologicalSample,
     @JsonKey(name: 'genes') List<Gene>? genes,
     @JsonKey(name: 'phenotypes') List<Phenotype>? phenotypes,
+    @JsonKey(name: 'diseases') List<Disease>? diseases,
     @JsonKey(name: 'subject_id') int? subjectId,
   }) = _Patient;
 

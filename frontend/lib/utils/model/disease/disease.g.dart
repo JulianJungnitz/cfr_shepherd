@@ -1,26 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'gene.dart';
+part of 'disease.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$GeneImpl _$$GeneImplFromJson(Map<String, dynamic> json) => _$GeneImpl(
-      taxid: json['taxid'] as String?,
+_$DiseaseImpl _$$DiseaseImplFromJson(Map<String, dynamic> json) =>
+    _$DiseaseImpl(
       synonyms: (json['synonyms'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
       name: json['name'] as String?,
+      description: json['description'] as String?,
       id: json['id'] as String?,
-      family: json['family'] as String?,
+      type: json['type'] as String?,
     );
 
-Map<String, dynamic> _$$GeneImplToJson(_$GeneImpl instance) =>
+Map<String, dynamic> _$$DiseaseImplToJson(_$DiseaseImpl instance) =>
     <String, dynamic>{
-      'taxid': instance.taxid,
       'synonyms': instance.synonyms,
       'name': instance.name,
+      'description': instance.description,
       'id': instance.id,
-      'family': instance.family,
+      'type': instance.type,
     };

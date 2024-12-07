@@ -1,18 +1,18 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'phenotype.freezed.dart';
-part 'phenotype.g.dart';
+part 'disease.freezed.dart';
+part 'disease.g.dart';
 
 @freezed
-class Phenotype with _$Phenotype {
-  const factory Phenotype({
+class Disease with _$Disease {
+  const factory Disease({
     @JsonKey(name: 'synonyms') List<String>? synonyms,
     @JsonKey(name: 'name') String? name,
     @JsonKey(name: 'description') String? description,
     @JsonKey(name: 'id') String? id,
     @JsonKey(name: 'type') String? type,
-  }) = _Phenotype;
+  }) = _Disease;
 
-  factory Phenotype.fromJson(Map<String, Object?> json) => _$PhenotypeFromJson(json);
+  factory Disease.fromJson(Map<String, Object?> json) => _$DiseaseFromJson(json);
 }
 
