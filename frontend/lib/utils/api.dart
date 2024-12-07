@@ -7,6 +7,9 @@ abstract class APIPaths {
   static const causalGeneDiscovery = '/causal_gene_discovery';
   static const diseaseCharacterization = '/disease_characterization';
   static const query = '/query';
+  static const hasPatientsLikeMeResults = '/has_patients_like_me';
+  static const hasCausalGeneDiscoveryResults = '/has_causal_gene_discovery';
+  static const hasDiseaseCharacterizationResults = '/has_disease_characterization';
 }
 
 class API {
@@ -55,9 +58,11 @@ class API {
   }
 
   static Future<APIResult> get(String path,
-      {bool asUint8List = false, bool noPrint = true}) async {
+      {bool asUint8List = false,
+      bool noPrint = true,
+      bool rawString = false}) async {
     var headers = {
-      'Content-Type': 'application/json',
+      if (rawString == false) 'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
     };
 
@@ -76,6 +81,9 @@ class API {
         return APIResult(true, response.bodyBytes);
       }
 
+      if(rawString) {
+        return APIResult(true, response.body);
+      }
       var tmp = json.decode(response.body);
       String? message = tmp["message"];
       dynamic data = tmp["data"];

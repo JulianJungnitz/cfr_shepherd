@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:frontend/screens/patient_analysis_screen.dart';
 import 'package:frontend/widgets/patient_information_box.dart';
 import 'package:frontend/widgets/rounded_container.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';

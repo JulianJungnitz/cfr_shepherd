@@ -2,10 +2,8 @@ import 'package:frontend/utils/api.dart';
 import 'package:frontend/utils/model/disease/disease.dart';
 import 'package:frontend/utils/model/disease_characterization/disease_characterization.dart';
 import 'package:frontend/utils/model/causal_gene_discovery/causal_gene.dart';
-import 'package:frontend/utils/model/gene/gene.dart';
 import 'package:frontend/utils/model/patient/patient.dart';
 import 'package:frontend/utils/model/patient_like_me/patient_like_me.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 class PatientDataProvider extends ChangeNotifier {
@@ -95,7 +93,7 @@ class PatientDataProvider extends ChangeNotifier {
     }
   }
 
-  Future<APIResult> _queryNeo4J(String query) async {
+  Future<APIResult> queryNeo4J(String query) async {
     var response = await API.post('${APIPaths.query}', body: {"query": query});
     return response;
   }
@@ -110,7 +108,7 @@ class PatientDataProvider extends ChangeNotifier {
     Optional Match (bs)-[:BELONGS_TO_SUBJECT]-(s:Subject)
     return bs as biological_sample ,collect(distinct g) as genes, collect(distinct d) as diseases,collect(distinct p) as phenotypes ,id(s) as sample_id limit 1
     """;
-    var response = await _queryNeo4J(query);
+    var response = await queryNeo4J(query);
     if (!response.success) {
       return null;
     }
@@ -126,7 +124,7 @@ class PatientDataProvider extends ChangeNotifier {
     WHERE d.name = "$diseaseName"
     return d as disease, collect(p) as phenotypes limit 1
     """;
-    var response = await _queryNeo4J(query);
+    var response = await queryNeo4J(query);
     if (!response.success) {
       return null;
     }

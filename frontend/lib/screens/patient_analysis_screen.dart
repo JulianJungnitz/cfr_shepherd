@@ -1,33 +1,30 @@
-import 'dart:math';
-
 import 'package:expandable_text/expandable_text.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/utils/model/disease_characterization/disease_characterization.dart';
 import 'package:frontend/utils/model/causal_gene_discovery/causal_gene.dart';
-import 'package:frontend/utils/model/gene/gene.dart';
 import 'package:frontend/utils/model/patient/patient.dart';
 import 'package:frontend/utils/model/patient_like_me/patient_like_me.dart';
 import 'package:frontend/widgets/patient_information_box.dart';
-import 'package:frontend/widgets/rounded_container.dart';
 import 'package:frontend/widgets/similarity_info_box.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/utils/patient_data_provider.dart';
 
-import 'package:flutter_charts/flutter_charts.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class PatientAnalysisScreen extends StatefulWidget {
+  final int patientId;
+
+  const PatientAnalysisScreen({super.key, required this.patientId});
   @override
   State<PatientAnalysisScreen> createState() => _PatientAnalysisScreenState();
 }
 
 class _PatientAnalysisScreenState extends State<PatientAnalysisScreen> {
-  int patientId = 15013028;
+  late int patientId;
   Patient? patient;
 
   @override
   void initState() {
+    patientId = widget.patientId;
     super.initState();
     context.read<PatientDataProvider>().getPatientsLikeMe(patientId);
     context.read<PatientDataProvider>().getCausalGeneDiscovery(patientId);
@@ -90,9 +87,9 @@ class _PatientAnalysisScreenState extends State<PatientAnalysisScreen> {
                 comparisonWidgetBuilder: (context, comparisonPatient) {
                   comparisonPatient as Patient;
                   List<String?> genes =
-                      comparisonPatient.genes!.map((e) => e.id)!.toList();
+                      comparisonPatient.genes!.map((e) => e.id).toList();
                   List<String?> sharedGenes = patient!.genes!
-                      .map((e) => e.id)!
+                      .map((e) => e.id)
                       .where((element) => genes.contains(element))
                       .toList();
                   List<String> sharedPhenotypes = patient!.phenotypes!

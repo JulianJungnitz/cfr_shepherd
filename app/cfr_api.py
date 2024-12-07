@@ -39,7 +39,6 @@ def handle_request(func: Callable) -> Callable:
     """Base decorator for handling API requests"""
     @wraps(func)
     def wrapper(*args, **kwargs) -> dict:
-        # Handle OPTIONS request
         if request.method == "OPTIONS":
             response.status = 204
             return
@@ -89,7 +88,24 @@ def endpoint():
     driver = utils.connect_to_neo4j()
     result = utils.execute_query(driver, query)
     return result
-    
+
+def create_has_result_endpoint(route, filename):
+    @cfr_api_server.route(f"/{route}", method=["OPTIONS", "GET", "POST"])
+    @handle_request
+    def endpoint():
+        # check if file exists
+        file_path = os.path.join(RESULTS_DIR, filename)
+        if not os.path.exists(file_path):
+            response.status = 404
+            return {"message": "Result file not found"}
+        df = pd.read_csv(file_path)
+        if df.empty:
+            response.status = 404
+            return {"message": "No results found"}
+        return True
+
+
+    return endpoint
 
 
 def _read_patient_data_from_file(patient_id=None, file=None):
@@ -99,19 +115,27 @@ def _read_patient_data_from_file(patient_id=None, file=None):
     return patient_data
 
 
+patient_like_me_result_file= "checkpoints.patients_like_me_scores.csv"
+causal_gene_result_file = "checkpoints.causal_gene_discovery_scores.csv"
+disease_characterization_result_file = "checkpoints.disease_characterization_scores.csv"
+
 get_patients_like_me = create_patient_result_endpoint(
-    "patients_like_me", "similar_patients", "checkpoints.patients_like_me_scores.csv"
+    "patients_like_me", "similar_patients", patient_like_me_result_file
 )
 get_causal_gene = create_patient_result_endpoint(
     "causal_gene_discovery",
     "causal_gene",
-    "checkpoints.causal_gene_discovery_scores.csv",
+    causal_gene_result_file,
 )
 get_disease_characterization = create_patient_result_endpoint(
     "disease_characterization",
     "disease_characterization",
-    "checkpoints.disease_characterization_scores.csv",
+   disease_characterization_result_file,
 )
+
+has_patients_like_me_result = create_has_result_endpoint("has_patients_like_me", patient_like_me_result_file)
+has_causal_gene_result = create_has_result_endpoint("has_causal_gene_discovery", causal_gene_result_file)
+has_disease_characterization_result = create_has_result_endpoint("has_disease_characterization", disease_characterization_result_file)
 
 
 # print(_get_patients_like_me(15013028))
