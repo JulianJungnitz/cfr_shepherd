@@ -14,7 +14,7 @@ def start_preprocessing_data(config):
     NUMBER_OF_SAMPLES_LIMIT = config["shepherd"]["NUMBER_OF_SAMPLES_LIMIT"]
     OVERWRITE_PREPROCESSED_DATA = config["shepherd"]["OVERWRITE_PREPROCESSED_DATA"]
     ONLY_PATIENTS_WITH_DISEASE = config["shepherd"]["ONLY_PATIENTS_WITH_DISEASE"]
-    file_name = "./SHEPHERD/data/patients/hauner_data/data.txt"
+    file_name = utils.SHEPHERD_DIR + "/data/patients/hauner_data/data.txt"
     if OVERWRITE_PREPROCESSED_DATA:
         print("Overwriting preprocessed data")
         LIMIT_SAMPLE_SIZE = config["shepherd"]["LIMIT_SAMPLE_SIZE"]
