@@ -9,4 +9,5 @@ python predict.py \
     --edgelist KG_edgelist_mask.txt \
     --node_map KG_node_map.txt \
     --saved_node_embeddings_path checkpoints/pretrain.ckpt \
-    --best_ckpt checkpoints/patients_like_me.ckpt/patients_like_me.ckpt
+    --best_ckpt checkpoints/patients_like_me.ckpt/patients_like_me.ckpt \
+    --patient_aggr_nodes phenotypes_and_genes

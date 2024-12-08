@@ -220,7 +220,8 @@ class PatientDataset(Dataset):
 
         if self.patient_aggr_nodes == "phenotypes_and_genes":
             node_idx_to_aggregate = phenotype_node_idx + candidate_gene_node_idx
-
+        else:
+            node_idx_to_aggregate = phenotype_node_idx
 
 
         if not self.raw_data:
