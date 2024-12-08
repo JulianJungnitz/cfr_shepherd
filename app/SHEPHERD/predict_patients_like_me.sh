@@ -1,6 +1,7 @@
 pwd
 cd app/SHEPHERD/shepherd
 
+patient_aggr_nodes=$1
 
 
 python predict.py \
@@ -10,4 +11,4 @@ python predict.py \
     --node_map KG_node_map.txt \
     --saved_node_embeddings_path checkpoints/pretrain.ckpt \
     --best_ckpt checkpoints/patients_like_me.ckpt/patients_like_me.ckpt \
-    --patient_aggr_nodes phenotypes_and_genes
+    --patient_aggr_nodes $patient_aggr_nodes

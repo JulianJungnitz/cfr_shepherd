@@ -75,6 +75,9 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
     id_similar = 0
     icd10_similar = 0
     index= 0
+    # sort group by score
+    group = group.sort_values(by="similarities", ascending=False)
+
     for i, row in group.iterrows():
         candidate_patient_id = row["candidate_patients"]
         candidate_patient_disease = patients_disease_map[candidate_patient_id]
@@ -136,5 +139,6 @@ def get_all_patients_diseases(df):
 
 if __name__ == "__main__":
     ### EXCLUDE CONTROL DISEASE?? ###
-    evaluate_patients_like_me("SHEPHERD/data/results/checkpoints.patients_like_me_scores.csv")
+    evaluate_patients_like_me("SHEPHERD/data/results_only_phenotypes/checkpoints.patients_like_me_scores.csv")
+    evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
 # %%

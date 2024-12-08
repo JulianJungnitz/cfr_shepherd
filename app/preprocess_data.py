@@ -6,9 +6,10 @@ import os
 from SHEPHERD.data_prep.shortest_paths import add_spl_to_patients
 import subprocess
 
-def query_data(driver, limit = None):
+def query_data(driver, limit = None, ONLY_PATIENTS_WITH_DISEASE = False):
     query = """
-    MATCH (s:Biological_sample)
+    MATCH (s:Biological_sample) """ + ("" if ONLY_PATIENTS_WITH_DISEASE else """ OPTIONAL """) + """
+    MATCH (s)-[:HAS_DISEASE]->(d:Disease)
     OPTIONAL MATCH (s)-[:HAS_DAMAGE]->(g:Gene)
     where not g.synonyms[1]=""
     WITH s, collect(DISTINCT g.synonyms[1]) AS genes
@@ -31,8 +32,8 @@ def write_to_file(data, file_name = "data.txt"):
             json_line = json.dumps(line)
             f.write(json_line + "\n")
 
-def create_patients_data_file(driver,limit = None, file_name = None):
-    data = query_data(driver, limit)
+def create_patients_data_file(driver,limit = None, file_name = None, ONLY_PATIENTS_WITH_DISEASE = False):
+    data = query_data(driver, limit, ONLY_PATIENTS_WITH_DISEASE = ONLY_PATIENTS_WITH_DISEASE)
     driver.close()
     write_to_file(data, file_name)
 

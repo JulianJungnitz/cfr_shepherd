@@ -28,8 +28,8 @@ if is_running_in_docker():
     OUTPUT_DIR = '/mnt/output'
     print("Running inside Docker container.")
 else:
-    INPUT_DIR = './'
-    OUTPUT_DIR = './'
+    INPUT_DIR = './..'
+    OUTPUT_DIR = './..'
     current_dir = os.path.dirname(os.path.realpath(__file__))
     print("Current directory: ", current_dir)
     print("Running on local machine.")
@@ -40,14 +40,17 @@ else:
 
 
 
-def read_config(file_path=f"{INPUT_DIR}/config.yml",):
+def read_config(file_path=f"",):
+    if file_path == "":
+        file_path = f"{APP_DIR}/../config.yml"
     try:
         with open(file_path, "r") as config_file:
             config = yaml.safe_load(config_file)
         return config
                 
     except FileNotFoundError:
-        print(f"Config file '{file_path}' not found.")
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        print(f"Config file '{file_path}' not found. Current directory: {current_dir}")
 
 
 
