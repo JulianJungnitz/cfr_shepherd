@@ -28,8 +28,8 @@ if is_running_in_docker():
     OUTPUT_DIR = '/mnt/output'
     print("Running inside Docker container.")
 else:
-    INPUT_DIR = './..'
-    OUTPUT_DIR = './..'
+    INPUT_DIR = './'
+    OUTPUT_DIR = './'
     current_dir = os.path.dirname(os.path.realpath(__file__))
     print("Current directory: ", current_dir)
     print("Running on local machine.")

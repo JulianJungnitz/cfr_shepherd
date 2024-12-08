@@ -77,6 +77,7 @@ def parse_args():
     parser.add_argument('--run_type', choices=["causal_gene_discovery", "disease_characterization", "patients_like_me"], type=str)
     parser.add_argument('--saved_node_embeddings_path', type=str, default=None, help='Path to pretrained model checkpoint')
     parser.add_argument('--best_ckpt', type=str, default=None, help='Name of the best performing checkpoint')
+    parser.add_argument('--patient_aggr_nodes', type=str,choices=["phenotypes","phenotypes_and_genes"], default="phenotypes", help='Which nodes to aggregate for patient representation')
     args = parser.parse_args()
     return args
 
@@ -106,7 +107,7 @@ def predict(args):
     else: spl_indexing_dict = None 
     print('Loaded SPL information')
     
-    dataset = PatientDataset(project_config.PROJECT_DIR / 'patients' / hparams['test_data'], time=hparams['time'])
+    dataset = PatientDataset(project_config.PROJECT_DIR / 'patients' / hparams['test_data'], time=hparams['time'], patient_aggr_nodes=args.patient_aggr_nodes)
     print(f'There are {len(dataset)} patients in the test dataset')
     hparams.update({'inference_batch_size': len(dataset)})
     print('batch size: ', hparams['inference_batch_size'])

@@ -46,9 +46,9 @@ echo "Memory usage before running predict.py:"
 free -h
 
 cd ../..
-# bash app/SHEPHERD/predict_patients_like_me.sh
+bash app/SHEPHERD/predict_patients_like_me.sh
 # bash app/SHEPHERD/predict_causal_gene.sh
-bash app/SHEPHERD/predict_disease_categorization.sh
+# bash app/SHEPHERD/predict_disease_categorization.sh
 
 echo "Memory usage after running predict.py:"
 free -h
