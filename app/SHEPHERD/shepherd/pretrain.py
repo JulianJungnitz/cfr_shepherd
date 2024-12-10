@@ -84,14 +84,15 @@ def train(args, hparams):
         if ":" in args.resume: # colons are not allowed in ID/resume name
             resume_id = "_".join(args.resume.split(":"))
         run_name = args.resume
-        wandb_logger = WandbLogger(run_name, project='kg-train', entity='rare_disease_dx', save_dir=hparams['wandb_save_dir'], id=resume_id, resume=resume_id)
+
+        wandb_logger = WandbLogger(run_name, project='cfr_shepherd', entity='jungnitzjulian', save_dir=hparams['wandb_save_dir'], id=resume_id, resume=resume_id)
         model = NodeEmbeder.load_from_checkpoint(checkpoint_path=str(Path(args.save_dir) / 'checkpoints' /  args.best_ckpt), 
                                                  all_data=all_data, edge_attr_dict=edge_attr_dict, 
                                                  num_nodes=len(nodes["node_idx"].unique()), combined_training=False) 
     else:
         curr_time = datetime.now().strftime("%H:%M:%S")
         run_name = f"{curr_time}_run"
-        wandb_logger = WandbLogger(run_name, project='kg-train', entity='rare_disease_dx', save_dir=hparams['wandb_save_dir'], id="_".join(run_name.split(":")), resume="allow")
+        wandb_logger = WandbLogger(run_name,  project='cfr_shepherd', entity='jungnitzjulian',save_dir=hparams['wandb_save_dir'], id="_".join(run_name.split(":")), resume="allow")
         model = NodeEmbeder(all_data, edge_attr_dict, hp_dict=hparams, num_nodes=len(nodes["node_idx"].unique()), combined_training=False)
 
     checkpoint_callback = ModelCheckpoint(monitor='val/node_total_acc', dirpath=Path(args.save_dir) / 'checkpoints', filename=f'{run_name}' + '_{epoch}', save_top_k=1, mode='max')
