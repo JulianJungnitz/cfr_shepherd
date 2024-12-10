@@ -88,7 +88,7 @@ def get_train_hparams(args):
                'seed': args.seed,
                'batch_size': args.batch_size,
                
-               'augment_genes': True if args.aug_gene_w > 0 else False,
+               'augment_genes': False if args.aug_gene_w > 0 else False,
                'n_sim_genes': args.n_sim_genes,
                'aug_gene_w': args.aug_gene_w,
                'aug_gene_by_deg': args.aug_gene_by_deg,
