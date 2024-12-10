@@ -85,6 +85,8 @@ def get_train_hparams(args):
 
                'n_transformer_layers': args.n_transformer_layers,
                'n_transformer_heads': args.n_transformer_heads,
+
+               "patient_aggr_nodes": args.patient_aggr_nodes, # What nodes to aggregate for patients ("phenotypes", "phenotypes_and_genes")
                
                # Fixed parameters
                'pos_weight': 1,
@@ -131,6 +133,7 @@ def get_train_hparams(args):
                'plot_phen_gene_sims': False, # Flag to plot phenotype-gene similarities
                'mrr_vs_percent_overlap': False, # Flag to plot MRR vs. percent overlap of phenotypes
                'saved_checkpoint_path': project_config.PROJECT_DIR  / f'{args.saved_node_embeddings_path}', 
+
     }
 
     # Get hyperparameters based on run type arguments

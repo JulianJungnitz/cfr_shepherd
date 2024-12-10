@@ -20,7 +20,10 @@ def start_preprocessing_data(config):
         LIMIT_SAMPLE_SIZE = config["shepherd"]["LIMIT_SAMPLE_SIZE"]
         NUMBER_OF_SAMPLES_LIMIT = NUMBER_OF_SAMPLES_LIMIT if LIMIT_SAMPLE_SIZE else None
         create_patients_data_file(
-            driver, limit=NUMBER_OF_SAMPLES_LIMIT, file_name=file_name, ONLY_PATIENTS_WITH_DISEASE=ONLY_PATIENTS_WITH_DISEASE
+            driver,
+            limit=NUMBER_OF_SAMPLES_LIMIT,
+            file_name=file_name,
+            ONLY_PATIENTS_WITH_DISEASE=ONLY_PATIENTS_WITH_DISEASE,
         )
         print("Samples written to file: " + file_name)
     else:
@@ -54,6 +57,29 @@ def predict_disease_categorization(PATIENTS_AGGR_NODES=None):
     utils.run_subprocess(command)
 
 
+def run_training_disease_characterization(PATIENTS_AGGR_NODES=None):
+    print("Training disease characterization")
+    command = [
+        "bash",
+        utils.SHEPHERD_DIR + "/shepherd/train_disease_characterization.sh",
+        PATIENTS_AGGR_NODES,
+    ]
+    utils.run_subprocess(command)
+
+
+def run_shepherd_preprocessing(config):
+    print("Running shepherd preprocessing")
+    dir = utils.SHEPHERD_DIR
+    command = [
+        "python",
+        dir + "/data_prep/preprocess_patients_and_kg.py",
+        "-split_dataset",
+        "-simulated_path",
+        dir + "/data/patients/hauner_data/data.txt",
+    ]
+    utils.run_subprocess(command)
+
+
 def main():
     global driver
 
@@ -62,8 +88,17 @@ def main():
 
     config = utils.read_config()
     start_preprocessing_data(config)
-
     PATIENTS_AGGR_NODES = config["shepherd"]["PATIENTS_AGGR_NODES"]
+
+    RUN_PREPROCESSING = config["shepherd"]["RUN_PREPROCESSING"]
+    if RUN_PREPROCESSING:
+        run_shepherd_preprocessing(config)
+
+    RUN_TRAINING_DISEASE_CHARACTERIZATION = config["shepherd"][
+        "RUN_TRAINING_DISEASE_CHARACTERIZATION"
+    ]
+    if RUN_TRAINING_DISEASE_CHARACTERIZATION:
+        run_training_disease_characterization(PATIENTS_AGGR_NODES)
 
     RUN_PATIENTS_LIKE_ME = config["shepherd"]["RUN_PATIENTS_LIKE_ME"]
     if RUN_PATIENTS_LIKE_ME:

@@ -21,11 +21,11 @@ import matplotlib
 matplotlib.use('Agg')
 
 import sys
-sys.path.insert(0, '..') # add config to path
+sys.path.insert(0, '../../..') # add config to path
 
 import preprocess 
 import project_config
-from project_utils import read_simulated_patients, write_patients
+from project_utils import read_patients, write_patients
 pd.options.mode.chained_assignment = None
 
 # input locations
@@ -66,7 +66,7 @@ def read_data(args):
     node_type_dict = {idx:node_type for idx, node_type in zip(node_df['node_idx'], node_df['node_type'])}
 
     # read in patients
-    sim_patients = read_simulated_patients(args.simulated_path)
+    sim_patients = read_patients(args.simulated_path)
     print(f'Number of sim patients: {len(sim_patients)}')
     
     # orphanet metadata
@@ -293,7 +293,7 @@ def create_disease_split_dataset(filtered_patients, frac_train=0.7, frac_val_tes
     dx_split_test_patient_ids = pd.DataFrame({'ids':[p['id'] for p in dx_split_test_patients]})
     
     #NOTE: we decided to merge the train & test sets into a single larger train set to be able to train on more diseases. We are posthoc merging to keep the code as was originally written.
-    dx_split_train_patient_ids = pd.concat([]dx_split_train_patient_ids, dx_split_test_patient_ids)
+    dx_split_train_patient_ids = pd.concat(dx_split_train_patient_ids, dx_split_test_patient_ids)
     dx_split_train_patients = dx_split_train_patients + dx_split_test_patient_ids
     
     
@@ -312,6 +312,7 @@ python preprocess_patients.py \
 '''
 
 def main():
+
     parser = argparse.ArgumentParser(description="Preprocessing Patients & KG.")
     parser.add_argument("-edgelist", type=str, default=f'KG_edgelist_mask.txt', help="File with edge list")
     parser.add_argument("-node_map", type=str, default=f'KG_node_map.txt', help="File with node list")
@@ -319,6 +320,7 @@ def main():
 
     parser.add_argument("-split_dataset", action='store_true', help="Split patient datasets into train/val/test.")
     parser.add_argument("-split_dataset_from_lists", action='store_true', help='Whether the train/val/test split IDs should be read from file.')
+    parser.add_argument("-only_patients", help='Only process patients')
     
     args = parser.parse_args()
 

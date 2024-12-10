@@ -1,3 +1,5 @@
+cd app/SHEPHERD/shepherd
+patient_aggr_nodes=$1
 # Bash script to train SHEPHERD for novel disease characterization
 
 # Command to run this bash script:
@@ -7,7 +9,7 @@
 python train.py \
         --edgelist KG_edgelist_mask.txt \
         --node_map KG_node_map.txt \
-        --patient_data disease_simulated \
+        --patient_data my_data \
         --run_type disease_characterization \
         --saved_node_embeddings_path checkpoints/pretrain.ckpt \
         --sparse_sample 300 \
@@ -15,4 +17,5 @@ python train.py \
         --upsample_cand 3 \
         --neighbor_sampler_size 15 \
         --lmbda 0.9 \
-        --kappa 0.029999999999999992
+        --kappa 0.029999999999999992 \
+        --patient_aggr_nodes $patient_aggr_nodes

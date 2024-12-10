@@ -8,7 +8,9 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from multiprocessing import Pool
-sys.path.insert(0, '..') # add project_config to path
+sys.path.insert(0, '..') # add project_config to 
+sys.path.insert(0, "app/SHEPHERD") # add project_config to path
+
 import project_config as config
 import logging
 import pickle

@@ -77,6 +77,8 @@ def parse_args():
     parser.add_argument('--kappa', type=float, default=0.3, help='Kappa (Only used for combined model with link prediction loss)')
     parser.add_argument('--seed', default=33, type=int)
     parser.add_argument('--batch_size', default=64, type=int) 
+    parser.add_argument('--patient_aggr_nodes', default="phenotypes", type=str, choices=["phenotypes", "phenotypes_and_genes"])
+    
     
     # Resume / run inference with best checkpoint
     parser.add_argument('--resume', default="", type=str)
@@ -96,11 +98,11 @@ def load_patient_datasets(hparams, inference=False):
         train_dataset = None
         val_dataset = None
     else:
-        train_dataset = PatientDataset(project_config.PROJECT_DIR / 'patients' / hparams['train_data'],  time=hparams['time'])
-        val_dataset = PatientDataset(project_config.PROJECT_DIR / 'patients' / hparams['validation_data'], time=hparams['time'])
+        train_dataset = PatientDataset(project_config.PROJECT_DIR / 'patients' / hparams['train_data'],  time=hparams['time'], patient_aggr_nodes=hparams['patient_aggr_nodes'])
+        val_dataset = PatientDataset(project_config.PROJECT_DIR / 'patients' / hparams['validation_data'], time=hparams['time'], patient_aggr_nodes=hparams['patient_aggr_nodes'])
 
     if inference:
-        test_dataset = PatientDataset(project_config.PROJECT_DIR / 'patients' / hparams['test_data'], time=hparams['time'])
+        test_dataset = PatientDataset(project_config.PROJECT_DIR / 'patients' / hparams['test_data'], time=hparams['time'], patient_aggr_nodes=hparams['patient_aggr_nodes'])
     else:
         test_dataset = None
     
