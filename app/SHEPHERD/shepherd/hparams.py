@@ -44,17 +44,25 @@ def get_pretrain_hparams(args, combined=False):
                'seed': 1,
                'profiler': None,
                'wandb_save_dir': project_config.PROJECT_DIR / 'wandb' / 'preprocess',
-               'wandb_project_name': 'cfr_shepherd',
-               'wandb_entity': 'jungnitzjulian',
+               
                'log_every_n_steps': 10,
                'time': False,
                'debug': False
         }
-    
+
+    hparams = add_wandb_hparams(args, hparams)
+
     print('Pretrain hparams: ', hparams)
     
     return hparams
 
+
+def add_wandb_hparams(args, hparams):
+    hparams.update({
+        'wandb_project_name': 'cfr_shepherd',
+        'wandb_entity': 'jungnitzjulian-technical-university-darmstadt',
+    })
+    return hparams
 
 
 ####################################################################
@@ -115,8 +123,6 @@ def get_train_hparams(args):
                'n_gpus': 1, 
                'num_workers': 4,
                'wandb_save_dir' : project_config.PROJECT_DIR / 'wandb',
-               'wandb_project_name': 'cfr_shepherd',
-               'wandb_entity': 'jungnitzjulian',
                'precision': 16, 
                'reload_dataloaders_every_n_epochs': 0,
                'profiler': 'simple',
@@ -139,6 +145,8 @@ def get_train_hparams(args):
                'saved_checkpoint_path': project_config.PROJECT_DIR  / f'{args.saved_node_embeddings_path}', 
 
     }
+
+    hparams = add_wandb_hparams(args, hparams)
 
     # Get hyperparameters based on run type arguments
     hparams = get_run_type_args(args, hparams)
@@ -251,10 +259,11 @@ def get_predict_hparams(args):
                'n_cand_diseases': 1000,
                'test_n_cand_diseases': -1, 
                'candidate_disease_type': 'all_kg_nodes',
-               'wandb_project_name': 'cfr_shepherd',
-               'wandb_entity': 'jungnitzjulian',
 
     }
+
+
+    hparams = add_wandb_hparams(args, hparams)
 
     # Get hyperparameters based on run type arguments
     hparams = get_run_type_args(args, hparams)    
