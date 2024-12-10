@@ -42,7 +42,10 @@ else:
 
 def read_config(file_path=f"",):
     if file_path == "":
-        file_path = f"{APP_DIR}/../config.yml"
+        if is_running_in_docker():
+            file_path = f"{INPUT_DIR}/config.yml"
+        else:
+            file_path = f"{APP_DIR}/../config.yml"
     try:
         with open(file_path, "r") as config_file:
             config = yaml.safe_load(config_file)

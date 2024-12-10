@@ -111,7 +111,8 @@ def create_has_result_endpoint(route, filename):
 def _read_patient_data_from_file(patient_id=None, file=None):
     file_path = os.path.join(RESULTS_DIR, file)
     df = pd.read_csv(file_path)
-    patient_data = df[df["patient_id"] == patient_id].to_dict(orient="records")
+    k = 15
+    patient_data = df[df["patient_id"] == patient_id].head(k).to_dict(orient="records")
     return patient_data
 
 
