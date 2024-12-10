@@ -6,7 +6,7 @@
 #SBATCH -C avx512
 #SBATCH -n 1
 #SBATCH --mem-per-cpu=64G
-#SBATCH --time=00:10:00
+#SBATCH --time=00:60:00
 #SBATCH --cpus-per-task=1
 #SBATCH --gres=gpu
 
