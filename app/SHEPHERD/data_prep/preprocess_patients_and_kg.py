@@ -273,6 +273,10 @@ def create_dataset_split_from_lists(filtered_patients, train_list_f, val_list_f)
 
 def create_disease_split_dataset(filtered_patients, frac_train=0.7, frac_val_test=0.15):
     # divide patients by disease ID into train/val/test
+
+    for p in filtered_patients:
+        p['disease_id'] = p['true_diseases'][0]
+
     diseases = list(set([p['disease_id'] for p in filtered_patients]))
 
     n_train = round(len(diseases) * frac_train)
@@ -293,8 +297,8 @@ def create_disease_split_dataset(filtered_patients, frac_train=0.7, frac_val_tes
     dx_split_test_patient_ids = pd.DataFrame({'ids':[p['id'] for p in dx_split_test_patients]})
     
     #NOTE: we decided to merge the train & test sets into a single larger train set to be able to train on more diseases. We are posthoc merging to keep the code as was originally written.
-    dx_split_train_patient_ids = pd.concat(dx_split_train_patient_ids, dx_split_test_patient_ids)
-    dx_split_train_patients = dx_split_train_patients + dx_split_test_patient_ids
+    # dx_split_train_patient_ids = pd.concat(dx_split_train_patient_ids, dx_split_test_patient_ids)
+    # dx_split_train_patients = dx_split_train_patients + dx_split_test_patient_ids
     
     
     print(f'There are {len(dx_split_train_patients)} patients in the disease split train set and {len(dx_split_val_patients)} in the val set.')
@@ -324,21 +328,22 @@ def main():
     
     args = parser.parse_args()
 
-    ## read in data, normalize genes to ensembl ids, and create maps from genes/phenotypes to node idx
+    # ## read in data, normalize genes to ensembl ids, and create maps from genes/phenotypes to node idx
     node_df, node_type_dict, sim_patients, orphanet_metadata, mondo_orphanet_map, orphanet_mondo_map, hp_map_dict, mondo_to_hpo_dict = read_data(args)
-    hpo_to_idx_dict = create_hpo_to_node_idx_dict(node_df, hp_map_dict)
-    node_df, gene_symbol_to_idx_dict, ensembl_to_idx_dict = create_gene_to_node_idx_dict(args,node_df)
-    mondo_to_node_idx_dict = create_mondo_to_node_idx_dict(node_df, mondo_to_hpo_dict)
-    map_diseases_to_orphanet(node_df, mondo_orphanet_map)
-    edges = pd.read_csv(project_config.KG_DIR / args.edgelist, sep="\t")
-    graph = create_networkx_graph(edges)
-    snap_graph = snap.LoadEdgeList(snap.TUNGraph, str(project_config.KG_DIR / args.edgelist), 0, 1, '\t')
+    # hpo_to_idx_dict = create_hpo_to_node_idx_dict(node_df, hp_map_dict)
+    # node_df, gene_symbol_to_idx_dict, ensembl_to_idx_dict = create_gene_to_node_idx_dict(args,node_df)
+    # mondo_to_node_idx_dict = create_mondo_to_node_idx_dict(node_df, mondo_to_hpo_dict)
+    # map_diseases_to_orphanet(node_df, mondo_orphanet_map)
+    # edges = pd.read_csv(project_config.KG_DIR / args.edgelist, sep="\t")
+    # graph = create_networkx_graph(edges)
+    # snap_graph = snap.LoadEdgeList(snap.TUNGraph, str(project_config.KG_DIR / args.edgelist), 0, 1, '\t')
 
 
-    # filter patients to remove those with no causal gene, no distractor genes, or no phenotypes
-    filtered_sim_patients = filter_patients(sim_patients, hpo_to_idx_dict, ensembl_to_idx_dict)
-    # write patients to file
-    write_patients(filtered_sim_patients, project_config.PROJECT_DIR / 'patients' / 'simulated_patients' /f'all_sim_patients_kg_{project_config.CURR_KG}.txt')
+    # # filter patients to remove those with no causal gene, no distractor genes, or no phenotypes
+    # filtered_sim_patients = filter_patients(sim_patients, hpo_to_idx_dict, ensembl_to_idx_dict)
+    filtered_sim_patients = sim_patients
+    # # write patients to file
+    # write_patients(filtered_sim_patients, project_config.PROJECT_DIR / 'patients' / 'simulated_patients' /f'all_sim_patients_kg_{project_config.CURR_KG}.txt')
   
     if args.split_dataset:
         ## filter patients & split into train/val/test
@@ -351,12 +356,12 @@ def main():
             dx_split_train_patients, dx_split_val_patients, dx_split_train_patient_ids, dx_split_val_patient_ids = create_disease_split_dataset(filtered_sim_patients)
 
         ## Save to file
-        if not args.create_train_val_test_from_lists: 
-            dx_split_train_patient_ids.to_csv(project_config.PROJECT_DIR / 'patients' / f'simulated_patients'/ f'disease_split_train_sim_patients_kg_{project_config.CURR_KG}_patient_ids.csv')
-            dx_split_val_patient_ids.to_csv(project_config.PROJECT_DIR / 'patients' / f'simulated_patients'/ f'disease_split_val_sim_patients_kg_{project_config.CURR_KG}_patient_ids.csv')
+        # if not args.create_train_val_test_from_lists: 
+        #     dx_split_train_patient_ids.to_csv(project_config.PROJECT_DIR / 'patients' / f'simulated_patients'/ f'disease_split_train_sim_patients_kg_{project_config.CURR_KG}_patient_ids.csv')
+        #     dx_split_val_patient_ids.to_csv(project_config.PROJECT_DIR / 'patients' / f'simulated_patients'/ f'disease_split_val_sim_patients_kg_{project_config.CURR_KG}_patient_ids.csv')
 
-        write_patients(dx_split_train_patients, project_config.PROJECT_DIR / 'patients' / 'simulated_patients'/ f'disease_split_train_sim_patients_kg_{project_config.CURR_KG}.txt')
-        write_patients(dx_split_val_patients, project_config.PROJECT_DIR / 'patients' / 'simulated_patients'/ f'disease_split_val_sim_patients_kg_{project_config.CURR_KG}.txt')
+        write_patients(dx_split_train_patients, project_config.PROJECT_DIR / 'patients' / 'hauner_data'/ f'disease_split_train_sim_patients_{project_config.CURR_KG}.txt')
+        write_patients(dx_split_val_patients, project_config.PROJECT_DIR / 'patients' / 'hauner_data'/ f'disease_split_val_sim_patients_{project_config.CURR_KG}.txt')
 
 
 

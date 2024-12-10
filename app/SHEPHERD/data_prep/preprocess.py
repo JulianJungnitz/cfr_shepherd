@@ -184,36 +184,36 @@ class Preprocessor():
     def __init__(self, process_phenotypes=True, process_genes=True, hpo_source_year='2019'):
         if process_phenotypes:
             # read in hpo hierarchy
-            HPO_2015_DIR = config.UDN_DATA / 'hpo' / 'Jan_2015' 
-            HPO_2019_DIR = config.UDN_DATA / 'hpo' / '2019' 
-            HPO_2020_DIR = config.UDN_DATA / 'hpo' / '8_2020' 
-            HPO_2021_DIR = config.UDN_DATA / 'hpo' / '2021' 
+            # HPO_2015_DIR = config.UDN_DATA / 'hpo' / 'Jan_2015' 
+            # HPO_2019_DIR = config.UDN_DATA / 'hpo' / '2019' 
+            # HPO_2020_DIR = config.UDN_DATA / 'hpo' / '8_2020' 
+            # HPO_2021_DIR = config.UDN_DATA / 'hpo' / '2021' 
 
-            self.hpo_2019 = obonet.read_obo(HPO_2019_DIR / 'hp.obo') 
-            self.hpo_2015 = obonet.read_obo(HPO_2015_DIR / 'hp.obo') 
-            self.hpo_2020 = obonet.read_obo(HPO_2020_DIR / 'hp.obo') 
-            self.hpo_2021 = obonet.read_obo(HPO_2021_DIR / 'hp.obo') 
+            # self.hpo_2019 = obonet.read_obo(HPO_2019_DIR / 'hp.obo') 
+            # self.hpo_2015 = obonet.read_obo(HPO_2015_DIR / 'hp.obo') 
+            # self.hpo_2020 = obonet.read_obo(HPO_2020_DIR / 'hp.obo') 
+            # self.hpo_2021 = obonet.read_obo(HPO_2021_DIR / 'hp.obo') 
 
-            self.hpo_source_year = hpo_source_year
-            if hpo_source_year == '2019': self.hpo_ontology = self.hpo_2019
-            elif hpo_source_year == '2020': self.hpo_ontology = self.hpo_2020
-            elif hpo_source_year == '2021': self.hpo_ontology = self.hpo_2021
-            else: raise NotImplementedError
+            # self.hpo_source_year = hpo_source_year
+            # if hpo_source_year == '2019': self.hpo_ontology = self.hpo_2019
+            # elif hpo_source_year == '2020': self.hpo_ontology = self.hpo_2020
+            # elif hpo_source_year == '2021': self.hpo_ontology = self.hpo_2021
+            # else: raise NotImplementedError
 
             # create dictionary mapping alternate HPO IDs to current HPO IDs
-            alt_to_curr_hpo_path = Path(config.PREPROCESS_PATH / f'alt_to_curr_hpo_dict_{hpo_source_year}.pkl')
-            if alt_to_curr_hpo_path.exists():
-                with open(str(alt_to_curr_hpo_path), 'rb') as f:
-                    self.alt_to_curr_hpo_dict = pickle.load(f)
-            else:
-                self.alt_to_curr_hpo_dict = {}
-                for node_id in self.hpo_ontology.nodes():
-                    node_dict = self.hpo_ontology.nodes[node_id]
-                    if 'alt_id' in node_dict:
-                        for alt_id in node_dict['alt_id']:
-                            self.alt_to_curr_hpo_dict[alt_id] = node_id
-                with open(str(alt_to_curr_hpo_path), 'wb') as f:
-                    pickle.dump(self.alt_to_curr_hpo_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
+            # alt_to_curr_hpo_path = Path(config.PREPROCESS_PATH / f'alt_to_curr_hpo_dict_{hpo_source_year}.pkl')
+            # if alt_to_curr_hpo_path.exists():
+            #     with open(str(alt_to_curr_hpo_path), 'rb') as f:
+            #         self.alt_to_curr_hpo_dict = pickle.load(f)
+            # else:
+            #     self.alt_to_curr_hpo_dict = {}
+            #     for node_id in self.hpo_ontology.nodes():
+            #         node_dict = self.hpo_ontology.nodes[node_id]
+            #         if 'alt_id' in node_dict:
+            #             for alt_id in node_dict['alt_id']:
+            #                 self.alt_to_curr_hpo_dict[alt_id] = node_id
+            #     with open(str(alt_to_curr_hpo_path), 'wb') as f:
+            #         pickle.dump(self.alt_to_curr_hpo_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
                     
 
 

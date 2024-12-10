@@ -147,7 +147,7 @@ def get_dataloaders(hparams, all_data, nid_to_spl_dict, n_nodes, gene_phen_dis_n
         print("Using augment gene similarity: %s" % args.aug_sim)
     else: gene_similarity_dict=None
 
-    with open("/home/ema30/zaklab/rare_disease_dx/formatted_patients/degree_dict_8.9.21_kg.pkl", "rb") as input_file:
+    with open(project_config.KG_DIR / "degree_dict_8.9.21_kg.pkl", "rb") as input_file:
         gene_deg_dict = pickle.load(input_file)
 
     if inference:
