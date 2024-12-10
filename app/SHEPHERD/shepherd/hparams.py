@@ -44,6 +44,8 @@ def get_pretrain_hparams(args, combined=False):
                'seed': 1,
                'profiler': None,
                'wandb_save_dir': project_config.PROJECT_DIR / 'wandb' / 'preprocess',
+               'wandb_project_name': 'cfr_shepherd',
+               'wandb_entity': 'jungnitzjulian',
                'log_every_n_steps': 10,
                'time': False,
                'debug': False
@@ -113,6 +115,8 @@ def get_train_hparams(args):
                'n_gpus': 1, 
                'num_workers': 4,
                'wandb_save_dir' : project_config.PROJECT_DIR / 'wandb',
+               'wandb_project_name': 'cfr_shepherd',
+               'wandb_entity': 'jungnitzjulian',
                'precision': 16, 
                'reload_dataloaders_every_n_epochs': 0,
                'profiler': 'simple',
@@ -155,7 +159,6 @@ def get_run_type_args(args, hparams):
                         'use_diseases': False,
                         'add_cand_diseases': False,
                         'add_similar_patients': False,
-                        'wandb_project_name': 'causal-gene-discovery'
                        })
     elif args.run_type == 'disease_characterization':
         hparams.update({
@@ -164,7 +167,6 @@ def get_run_type_args(args, hparams):
                         'use_diseases': True,
                         'add_cand_diseases': True ,
                         'add_similar_patients': False,
-                        'wandb_project_name': 'disease-heterogeneity',
                        })
     elif args.run_type == 'patients_like_me':
         hparams.update({
@@ -173,7 +175,6 @@ def get_run_type_args(args, hparams):
                         'use_diseases': False,
                         'add_cand_diseases': False,
                         'add_similar_patients': True,
-                        'wandb_project_name': 'patients-like-me',
                        })
     else:
         raise Exception('You must specify run type.')
@@ -250,31 +251,9 @@ def get_predict_hparams(args):
                'n_cand_diseases': 1000,
                'test_n_cand_diseases': -1, 
                'candidate_disease_type': 'all_kg_nodes',
-            #    'patient_similarity_type': 'gene', # How we determine labels for similar patients in "Patients Like Me"
-            #    'n_similar_patients': 2, # Number of patients with the same gene/disease that we add to the batch
-            #    'only_hard_distractors': False, # Flag wattention_typehen true only uses the curated hard distractors at train time
-            #    'sample_edges_from_train_patients': False, # Preferentially sample edges connected to training patients
-            #    'gradclip': 1.0,
-            #    'inference_batch_size': 64,
-            #    'max_epochs': 100, 
-            #    'precision': 16, 
-            #    'reload_dataloaders_every_n_epochs': 0,
-            #    'profiler': 'simple',
-            #    'pin_memory': False,
-            #    'log_gpu_memory': True,
-            #    'debug': False, 
-            #    'plot_softmax': False,
-            #    'plot_intrain': False, # Flag to plot gene rank vs. in train sets
-            #    'plot_PG_embed': False, # Flag to plot embeddings with phenotype and gene labels
-            #    'plot_disease_embed': False, # Flag to plot embeddings with disease labels
-            #    'plot_patient_embed': False, # Flag to plot embeddings for patients
-            #    'plot_degree_rank': False, # Flag to plot degree vs. gene rank
-            #    'plot_nhops_rank': False, # Flag to plot nhops vs. gene rank
-            #    'plot_frac_rank': False, # Flag to plot fraction of ___ vs. gene rank
-            #    'plot_gradients': False, # Flag to plot gradients
-            #    'plot_attn_nhops': False, # Flag to plot attn weights vs. nhops
-            #    'plot_phen_gene_sims': False, # Flag to plot phenotype-gene similarities
-            #    'mrr_vs_percent_overlap': False, # Flag to plot MRR vs. percent overlap of phenotypes
+               'wandb_project_name': 'cfr_shepherd',
+               'wandb_entity': 'jungnitzjulian',
+
     }
 
     # Get hyperparameters based on run type arguments

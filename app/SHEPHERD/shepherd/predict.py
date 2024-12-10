@@ -126,7 +126,7 @@ def predict(args):
     
     # Create Weights & Biases Logger
     run_name = 'test'
-    wandb_logger = WandbLogger(name=run_name, project='cfr_shepherd', entity='jungnitzjulian', save_dir=hparams['wandb_save_dir'],
+    wandb_logger = WandbLogger(name=run_name, project=hparams["wandb_project_name"], entity=hparams["wandb_entity"], save_dir=hparams['wandb_save_dir'],
                     id="_".join(run_name.split(":")), resume="allow") 
 
     # Get patient model 
