@@ -256,7 +256,7 @@ def train(args, hparams):
         lr = hparams['lr']   
         val_data = str(hparams['validation_data']).split('.txt')[0].replace('/', '.')
         run_name = "{}_val_{}".format(curr_time, val_data).replace('patients', 'pats') 
-        run_name = run_name + f'_seed={args.seed}'
+        run_name = run_name + f'_seed_{args.seed}'
         run_name = run_name.replace('5_candidates_mapped_only', '5cand_map').replace('8.9.21_kgsolved_manual_baylor_nobgm_distractor_genes', 'manual').replace('patient_disease_NCA', 'pd_NCA').replace('_distractor', '')
         wandb_logger = WandbLogger(name=run_name, project=hparams["wandb_project_name"], entity=hparams["wandb_entity"], save_dir=hparams['wandb_save_dir'],
                         id="_".join(run_name.split(":")), resume="allow") 
