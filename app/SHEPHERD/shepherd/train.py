@@ -283,7 +283,7 @@ def train(args, hparams):
     if not os.path.exists(project_config.PROJECT_DIR / 'checkpoints' / hparams['model_type']): (project_config.PROJECT_DIR / 'checkpoints' / hparams['model_type']).mkdir()
     if not os.path.exists(checkpoint_path): checkpoint_path.mkdir()
     monitor_type =  'val/mrr' if args.run_type == 'disease_characterization' or args.run_type == 'patients_like_me' else 'val/gp_val_epoch_mrr'
-    fname = 'epoch={epoch:02d}-val_mrr={val/mrr:.2f}' if args.run_type == 'disease_characterization' or args.run_type == 'patients_like_me'  else 'epoch={epoch:02d}-val_mrr={val/gp_val_epoch_mrr:.2f}'
+    fname = 'epoch_{epoch:02d}-val_mrr_{val/mrr:.2f}' if args.run_type == 'disease_characterization' or args.run_type == 'patients_like_me'  else 'epoch={epoch:02d}-val_mrr={val/gp_val_epoch_mrr:.2f}'
     patient_checkpoint_callback = ModelCheckpoint(
         monitor=monitor_type,
         dirpath=checkpoint_path,
