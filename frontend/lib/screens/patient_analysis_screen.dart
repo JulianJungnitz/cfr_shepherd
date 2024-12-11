@@ -5,6 +5,8 @@ import 'package:frontend/utils/model/causal_gene_discovery/causal_gene.dart';
 import 'package:frontend/utils/model/patient/patient.dart';
 import 'package:frontend/utils/model/patient_like_me/patient_like_me.dart';
 import 'package:frontend/widgets/patient_information_box.dart';
+import 'package:frontend/widgets/phenotype_attention_box.dart';
+import 'package:frontend/widgets/rounded_container.dart';
 import 'package:frontend/widgets/similarity_info_box.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/utils/patient_data_provider.dart';
@@ -56,6 +58,9 @@ class _PatientAnalysisScreenState extends State<PatientAnalysisScreen> {
                 height: 32,
               ),
               Divider(),
+              PhenotypeAttentionBox(
+                patientId: patientId,
+              ),
               SizedBox(
                 height: 32,
               ),

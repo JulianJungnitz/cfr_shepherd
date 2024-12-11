@@ -31,6 +31,8 @@ class SimilarityInfoBox extends StatefulWidget {
   State<SimilarityInfoBox> createState() => _SimilarityInfoBoxState();
 }
 
+List<int> itemsToShow = [3, 5, 10, 15,];
+
 class _SimilarityInfoBoxState extends State<SimilarityInfoBox> {
   int _dropDownValue = 5;
 
@@ -51,7 +53,7 @@ class _SimilarityInfoBoxState extends State<SimilarityInfoBox> {
                 child: DropdownButton<int>(
                   borderRadius: BorderRadius.circular(8),
                   value: _dropDownValue,
-                  items: [3, 5, 10, 15]
+                  items: itemsToShow
                       .map((v) => DropdownMenuItem(
                           value: v,
                           child: Text(
@@ -199,7 +201,7 @@ class SimilarityChart extends StatelessWidget {
             dataSource: data,
             xValueMapper: (dynamic data, _) => _.toString(),
             yValueMapper: (dynamic data, _) => data.similarities!,
-            color: Colors.blueAccent,
+            color: Theme.of(context).primaryColor,
             dataLabelSettings: DataLabelSettings(
               alignment: ChartAlignment.center,
               isVisible: false,
