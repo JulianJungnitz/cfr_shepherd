@@ -28,19 +28,6 @@ conda activate shepherd
 
 
 
-CURRENT_DIR=$(pwd)
-ESCAPED_DIR=$(echo "$CURRENT_DIR" | sed 's/\//\\\//g')
-CONFIG_FILE="project_config.py"
-if [[ ! -f "$CONFIG_FILE" ]]; then
-    echo "Error: $CONFIG_FILE not found in the current directory."
-    exit 1
-fi
-
-echo "Setting up project_config.py"
-sed -i "s/^PROJECT_DIR *= *.*/PROJECT_DIR = Path(\"$ESCAPED_DIR\/data\")/" "$CONFIG_FILE"
-
-
-
 
 
 echo "Memory usage before running predict.py:"

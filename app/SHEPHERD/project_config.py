@@ -28,6 +28,9 @@ current_dir = os.path.dirname(os.path.realpath(__file__))
 #PROJECT_DIR = Path("/home/ema30/zaklab/rare_disease_dx/test_camera_ready") # Path('PATH/TO/SHEPHERD')
 if(is_running_in_docker()):
     PROJECT_DIR = Path("/app/SHEPHERD/data")
+elif current_dir.countains("jj56rivo"):
+    print("Running on cluster")
+    PROJECT_DIR = Path("/work/scratch/jj56rivo/cfr_shepherd_data")
 else:
     PROJECT_DIR = Path("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data")
 CURR_KG = '8.9.21_kg' 
