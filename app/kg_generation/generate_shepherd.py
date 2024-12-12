@@ -1,13 +1,16 @@
 #%%
 import sys
 sys.path.append('../')
+sys.path.append('../SHEPHERD/')
+sys.path.append('app/SHEPHERD/')
 import pandas as pd
 from collections import defaultdict
 import math
 import utils
+import project_config
 
-NODE_FILE = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/KG_node_map.txt"
-EDGE_FILE = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/KG_edgelist_mask.txt"
+NODE_FILE = project_config.PROJECT_DIR / "knowledge_graph/8.9.21_kg/KG_node_map.txt"
+EDGE_FILE =  project_config.PROJECT_DIR / "knowledge_graph/8.9.21_kg/KG_edgelist_mask.txt"
 
 
 def generate_shepherd_kg_in_neo4J():

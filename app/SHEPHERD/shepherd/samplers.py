@@ -341,7 +341,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         self.adj_t_sample.storage.rowptr()
 
 
-        print("hyperparameters at end of initialization:", hparams)
+        # print("hyperparameters at end of initialization:", hparams)
         super(PatientNeighborSampler, self).__init__(
             self.patient_dataset, collate_fn=self.collate, **kwargs)
 
