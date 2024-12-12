@@ -10,5 +10,5 @@ python predict.py \
     --edgelist KG_edgelist_mask.txt \
     --node_map KG_node_map.txt \
     --saved_node_embeddings_path checkpoints/pretrain.ckpt \
-    --best_ckpt checkpoints/patient_NCA/best/best.ckpt \
+    --best_ckpt checkpoints/disease_characterization.ckpt \
     --patient_aggr_nodes $patient_aggr_nodes
