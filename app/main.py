@@ -11,6 +11,7 @@ from app.cfr_api import  cfr_api_server
 server = Bottle()
 
 if __name__ == '__main__':
+    app.register()
     print("Starting server")
     server.mount('/api', api_server)
     server.mount('/cfr_api', cfr_api_server)

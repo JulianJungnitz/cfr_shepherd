@@ -6,7 +6,7 @@ neo4j_credentials:
 
 shepherd:
   OVERWRITE_PREPROCESSED_DATA: True # If True, the patients data will be pulled from the neo4j database
-  LIMIT_SAMPLE_SIZE: True 
+  LIMIT_SAMPLE_SIZE: False 
   NUMBER_OF_SAMPLES_LIMIT: 10
   ONLY_PATIENTS_WITH_DISEASE: False # If True, only patients with disease will be used. If during mapping from DOID to MONDO, no diseases are found, the patient will be excluded.
   ONLY_PATIENTS_WITH_PHENOTYPES: True 
@@ -15,12 +15,13 @@ shepherd:
   CREATE_SPL_MATRIX: False # This is necessary if the algo is run on new data
 
   # this runs the predictions
-  RUN_PATIENTS_LIKE_ME: True
-  RUN_CAUSAL_GENE_DISCOVERY: True
-  RUN_DISEASE_CATEGORIZATION: True
+  RUN_PATIENTS_LIKE_ME: False
+  RUN_CAUSAL_GENE_DISCOVERY: False
+  RUN_DISEASE_CATEGORIZATION: False
 
   PATIENTS_AGGR_NODES: phenotypes # Options: phenotypes, phenotypes_and_genes - for patients like me and disease categorization the aggregation for the patient embedding can be changed
 
+  MOVE_RESULTS_TO_OUTPUT_DIR: True # This moves the results to the output directory after every prediction
 
   RUN_PREPROCESSING: False # This runs the preprocessing for training the model
   RUN_TRAINING_DISEASE_CHARACTERIZATION: False 
