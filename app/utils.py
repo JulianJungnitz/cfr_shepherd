@@ -25,7 +25,7 @@ def is_running_in_docker():
 
 if is_running_in_docker():
     INPUT_DIR = '/mnt/input'
-    OUTPUT_DIR = '/mnt/output'
+    OUTPUT_DIR = '/app/output'
     print("Running inside Docker container.")
 else:
     INPUT_DIR = './..'
