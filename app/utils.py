@@ -7,8 +7,10 @@ import subprocess
 
 APP_DIR  = os.path.dirname(os.path.realpath(__file__))
 SHEPHERD_DIR = APP_DIR + "/SHEPHERD"
+RESULTS_DIR = SHEPHERD_DIR + "/data/results"
 print("APP_DIR: ", APP_DIR)
 print("SHEPHERD_DIR: ", SHEPHERD_DIR)
+print("RESULTS_DIR: ", RESULTS_DIR)
 
 
 def is_running_in_docker():
@@ -29,7 +31,7 @@ if is_running_in_docker():
     print("Running inside Docker container.")
 else:
     INPUT_DIR = './..'
-    OUTPUT_DIR = './..'
+    OUTPUT_DIR = './out'
     current_dir = os.path.dirname(os.path.realpath(__file__))
     print("Current directory: ", current_dir)
     print("Running on local machine.")

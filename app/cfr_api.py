@@ -8,7 +8,6 @@ import utils as utils
 import json
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
-RESULTS_DIR = os.path.join(current_dir, "SHEPHERD/data/results")
 
 cfr_api_server = Bottle()
 
@@ -98,7 +97,7 @@ def create_attn_result_endpoint(route, filename):
     @handle_attn_request
     def endpoint(patient_ids):
         try:
-            file_path = os.path.join(RESULTS_DIR, filename)
+            file_path = os.path.join(utils.RESULTS_DIR, filename)
             if not os.path.exists(file_path):
                 response.status = 404
                 return {"message": f"File {filename} not found."}
@@ -147,7 +146,7 @@ def create_has_result_endpoint(route, filename):
     @handle_request
     def endpoint():
         # check if file exists
-        file_path = os.path.join(RESULTS_DIR, filename)
+        file_path = os.path.join(utils.RESULTS_DIR, filename)
         if not os.path.exists(file_path):
             response.status = 404
             return {"message": "Result file not found"}
@@ -162,7 +161,7 @@ def create_has_result_endpoint(route, filename):
 
 
 def _read_patient_data_from_file(patient_id=None, file=None):
-    file_path = os.path.join(RESULTS_DIR, file)
+    file_path = os.path.join(utils.RESULTS_DIR, file)
     df = pd.read_csv(file_path)
     k = 15
     patient_data = df[df["patient_id"] == patient_id].head(k).to_dict(orient="records")

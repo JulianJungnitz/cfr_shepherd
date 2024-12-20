@@ -3,6 +3,7 @@ import shepherd as shepherd
 from FeatureCloud.app.engine.app import AppState, app_state
 
 
+
 @app_state("initial")
 class ExecuteState(AppState):
 
@@ -11,5 +12,7 @@ class ExecuteState(AppState):
 
     def run(self):
         print("Running app state: initial")
-        shepherd.main()
+        # shepherd.main()
+        print("Finished running app state: initial")
         return "terminal"
+

@@ -37,7 +37,9 @@ def start_preprocessing_data(config):
         generate_spl_matrix()
 
 
-def predict_patients_like_me(PATIENTS_AGGR_NODES=None):
+def predict_patients_like_me(
+    PATIENTS_AGGR_NODES=None, 
+):
     dir = utils.SHEPHERD_DIR
     print("Predicting patients like me. Dir: " + dir)
     command = ["bash", dir + "/predict_patients_like_me.sh", PATIENTS_AGGR_NODES]
@@ -54,7 +56,9 @@ def predict_causal_gene_discovery():
     utils.run_subprocess(command)
 
 
-def predict_disease_categorization(PATIENTS_AGGR_NODES=None):
+def predict_disease_categorization(
+    PATIENTS_AGGR_NODES=None
+):
     dir = utils.SHEPHERD_DIR
     print("Predicting disease categorization. Dir: " + dir)
     command = ["bash", dir + "/predict_disease_categorization.sh", PATIENTS_AGGR_NODES]
@@ -68,6 +72,14 @@ def run_training_disease_characterization(PATIENTS_AGGR_NODES=None):
         utils.SHEPHERD_DIR + "/shepherd/train_disease_characterization.sh",
         PATIENTS_AGGR_NODES,
     ]
+    utils.run_subprocess(command)
+
+
+def move_results_to_output_dir():
+    print("Moving results to output directory: res: " + utils.RESULTS_DIR + " out: " + utils.OUTPUT_DIR)
+    resDir = utils.RESULTS_DIR
+    outDir = utils.OUTPUT_DIR
+    command = ["cp", "-r", resDir, outDir]
     utils.run_subprocess(command)
 
 
@@ -106,18 +118,24 @@ def main():
 
     RUN_PATIENTS_LIKE_ME = config["shepherd"]["RUN_PATIENTS_LIKE_ME"]
     if RUN_PATIENTS_LIKE_ME:
-        predict_patients_like_me(PATIENTS_AGGR_NODES)
+        predict_patients_like_me(
+            PATIENTS_AGGR_NODES,
+        )
 
     RUN_CAUSAL_GENE_DISCOVERY = config["shepherd"]["RUN_CAUSAL_GENE_DISCOVERY"]
     if RUN_CAUSAL_GENE_DISCOVERY:
-        predict_causal_gene_discovery()
+        predict_causal_gene_discovery(
+        )
 
     RUN_DISEASE_CATEGORIZATION = config["shepherd"]["RUN_DISEASE_CATEGORIZATION"]
     if RUN_DISEASE_CATEGORIZATION:
-        predict_disease_categorization(PATIENTS_AGGR_NODES)
+        predict_disease_categorization(
+            PATIENTS_AGGR_NODES,
+        )
 
+    MOVE_RESULTS_TO_OUTPUT_DIR = config["shepherd"]["MOVE_RESULTS_TO_OUTPUT_DIR"]
+    if MOVE_RESULTS_TO_OUTPUT_DIR:
+        move_results_to_output_dir()
 
-if __name__ == "__main__":
-    main()
 
 # %%
