@@ -10,8 +10,7 @@ from torch_geometric.data import Data
 from torch import Tensor
 
 import sys
-sys.path.insert(0, "../SHEPHERD")
-sys.path.insert(0, "/app/SHEPHERD")
+sys.path.insert(0, "app/SHEPHERD")
 import project_config
 
 def preprocess_graph(args):

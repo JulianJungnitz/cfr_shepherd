@@ -4,6 +4,7 @@ app/SHEPHERD/data/*
 data.zip
 data/*
 env/
+out/*
 */lightning_logs/*
 careforrare/*
 app/SHEPHERD/project_config.py
