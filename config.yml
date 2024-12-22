@@ -5,7 +5,10 @@ neo4j_credentials:
   NEO4J_DB: neo4j
 
 shepherd:
-  OVERWRITE_PREPROCESSED_DATA: True # If True, the patients data will be pulled from the neo4j database
+  RUN_PRETRAINING: True
+  USE_HAUNER_GRAPH: True
+
+  OVERWRITE_PREPROCESSED_DATA: False # If True, the patients data will be pulled from the neo4j database
   LIMIT_SAMPLE_SIZE: False 
   NUMBER_OF_SAMPLES_LIMIT: 10
   ONLY_PATIENTS_WITH_DISEASE: False # If True, only patients with disease will be used. If during mapping from DOID to MONDO, no diseases are found, the patient will be excluded.
@@ -25,3 +28,5 @@ shepherd:
 
   RUN_PREPROCESSING: False # This runs the preprocessing for training the model
   RUN_TRAINING_DISEASE_CHARACTERIZATION: False 
+
+  

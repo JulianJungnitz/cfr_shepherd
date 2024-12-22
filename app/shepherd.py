@@ -95,6 +95,21 @@ def run_shepherd_preprocessing(config):
     ]
     utils.run_subprocess(command)
 
+def run_pretraining(config):
+    print("Running shepherd pretraining")
+    dir = utils.SHEPHERD_DIR
+    command = [
+        "python",
+        dir + "/pretrain.py",
+        "--edgelist",
+        "KG_edgelist_mask.txt",
+        "--node_map",
+        "KG_node_map.txt",
+        "--save_dir",
+       "checkpoints/",
+    ]
+    utils.run_subprocess(command)
+
 
 def main():
     global driver
@@ -105,6 +120,10 @@ def main():
     config = utils.read_config()
     start_preprocessing_data(config)
     PATIENTS_AGGR_NODES = config["shepherd"]["PATIENTS_AGGR_NODES"]
+
+    RUN_PRETRAINING = config["shepherd"]["RUN_PRETRAINING"]
+    if RUN_PRETRAINING:
+        run_pretraining(config)
 
     RUN_PREPROCESSING = config["shepherd"]["RUN_PREPROCESSING"]
     if RUN_PREPROCESSING:

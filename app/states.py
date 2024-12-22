@@ -12,7 +12,7 @@ class ExecuteState(AppState):
 
     def run(self):
         print("Running app state: initial")
-        # shepherd.main()
+        shepherd.main()
         print("Finished running app state: initial")
         return "terminal"
 

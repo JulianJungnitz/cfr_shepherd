@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import utils
 
 
 def is_running_in_docker():
@@ -33,7 +34,14 @@ elif "jj56rivo" in current_dir:
     PROJECT_DIR = Path("/work/scratch/jj56rivo/cfr_shepherd_data")
 else:
     PROJECT_DIR = Path("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data")
-CURR_KG = '8.9.21_kg' 
+
+config = utils.read_config()
+
+if(config["shepherd"]["USE_HAUNER_GRAPH"]):
+    CURR_KG = 'hauner_graph'
+else:
+    CURR_KG = '8.9.21_kg' 
+    
 KG_DIR = PROJECT_DIR / 'knowledge_graph' / CURR_KG
 PREDICT_RESULTS_DIR = PROJECT_DIR / 'results'
 SEED = 33
