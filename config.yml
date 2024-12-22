@@ -24,7 +24,7 @@ shepherd:
 
   PATIENTS_AGGR_NODES: phenotypes # Options: phenotypes, phenotypes_and_genes - for patients like me and disease categorization the aggregation for the patient embedding can be changed
 
-  MOVE_RESULTS_TO_OUTPUT_DIR: True # This moves the results to the output directory after every prediction
+  MOVE_RESULTS_TO_OUTPUT_DIR: False # This moves the results to the output directory after every prediction
 
   RUN_PREPROCESSING: False # This runs the preprocessing for training the model
   RUN_TRAINING_DISEASE_CHARACTERIZATION: False 
