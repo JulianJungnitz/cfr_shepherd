@@ -10,6 +10,7 @@ sys.path.insert(0, utils.SHEPHERD_DIR)
 from preprocess_data import create_patients_data_file, generate_spl_matrix
 
 
+
 def start_preprocessing_data(config):
     NUMBER_OF_SAMPLES_LIMIT = config["shepherd"]["NUMBER_OF_SAMPLES_LIMIT"]
     OVERWRITE_PREPROCESSED_DATA = config["shepherd"]["OVERWRITE_PREPROCESSED_DATA"]
@@ -100,7 +101,7 @@ def run_pretraining(config):
     dir = utils.SHEPHERD_DIR
     command = [
         "python",
-        dir + "/pretrain.py",
+        dir + "/shepherd/pretrain.py",
         "--edgelist",
         "KG_edgelist_mask.txt",
         "--node_map",
