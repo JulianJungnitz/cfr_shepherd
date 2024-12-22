@@ -25,36 +25,81 @@ def preprocess_graph(args):
 
     # Convert edge attributes to idx
     edge_attr_list = [
-                      'effect/phenotype;phenotype_protein;gene/protein',
-                      'gene/protein;phenotype_protein;effect/phenotype',
-                      'disease;disease_phenotype_negative;effect/phenotype',
-                      'effect/phenotype;disease_phenotype_negative;disease',
-                      'disease;disease_phenotype_positive;effect/phenotype',
-                      'effect/phenotype;disease_phenotype_positive;disease',
-                      'gene/protein;protein_pathway;pathway',
-                      'pathway;protein_pathway;gene/protein',
-                      'disease;disease_protein;gene/protein',
-                      'gene/protein;disease_protein;disease',
-                      'gene/protein;protein_molfunc;molecular_function',
-                      'molecular_function;protein_molfunc;gene/protein',
-                      'gene/protein;protein_cellcomp;cellular_component',
-                      'cellular_component;protein_cellcomp;gene/protein',
-                      'gene/protein;protein_bioprocess;biological_process',
-                      'biological_process;protein_bioprocess;gene/protein',
-                      'biological_process;bioprocess_bioprocess;biological_process',
-                      'biological_process;bioprocess_bioprocess_rev;biological_process',
-                      'molecular_function;molfunc_molfunc;molecular_function',
-                      'molecular_function;molfunc_molfunc_rev;molecular_function',
-                      'cellular_component;cellcomp_cellcomp;cellular_component',
-                      'cellular_component;cellcomp_cellcomp_rev;cellular_component',
-                      'effect/phenotype;phenotype_phenotype;effect/phenotype',
-                      'effect/phenotype;phenotype_phenotype_rev;effect/phenotype',
-                      'gene/protein;protein_protein;gene/protein',
-                      'gene/protein;protein_protein_rev;gene/protein',
-                      'disease;disease_disease;disease',
-                      'disease;disease_disease_rev;disease',
-                      'pathway;pathway_pathway;pathway',
-                      'pathway;pathway_pathway_rev;pathway'
+        ## hauner_graph
+            'Disease;HAS_PARENT;Disease'
+            'Tissue;HAS_PARENT;Tissue'
+            'Biological_process;HAS_PARENT;Biological_process'
+            'Molecular_function;HAS_PARENT;Molecular_function'
+            'Cellular_component;HAS_PARENT;Cellular_component'
+            'Modification;HAS_PARENT;Modification'
+            'Gene;ASSOCIATED_WITH;Disease'
+            'Gene;LOCATED_IN;Chromosome'
+            'Gene;TRANSCRIBED_INTO;Transcript'
+            'Gene;TRANSLATED_INTO;Protein'
+            'Transcript;LOCATED_IN;Chromosome'
+            'Transcript;TRANSLATED_INTO;Protein'
+            'Protein;DETECTED_IN_PATHOLOGY_SAMPLE;Disease'
+            'Protein;ASSOCIATED_WITH;Disease'
+            'Protein;ASSOCIATED_WITH;Tissue'
+            'Protein;ASSOCIATED_WITH;Biological_process'
+            'Protein;ASSOCIATED_WITH;Molecular_function'
+            'Protein;ASSOCIATED_WITH;Cellular_component'
+            'Protein;COMPILED_INTERACTS_WITH;Protein'
+            'Protein;ACTS_ON;Protein'
+            'Protein;CURATED_INTERACTS_WITH;Protein'
+            'Protein;HAS_MODIFIED_SITE;Modified_protein'
+            'Protein;ANNOTATED_IN_PATHWAY;Pathway'
+            'Protein;IS_SUBUNIT_OF;Complex'
+            'Protein;IS_BIOMARKER_OF_DISEASE;Disease'
+            'Protein;IS_QCMARKER_IN_TISSUE;Tissue'
+            'Peptide;BELONGS_TO_PROTEIN;Protein'
+            'Peptide;HAS_MODIFIED_SITE;Modified_protein'
+            'Modified_protein;HAS_MODIFICATION;Modification'
+            'Modified_protein;IS_SUBSTRATE_OF;Protein'
+            'Complex;ASSOCIATED_WITH;Biological_process'
+            'Known_variant;VARIANT_FOUND_IN_CHROMOSOME;Chromosome'
+            'Known_variant;VARIANT_FOUND_IN_GENE;Gene'
+            'Known_variant;VARIANT_FOUND_IN_PROTEIN;Protein'
+            'Known_variant;VARIANT_IS_CLINICALLY_RELEVANT;Clinically_relevant_variant'
+            'Known_variant;CURATED_AFFECTS_INTERACTION_WITH;Protein'
+            'Clinically_relevant_variant;ASSOCIATED_WITH;Disease'
+            'Functional_region;FOUND_IN_PROTEIN;Protein'
+            'Metabolite;ASSOCIATED_WITH;Disease'
+            'Metabolite;ANNOTATED_IN_PATHWAY;Pathway'
+            'Metabolite;ASSOCIATED_WITH;Protein'
+
+
+        ## 8.9.21_kg - old shepherd graph
+                    #   'effect/phenotype;phenotype_protein;gene/protein',
+                    #   'gene/protein;phenotype_protein;effect/phenotype',
+                    #   'disease;disease_phenotype_negative;effect/phenotype',
+                    #   'effect/phenotype;disease_phenotype_negative;disease',
+                    #   'disease;disease_phenotype_positive;effect/phenotype',
+                    #   'effect/phenotype;disease_phenotype_positive;disease',
+                    #   'gene/protein;protein_pathway;pathway',
+                    #   'pathway;protein_pathway;gene/protein',
+                    #   'disease;disease_protein;gene/protein',
+                    #   'gene/protein;disease_protein;disease',
+                    #   'gene/protein;protein_molfunc;molecular_function',
+                    #   'molecular_function;protein_molfunc;gene/protein',
+                    #   'gene/protein;protein_cellcomp;cellular_component',
+                    #   'cellular_component;protein_cellcomp;gene/protein',
+                    #   'gene/protein;protein_bioprocess;biological_process',
+                    #   'biological_process;protein_bioprocess;gene/protein',
+                    #   'biological_process;bioprocess_bioprocess;biological_process',
+                    #   'biological_process;bioprocess_bioprocess_rev;biological_process',
+                    #   'molecular_function;molfunc_molfunc;molecular_function',
+                    #   'molecular_function;molfunc_molfunc_rev;molecular_function',
+                    #   'cellular_component;cellcomp_cellcomp;cellular_component',
+                    #   'cellular_component;cellcomp_cellcomp_rev;cellular_component',
+                    #   'effect/phenotype;phenotype_phenotype;effect/phenotype',
+                    #   'effect/phenotype;phenotype_phenotype_rev;effect/phenotype',
+                    #   'gene/protein;protein_protein;gene/protein',
+                    #   'gene/protein;protein_protein_rev;gene/protein',
+                    #   'disease;disease_disease;disease',
+                    #   'disease;disease_disease_rev;disease',
+                    #   'pathway;pathway_pathway;pathway',
+                    #   'pathway;pathway_pathway_rev;pathway'
                      ]
 
     edge_attr_to_idx_dict = {attr:i for i, attr in enumerate(edge_attr_list)}

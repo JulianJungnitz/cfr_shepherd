@@ -1,17 +1,16 @@
 #%%
-from pronto import Ontology
 
-mondo = Ontology("./mondo-rare.obo")
 
-doid_to_mondo = {}
+import pandas as pd
 
-for term in mondo.terms():
-    for xref in term.xrefs:
-        if xref.id.startswith("DOID:"):
-            doid_to_mondo[xref.id] = term.id
+def read_unique_full_relation(file_path: str):
+    print("read file")
+    df = pd.read_csv(file_path, sep="\t")
+    print("file read")
+    unique_relations = df["full_relation"].unique()
+    print("Unique full_relation values:")
+    for relation in unique_relations:
+        print(relation)
 
-example_doid = "DOID:9352"  
-if example_doid in doid_to_mondo:
-    print(f"MONDO ID for {example_doid} is {doid_to_mondo[example_doid]}")
-else:
-    print(f"No mapping found for {example_doid}")
+if __name__ == "__main__":
+    read_unique_full_relation("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph/KG_edgelist_mask.txt")
