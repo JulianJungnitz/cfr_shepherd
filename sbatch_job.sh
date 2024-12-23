@@ -27,7 +27,7 @@ conda activate shepherd
 # bash install_pyg.sh
 
 
-
+export PYTHONPATH="/home/jj56rivo/cfr_shepherd:$PYTHONPATH"
 
 
 echo "Memory usage before running predict.py:"
