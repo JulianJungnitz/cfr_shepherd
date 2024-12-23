@@ -5,8 +5,8 @@
 #SBATCH -o /work/home/jj56rivo/cfr_shepherd/out/o_%j.txt
 #SBATCH -C avx512
 #SBATCH -n 1
-#SBATCH --mem-per-cpu=90G
-#SBATCH --time=00:20:00
+#SBATCH --mem-per-cpu=400G
+#SBATCH --time=48:00:00
 #SBATCH --cpus-per-task=1
 #SBATCH --gres=gpu:v100
 
