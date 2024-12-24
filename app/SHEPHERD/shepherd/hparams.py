@@ -27,7 +27,7 @@ def get_pretrain_hparams(args, combined=False):
                'pred_threshold': 0.5,
                'negative_sampler_approach': 'by_edge_type',
                'filter_edges': True,
-               'n_gpus': 2,
+               'n_gpus': 4,
                'num_workers': 4,
                'batch_size': 512,
                'inference_batch_size': 64,
