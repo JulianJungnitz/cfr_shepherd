@@ -63,22 +63,34 @@ def get_batched_data(data, all_data):
 
 
 MAX_SIZE = 625
+MAX_EDGE_CHUNK = 10_000_000
 def get_mask(edge_index, nodes, ind):
-    n_splits = math.ceil(nodes.size(0) / MAX_SIZE)
-    node_mask = (edge_index[ind,:] == nodes[:MAX_SIZE].unsqueeze(-1)).nonzero()
-    for i in range(1, n_splits-1):
+    node_mask_list = []
+    
+    for node_start in range(0, nodes.size(0), MAX_SIZE):
+        node_end = min(node_start + MAX_SIZE, nodes.size(0))
+        node_chunk = nodes[node_start:node_end]  
 
-        node_mask_mid = (edge_index[ind,:] == nodes[MAX_SIZE*i:MAX_SIZE*(i+1)].unsqueeze(-1)).nonzero()
-        node_mask_mid[:,0] = node_mask_mid[:,0] + (MAX_SIZE*i)
-        node_mask = torch.cat([node_mask, node_mask_mid])
-    node_mask_end = (edge_index[ind,:] == nodes[MAX_SIZE*(n_splits-1):].unsqueeze(-1)).nonzero()
-    node_mask_end[:,0] = node_mask_end[:,0] + (MAX_SIZE*(n_splits-1))
-    node_mask = torch.cat([node_mask, node_mask_end])
-    return node_mask
+        for edge_start in range(0, edge_index.size(1), MAX_EDGE_CHUNK):
+            edge_end = min(edge_start + MAX_EDGE_CHUNK, edge_index.size(1))
+            edge_chunk = edge_index[ind, edge_start:edge_end]  
+            temp_mask = (edge_chunk == node_chunk.unsqueeze(-1)).nonzero()
+
+            temp_mask[:, 0] += node_start           
+            temp_mask[:, 1] += edge_start           
+
+            node_mask_list.append(temp_mask)
+
+    if len(node_mask_list) == 0:
+        return torch.empty((0,2), dtype=torch.long, device=nodes.device)
+    else:
+        node_mask = torch.cat(node_mask_list, dim=0)
+        return node_mask
 
 
 def get_indices_into_edge_index(edge_index, source_nodes, target_nodes):
     
+    # this was commented to always use chunking
     # if source_nodes.size(0) > MAX_SIZE:
     source_node_mask = get_mask(edge_index, source_nodes, ind = 0)
     target_node_mask = get_mask(edge_index, target_nodes, ind = 1)
