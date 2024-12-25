@@ -33,7 +33,7 @@ class NodeEmbeder(pl.LightningModule):
         self.save_hyperparameters("hp_dict", ignore=["spl_mat"])
 
         # Data
-        self.all_data = all_data
+        # self.all_data = all_data
         self.edge_attr_dict = edge_attr_dict
 
         # Model parameters
@@ -225,7 +225,9 @@ class NodeEmbeder(pl.LightningModule):
 
         if not self.combined_training: 
             ts = time.time()
+            print("try access all_data")
             data = get_batched_data(data, self.all_data) 
+            print("accessed all_data")
             tm = time.time()
             data = get_edges(data, self.all_data, dataset_type)
             te=time.time()
