@@ -82,7 +82,7 @@ def get_mask(edge_index, nodes, ind):
             node_mask_list.append(temp_mask)
 
     if len(node_mask_list) == 0:
-        return torch.empty((0,2), dtype=torch.long, device=nodes.device)
+        return torch.empty((0,2),  device=nodes.device)
     else:
         node_mask = torch.cat(node_mask_list, dim=0)
         return node_mask
