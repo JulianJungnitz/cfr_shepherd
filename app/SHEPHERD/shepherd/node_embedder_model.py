@@ -58,8 +58,10 @@ class NodeEmbeder(pl.LightningModule):
         self.nhid1 = self.hparams.hp_dict['hidden'] * 2
         self.nhid2 = self.hparams.hp_dict['hidden']
         self.output = self.hparams.hp_dict['output']
-
+        
+        print("Number of Nodes: ", num_nodes)
         self.node_emb = nn.Embedding(num_nodes, self.nfeat)
+        print("Embeddings initialized")
         
         self.num_nodes = num_nodes 
         self.num_relations = len(edge_attr_dict)
