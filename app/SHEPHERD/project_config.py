@@ -40,7 +40,7 @@ else:
 config = read_config()
 
 if(config["shepherd"]["USE_HAUNER_GRAPH"]):
-    CURR_KG = 'hauner_graph'
+    CURR_KG = 'hauner_graph_reduced'
 else:
     CURR_KG = '8.9.21_kg' 
 
