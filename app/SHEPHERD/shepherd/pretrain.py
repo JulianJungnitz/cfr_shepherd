@@ -115,7 +115,6 @@ def train(args, hparams):
                          log_every_n_steps=hparams['log_every_n_steps'],
                          limit_train_batches=limit_train_batches, 
                          limit_val_batches=limit_val_batches,
-                         precision=16
                         ) 
     train_dataloader, val_dataloader, test_dataloader = get_dataloaders(hparams, all_data)
 

@@ -27,6 +27,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 class NodeEmbeder(pl.LightningModule):
 
     def __init__(self, all_data, edge_attr_dict, hp_dict=None, num_nodes=None, combined_training=False, spl_mat=[]):
+        print("NodeEmbeder: __init__")
         super().__init__()
 
         # save hyperparameters
@@ -34,7 +35,10 @@ class NodeEmbeder(pl.LightningModule):
 
         # Data
         # self.all_data = all_data
-        self.edge_attr_dict = edge_attr_dict
+        # self.edge_attr_dict = edge_attr_dict
+
+        print("Size of all_data: ", len(all_data))
+        print("Size of edge_attr_dict: ", len(edge_attr_dict))
 
         # Model parameters
         self.lr = self.hparams.hp_dict['lr']
