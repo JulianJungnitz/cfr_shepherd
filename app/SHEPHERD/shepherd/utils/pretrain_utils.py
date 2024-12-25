@@ -95,21 +95,33 @@ def get_indices_into_edge_index(edge_index, source_nodes, target_nodes):
     source_node_mask = get_mask(edge_index, source_nodes, ind = 0)
     target_node_mask = get_mask(edge_index, target_nodes, ind = 1)
 
-    print("Source Node Mask len: ", len(source_node_mask))
-    print("Target Node Mask len: ", len(target_node_mask))
-    # else:
-        # source_node_mask = (edge_index[0,:] == source_nodes.unsqueeze(-1)).nonzero()
-        # target_node_mask = (edge_index[1,:] == target_nodes.unsqueeze(-1)).nonzero()
-    
-    vals_pos, counts_pos = torch.unique(torch.cat([source_node_mask, target_node_mask]), return_counts=True, dim=0)
-    if len(vals_pos) == 0 or len(counts_pos) == 0:
-        print(edge_index)
-        print(source_nodes)
-        print(target_nodes)
+    print("\n=== EDGE LIST TYPES DEBUG ===")
+    print(f"source_node_mask.shape: {source_node_mask.shape}")
+    print(f"target_node_mask.shape: {target_node_mask.shape}")
+    # Show first few rows if not too large
+    print(f"source_node_mask (head):\n{source_node_mask[:10]}")
+    print(f"target_node_mask (head):\n{target_node_mask[:10]}")
+    print(f"edge_index shape: {edge_index.shape}")
+    print(f"source_nodes.shape: {source_nodes.shape}, target_nodes.shape: {target_nodes.shape}\n")
 
+    # Merge both to see which indices appear for both source and target
+    vals_pos, counts_pos = torch.unique(
+        torch.cat([source_node_mask, target_node_mask]), 
+        return_counts=True, 
+        dim=0
+    )
+
+    if len(vals_pos) == 0:
+        print("No common rows in source_node_mask and target_node_mask.")
+    else:
+        print("vals_pos (head):\n", vals_pos[:10])
+        print("counts_pos (head):\n", counts_pos[:10])
+
+    # Only rows with counts>1 appear in both source and target
     vals_pos_1 = vals_pos[counts_pos > 1][:,1]
     vals_pos_0 = vals_pos[counts_pos > 1][:,0]
-    print("Length: ", len(vals_pos_1), len(vals_pos_0))
+    print(f"Overlap count: {len(vals_pos_1)}, {len(vals_pos_0)}\n")
+
 
     
     return vals_pos[counts_pos > 1][:,1], vals_pos[counts_pos > 1][:,0]
