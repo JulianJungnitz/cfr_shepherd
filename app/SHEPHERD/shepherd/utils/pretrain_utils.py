@@ -103,6 +103,11 @@ def get_indices_into_edge_index(edge_index, source_nodes, target_nodes):
         print(edge_index)
         print(source_nodes)
         print(target_nodes)
+
+    vals_pos_1 = vals_pos[counts_pos > 1][:,1]
+    vals_pos_0 = vals_pos[counts_pos > 1][:,0]
+    print("Length: ", len(vals_pos_1), len(vals_pos_0))
+
     
     return vals_pos[counts_pos > 1][:,1], vals_pos[counts_pos > 1][:,0]
 
