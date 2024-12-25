@@ -64,8 +64,6 @@ class NodeEmbeder(pl.LightningModule):
         self.output = self.hparams.hp_dict['output']
         
         print("Number of Nodes: ", num_nodes)
-        num_nodes = num_nodes // 10
-        print("Number of Nodes: ", num_nodes)
         self.node_emb = nn.Embedding(num_nodes, self.nfeat)
         print("Embeddings initialized")
         
