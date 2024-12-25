@@ -176,7 +176,8 @@ class NodeEmbeder(pl.LightningModule):
                 for et in all_edge_types.cpu().numpy():
                     rand_indices.append(sample_node_for_et(et, targets_dict))
 
-                rand_index = torch.tensor(rand_indices, device=device)
+                rand_index = torch.tensor(rand_indices, device=device, dtype=torch.long)
+
 
             print("Moved: negative sampling")
 
