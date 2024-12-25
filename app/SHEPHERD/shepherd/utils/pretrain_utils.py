@@ -79,12 +79,12 @@ def get_mask(edge_index, nodes, ind):
 
 def get_indices_into_edge_index(edge_index, source_nodes, target_nodes):
     
-    if source_nodes.size(0) > MAX_SIZE:
-        source_node_mask = get_mask(edge_index, source_nodes, ind = 0)
-        target_node_mask = get_mask(edge_index, target_nodes, ind = 1)
-    else:
-        source_node_mask = (edge_index[0,:] == source_nodes.unsqueeze(-1)).nonzero()
-        target_node_mask = (edge_index[1,:] == target_nodes.unsqueeze(-1)).nonzero()
+    # if source_nodes.size(0) > MAX_SIZE:
+    source_node_mask = get_mask(edge_index, source_nodes, ind = 0)
+    target_node_mask = get_mask(edge_index, target_nodes, ind = 1)
+    # else:
+        # source_node_mask = (edge_index[0,:] == source_nodes.unsqueeze(-1)).nonzero()
+        # target_node_mask = (edge_index[1,:] == target_nodes.unsqueeze(-1)).nonzero()
     
     vals_pos, counts_pos = torch.unique(torch.cat([source_node_mask, target_node_mask]), return_counts=True, dim=0)
     if len(vals_pos) == 0 or len(counts_pos) == 0:
