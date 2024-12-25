@@ -104,8 +104,8 @@ def train(args, hparams):
         limit_val_batches = 1.0 
         hparams['max_epochs'] = 3
     else:
-        limit_train_batches = 1.0
-        limit_val_batches = 1.0 
+        limit_train_batches = 0.1
+        limit_val_batches = 0.1
 
     trainer = pl.Trainer(gpus=hparams['n_gpus'], logger=wandb_logger, 
                          max_epochs=hparams['max_epochs'], 
@@ -115,7 +115,6 @@ def train(args, hparams):
                          log_every_n_steps=hparams['log_every_n_steps'],
                          limit_train_batches=limit_train_batches, 
                          limit_val_batches=limit_val_batches,
-                         precission=16
                         ) 
     train_dataloader, val_dataloader, test_dataloader = get_dataloaders(hparams, all_data)
 
