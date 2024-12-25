@@ -52,8 +52,17 @@ def add_reverse_edges(file_path: str):
     df = pd.concat([df, df_reverse])
     print(df.shape)
     df.to_csv(file_path + "_with_rev.txt", sep="\t", header=False, index=False)
-    
+
+def convert_types(file_path: str):
+    print("Converting types")
+    df = pd.read_csv(file_path, sep="\t", header=None)
+    print("file read")
+    pd.to_numeric(df[0], errors='raise')
+    print("converted 0")
+    pd.to_numeric(df[1], errors='raise')
+    print("converted 1")
+    df.to_csv(file_path + "_conv.txt", sep="\t", header=False, index=False)
 
 if __name__ == "__main__":
-    add_reverse_edges("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
+    convert_types("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask_rev.txt")
     # get_relations_of_node("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/KG_edgelist_mask.txt")
