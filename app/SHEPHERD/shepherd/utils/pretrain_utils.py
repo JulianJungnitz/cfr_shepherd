@@ -101,6 +101,7 @@ def get_indices_into_edge_index(edge_index, source_nodes, target_nodes):
     # Show first few rows if not too large
     print(f"source_node_mask (head):\n{source_node_mask[:10]}")
     print(f"target_node_mask (head):\n{target_node_mask[:10]}")
+    print(f"edge_index (head):\n{edge_index[:, :10]}")
     print(f"edge_index shape: {edge_index.shape}")
     print(f"source_nodes.shape: {source_nodes.shape}, target_nodes.shape: {target_nodes.shape}\n")
 
