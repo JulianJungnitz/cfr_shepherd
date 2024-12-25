@@ -13,4 +13,4 @@ def read_unique_full_relation(file_path: str):
         print(relation)
 
 if __name__ == "__main__":
-    read_unique_full_relation("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph/KG_edgelist_mask.txt")
+    read_unique_full_relation("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
