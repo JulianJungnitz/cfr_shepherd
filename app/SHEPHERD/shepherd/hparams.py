@@ -29,7 +29,7 @@ def get_pretrain_hparams(args, combined=False):
                'filter_edges': True,
                'n_gpus': 1,
                'num_workers': 4,
-               'batch_size': 256, # reduced by Julian from 512
+               'batch_size': 512, # reduced by Julian from 512
                'inference_batch_size': 64,
                'neighbor_sampler_sizes': [15, 10, 5],
                'max_epochs': 200,
