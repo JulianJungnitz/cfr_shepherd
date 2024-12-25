@@ -170,7 +170,7 @@ class NodeEmbeder(pl.LightningModule):
             # rand_index = torch.tensor(np.vectorize(sample_node_for_et)(all_edge_types.cpu(), targets_dict)).to(device)
             if all_edge_types.numel() == 0:
                 print("No edge types found")
-                rand_index = torch.tensor([], device=device)
+                rand_index = torch.tensor([], device=device, dtype=torch.long)
             else:
                 rand_indices = []
                 for et in all_edge_types.cpu().numpy():
