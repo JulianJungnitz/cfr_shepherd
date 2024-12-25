@@ -43,7 +43,7 @@ def parse_args():
     parser.add_argument('--save_dir', type=str, default=None, help='Directory for saving files')
     
     # Tunable parameters
-    parser.add_argument('--nfeat', type=int, default=2048, help='Dimension of embedding layer')
+    parser.add_argument('--nfeat', type=int, default=1024, help='Dimension of embedding layer') # set by Julian from 2048
     parser.add_argument('--hidden', default=256, type=int)
     parser.add_argument('--output', default=128, type=int)
     parser.add_argument('--n_heads', default=4, type=int)
