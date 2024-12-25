@@ -62,8 +62,8 @@ def get_batched_data(data, all_data):
     return data
 
 
-MAX_SIZE = 625
-MAX_EDGE_CHUNK = 10_000_000
+MAX_SIZE = 100
+MAX_EDGE_CHUNK = 1_000_000
 def get_mask(edge_index, nodes, ind):
     node_mask_list = []
     
