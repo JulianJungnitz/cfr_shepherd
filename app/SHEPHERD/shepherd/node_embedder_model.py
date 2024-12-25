@@ -34,8 +34,8 @@ class NodeEmbeder(pl.LightningModule):
         self.save_hyperparameters("hp_dict", ignore=["spl_mat"])
 
         # Data
-        # self.all_data = all_data
-        # self.edge_attr_dict = edge_attr_dict
+        self.all_data = all_data
+        self.edge_attr_dict = edge_attr_dict
 
         print("Size of all_data: ", len(all_data))
         print("Size of edge_attr_dict: ", len(edge_attr_dict))
@@ -63,6 +63,8 @@ class NodeEmbeder(pl.LightningModule):
         self.nhid2 = self.hparams.hp_dict['hidden']
         self.output = self.hparams.hp_dict['output']
         
+        print("Number of Nodes: ", num_nodes)
+        num_nodes = num_nodes // 10
         print("Number of Nodes: ", num_nodes)
         self.node_emb = nn.Embedding(num_nodes, self.nfeat)
         print("Embeddings initialized")
