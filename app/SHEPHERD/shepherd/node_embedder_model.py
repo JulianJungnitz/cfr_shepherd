@@ -166,7 +166,18 @@ class NodeEmbeder(pl.LightningModule):
             et_ids, et_counts = all_edge_types.unique(return_counts=True)
             targets_dict = self.create_target_dict(all_edge_types, et_ids) # indices into all_edge_types for each edge type
             print("Move to GPU: negative sampling")
-            rand_index = torch.tensor(np.vectorize(sample_node_for_et)(all_edge_types.cpu(), targets_dict)).to(device)
+            
+            # rand_index = torch.tensor(np.vectorize(sample_node_for_et)(all_edge_types.cpu(), targets_dict)).to(device)
+            if all_edge_types.numel() == 0:
+                print("No edge types found")
+                rand_index = torch.tensor([], device=device)
+            else:
+                rand_indices = []
+                for et in all_edge_types.cpu().numpy():
+                    rand_indices.append(sample_node_for_et(et, targets_dict))
+
+                rand_index = torch.tensor(rand_indices, device=device)
+
             print("Moved: negative sampling")
 
         if 'index_to_node_features_pos' in data:
