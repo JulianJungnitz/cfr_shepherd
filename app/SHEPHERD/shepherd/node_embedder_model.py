@@ -165,7 +165,7 @@ class NodeEmbeder(pl.LightningModule):
             # get negative targets by shuffling positive targets within each edge type
             et_ids, et_counts = all_edge_types.unique(return_counts=True)
             targets_dict = self.create_target_dict(all_edge_types, et_ids) # indices into all_edge_types for each edge type
-            print("Move to GPU: negative sampling")
+            # print("Move to GPU: negative sampling")
             
             # rand_index = torch.tensor(np.vectorize(sample_node_for_et)(all_edge_types.cpu(), targets_dict)).to(device)
             if all_edge_types.numel() == 0:
@@ -179,7 +179,7 @@ class NodeEmbeder(pl.LightningModule):
                 rand_index = torch.tensor(rand_indices, device=device,)
 
 
-            print("Moved: negative sampling")
+            # print("Moved: negative sampling")
 
         if 'index_to_node_features_pos' in data:
             index_to_node_features_neg = data.index_to_node_features_pos[rand_index] #NOTE: currently possible to get the same node as positive & negative target
@@ -243,15 +243,15 @@ class NodeEmbeder(pl.LightningModule):
 
         if not self.combined_training: 
             ts = time.time()
-            print("try access all_data")
+            # print("try access all_data")
             data = get_batched_data(data, self.all_data) 
-            print("accessed all_data")
+            # print("accessed all_data")
             tm = time.time()
             data = get_edges(data, self.all_data, dataset_type)
             te=time.time()
-        print("Move to GPU: _step - data")
+        # print("Move to GPU: _step - data")
         data = data.to(device)
-        print("Moved: _step - data")
+        # print("Moved: _step - data")
 
         # Get predictions
         t0 = time.time()
