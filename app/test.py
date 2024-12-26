@@ -55,7 +55,11 @@ def add_reverse_edges(file_path: str):
 
 def convert_types(file_path: str):
     print("Converting types")
-    df = pd.read_csv(file_path, sep="\t", header=None)
+    df = pd.read_csv(file_path, sep="\t", header=None, skiprows=1)
+    # remove the line that starts with y_idx
+    print("length: ", len(df))
+    df = df[df[0] != "y_idx"]
+    print("length: ", len(df))
     print("file read")
     pd.to_numeric(df[0], errors='raise')
     print("converted 0")
@@ -63,6 +67,14 @@ def convert_types(file_path: str):
     print("converted 1")
     df.to_csv(file_path + "_conv.txt", sep="\t", header=False, index=False)
 
+def add_headers(file_path: str):
+    # x_idx	y_idx	full_relation	mask
+    headers = ["x_idx", "y_idx", "full_relation", "mask"]
+    df = pd.read_csv(file_path, sep="\t", header=None)
+    df.columns = headers
+    df.to_csv(file_path, sep="\t", header=True, index=False)
+
 if __name__ == "__main__":
-    convert_types("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask_rev.txt")
+    add_headers("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
+    # convert_types("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask_rev.txt")
     # get_relations_of_node("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/KG_edgelist_mask.txt")
