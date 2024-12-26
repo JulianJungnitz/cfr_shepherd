@@ -32,7 +32,7 @@ def get_pretrain_hparams(args, combined=False):
                'num_workers': 4,
                'batch_size': 128, # reduced by Julian from 512
                'inference_batch_size': 64,
-               'neighbor_sampler_sizes': [5, 5, 5], # reduced by Julian from [15, 10, 5]
+               'neighbor_sampler_sizes': [15, 10, 5], # reduced by Julian from [15, 10, 5]
                'max_epochs': 200,
                'gradclip': 1.0,
                'lr_factor': 0.01,
