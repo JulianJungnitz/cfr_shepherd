@@ -99,6 +99,7 @@ def run_shepherd_preprocessing(config):
 def run_pretraining(config):
     print("Running shepherd pretraining")
     dir = utils.SHEPHERD_DIR
+    save_dir = utils.SCRATCH_DIR + "/pretrain"
     command = [
         "python",
         dir + "/shepherd/pretrain.py",
@@ -107,7 +108,7 @@ def run_pretraining(config):
         "--node_map",
         "KG_node_map.txt",
         "--save_dir",
-       "checkpoints/",
+        save_dir,
     ]
     utils.run_subprocess(command)
 
