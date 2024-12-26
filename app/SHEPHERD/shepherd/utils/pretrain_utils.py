@@ -95,15 +95,15 @@ def get_indices_into_edge_index(edge_index, source_nodes, target_nodes):
     source_node_mask = get_mask(edge_index, source_nodes, ind = 0)
     target_node_mask = get_mask(edge_index, target_nodes, ind = 1)
 
-    print("\n=== EDGE LIST TYPES DEBUG ===")
-    print(f"source_node_mask.shape: {source_node_mask.shape}")
-    print(f"target_node_mask.shape: {target_node_mask.shape}")
+    # print("\n=== EDGE LIST TYPES DEBUG ===")
+    # print(f"source_node_mask.shape: {source_node_mask.shape}")
+    # print(f"target_node_mask.shape: {target_node_mask.shape}")
     # Show first few rows if not too large
-    print(f"source_node_mask (head):\n{source_node_mask[:10]}")
-    print(f"target_node_mask (head):\n{target_node_mask[:10]}")
-    print(f"edge_index (head):\n{edge_index[:, :10]}")
-    print(f"edge_index shape: {edge_index.shape}")
-    print(f"source_nodes.shape: {source_nodes.shape}, target_nodes.shape: {target_nodes.shape}\n")
+    # print(f"source_node_mask (head):\n{source_node_mask[:10]}")
+    # print(f"target_node_mask (head):\n{target_node_mask[:10]}")
+    # print(f"edge_index (head):\n{edge_index[:, :10]}")
+    # print(f"edge_index shape: {edge_index.shape}")
+    # print(f"source_nodes.shape: {source_nodes.shape}, target_nodes.shape: {target_nodes.shape}\n")
 
     # Merge both to see which indices appear for both source and target
     vals_pos, counts_pos = torch.unique(
@@ -114,14 +114,14 @@ def get_indices_into_edge_index(edge_index, source_nodes, target_nodes):
 
     if len(vals_pos) == 0:
         print("No common rows in source_node_mask and target_node_mask.")
-    else:
-        print("vals_pos (head):\n", vals_pos[:10])
-        print("counts_pos (head):\n", counts_pos[:10])
+    # else:
+        # print("vals_pos (head):\n", vals_pos[:10])
+        # print("counts_pos (head):\n", counts_pos[:10])
 
     # Only rows with counts>1 appear in both source and target
-    vals_pos_1 = vals_pos[counts_pos > 1][:,1]
-    vals_pos_0 = vals_pos[counts_pos > 1][:,0]
-    print(f"Overlap count: {len(vals_pos_1)}, {len(vals_pos_0)}\n")
+    # vals_pos_1 = vals_pos[counts_pos > 1][:,1]
+    # vals_pos_0 = vals_pos[counts_pos > 1][:,0]
+    # print(f"Overlap count: {len(vals_pos_1)}, {len(vals_pos_0)}\n")
 
 
     
