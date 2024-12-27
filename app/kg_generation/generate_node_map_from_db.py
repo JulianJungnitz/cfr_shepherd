@@ -14,12 +14,26 @@ import utils as utils
 #    'Gene', 'Transcript', 'Chromosome', 'Protein', 'Peptide', 'Modified_protein',
 #    'Complex', 'Known_variant', 'Clinically_relevant_variant',
 #    'Functional_region', 'Metabolite', 'Pathway'],
-   
+#   '*'
+# );
+#These node types are removed: ["Clinical_variable", "Experimental_factor","Publication","GWAS_study","Project","Subject","Biological_sample"]
+# Stil contains 12361023 nodes
+
+# Reduced:
+# CALL gds.graph.project(
+#   'hauner_projection_reduced',
+#   ['Biological_process', 'Tissue', 'Cellular_component', 
+#    'Disease', 'Phenotype', 'Molecular_function', 'Modification', 
+#    'Gene', 'Transcript', 'Chromosome', 'Protein', 'Peptide', 'Modified_protein',
+#    'Complex', 'Clinically_relevant_variant',
+#    'Functional_region', 'Metabolite', 'Pathway'],
 #   '*'
 # );
 
-#These node types are removed: ["Clinical_variable", "Experimental_factor","Publication","GWAS_study","Project","Subject","Biological_sample"]
-# Stil contains 12361023 nodes
+# Reduced further: removed Known_variant
+# Contains now 1730670 nodes
+
+
 
 # To write the component id: 
 # CALL gds.wcc.write('hauner_projection_full_shepherd', {
@@ -40,6 +54,10 @@ import utils as utils
 # WITH n.wccComponentId AS cId, count(*) AS size
 # RETURN cId AS componentId, size
 # ORDER BY size DESC limit 10
+
+
+# to delete a projection:
+# CALL gds.graph.drop('hauner_projection_full_shepherd')
 
 # ------------------------------------------------
 # ------------------------------------------------
@@ -82,7 +100,7 @@ def export_node_map():
         for skip in range(0, total_count, batch_size):
             query = f"""
                 MATCH (n)
-                    where n.wccComponentId = 0
+                    where n.wccComponentId = 5
                 RETURN
                     id(n) AS node_id,
                     Labels(n)[0] AS node_type,

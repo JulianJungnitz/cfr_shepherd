@@ -34,9 +34,9 @@ def export_edge_list():
     driver = utils.connect_to_neo4j()
     node_ids = list(node_id_to_idx.keys())
     total_nodes = len(node_ids)
-    print(f"Found {total_nodes} nodes with wccComponentId=0")
+    print(f"Found {total_nodes} nodes in nodes map")
 
-    file_name = "KG_edge_list_mask.txt"
+    file_name = "KG_edgelist_mask.txt"
     file_exists = os.path.exists(file_name)
     mode = "a" if file_exists else "w"
 
