@@ -29,8 +29,8 @@ def get_pretrain_hparams(args, combined=False):
                'negative_sampler_approach': 'by_edge_type',
                'filter_edges': True,
                'n_gpus': 1,
-               'num_workers': 4,
-               'batch_size': 128, # reduced by Julian from 512
+               'num_workers': 1,
+               'batch_size': 512, # reduced by Julian from 512
                'inference_batch_size': 64,
                'neighbor_sampler_sizes': [15, 10, 5], # reduced by Julian from [15, 10, 5]
                'max_epochs': 400,
