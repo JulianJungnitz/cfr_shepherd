@@ -55,17 +55,16 @@ def add_reverse_edges(file_path: str):
 
 def convert_types(file_path: str):
     print("Converting types")
-    df = pd.read_csv(file_path, sep="\t", header=None, skiprows=1)
-    # remove the line that starts with y_idx
+    df = pd.read_csv(file_path, sep="\t", header=0)
     print("length: ", len(df))
-    df = df[df[0] != "y_idx"]
+    df = df[df["x_idx"] != "y_idx"]
     print("length: ", len(df))
     print("file read")
-    pd.to_numeric(df[0], errors='raise')
-    print("converted 0")
-    pd.to_numeric(df[1], errors='raise')
-    print("converted 1")
-    df.to_csv(file_path + "_conv.txt", sep="\t", header=False, index=False)
+    df["x_idx"] = pd.to_numeric(df["x_idx"], errors='raise')
+    print("converted x_idx")
+    df["y_idx"] = pd.to_numeric(df["y_idx"], errors='raise')
+    print("converted y_idx")
+    df.to_csv(file_path + "_conv.txt", sep="\t", header=True, index=False)
 
 def add_headers(file_path: str):
     # x_idx	y_idx	full_relation	mask
