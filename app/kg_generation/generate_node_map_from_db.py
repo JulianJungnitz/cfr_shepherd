@@ -22,25 +22,23 @@ import utils as utils
 # Reduced:
 # CALL gds.graph.project(
 #   'hauner_projection_reduced',
-#   ['Biological_process', 'Tissue', 'Cellular_component', 
-#    'Disease', 'Phenotype', 'Molecular_function', 'Modification', 
-#    'Gene', 'Transcript', 'Chromosome', 'Protein', 'Peptide', 'Modified_protein',
-#    'Complex', 'Clinically_relevant_variant',
-#    'Functional_region', 'Metabolite', 'Pathway'],
+#   ['Biological_process', 'Cellular_component', 
+#    'Disease', 'Phenotype', 'Molecular_function', 
+#    'Gene', 'Functional_region', 'Pathway', 'Protein'],
 #   '*'
 # );
 
-# Reduced further: removed Known_variant
-# Contains now 1730670 nodes
-
-
+# Reduced to the same components as in the shepherd paper + Proteins
 
 # To write the component id: 
-# CALL gds.wcc.write('hauner_projection_full_shepherd', {
+# CALL gds.wcc.write('hauner_projection_reduced', {
 #   writeProperty: 'wccComponentId'
 # })
 # YIELD nodePropertiesWritten, componentCount
 # RETURN nodePropertiesWritten, componentCount;
+
+# To remove all pathways from the source SMPDB:
+# MATCH (n:Pathway) WHERE n.source = "SMPDB" Return n REMOVE n.wccComponentId
 
 # To clear the component id:
 # CALL apoc.periodic.iterate(
@@ -58,6 +56,12 @@ import utils as utils
 
 # to delete a projection:
 # CALL gds.graph.drop('hauner_projection_full_shepherd')
+
+
+# triadic closure between phenotypes and Genes via disease:
+# MATCH (p:Phenotype)-[]->(d:Disease)<-[]-(g:Gene)
+# MERGE (p)-[r:LINKED_VIA_D_TO]->(g)
+# RETURN p, g, r
 
 # ------------------------------------------------
 # ------------------------------------------------
@@ -100,7 +104,7 @@ def export_node_map():
         for skip in range(0, total_count, batch_size):
             query = f"""
                 MATCH (n)
-                    where n.wccComponentId = 5
+                    where n.wccComponentId = 0
                 RETURN
                     id(n) AS node_id,
                     Labels(n)[0] AS node_type,
@@ -126,3 +130,4 @@ def export_node_map():
 
 if __name__ == "__main__":
     export_node_map()
+# %%
