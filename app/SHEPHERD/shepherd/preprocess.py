@@ -199,7 +199,7 @@ def preprocess_graph(args):
           'pathway;pathway_pathway_rev;pathway'
     ]
 
-    is_shepherd = project_config.KG_DIR.contains("8.9.21_kg")
+    is_shepherd = "8.9.21_kg" in project_config.KG_DIR.name
     print("Using shepherd graph edgelist" if is_shepherd else "Using hauner graph edgelist")
     edge_attr_list = edge_attr_list_shepherd if is_shepherd else edge_attr_list_hauner
 
