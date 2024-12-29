@@ -83,6 +83,8 @@ def train(args, hparams):
     if args.resume != "":
         if ":" in args.resume: # colons are not allowed in ID/resume name
             resume_id = "_".join(args.resume.split(":"))
+        else:
+            resume_id = "resume_job_no_id"
         run_name = args.resume
 
         wandb_logger = WandbLogger(run_name, project=hparams["wandb_project_name"], entity=hparams["wandb_entity"], save_dir=hparams['wandb_save_dir'], id=resume_id, resume=resume_id)
