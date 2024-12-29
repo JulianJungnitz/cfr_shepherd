@@ -20,6 +20,7 @@ def get_pretrain_hparams(args, combined=False):
                'wd': args.wd if not combined else 5e-4,
                'dropout': args.dropout if not combined else 0.2,
                'lr': args.lr if not combined else 0.0001,
+               "graph_shema": "shepherd",
 
                # Fixed parameters
                'decoder_type': 'bilinear',
