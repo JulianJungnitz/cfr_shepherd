@@ -110,7 +110,7 @@ def run_pretraining(config):
         "--save_dir",
         save_dir,
         "--resume",
-        "resume_hauner_pretrain",
+        "resume_hauner_checkpoint_215",
         "--best_ckpt",
         "23:54:24_run_epoch=215.ckpt",
     ]
