@@ -34,7 +34,7 @@ def get_pretrain_hparams(args, combined=False):
                'batch_size': 512, # reduced by Julian from 512
                'inference_batch_size': 64,
                'neighbor_sampler_sizes': [15, 10, 5], # reduced by Julian from [15, 10, 5]
-               'max_epochs': 200,
+               'max_epochs': 1000,
                'gradclip': 1.0,
                'lr_factor': 0.01,
                'lr_patience': 1000,
@@ -43,7 +43,7 @@ def get_pretrain_hparams(args, combined=False):
                'lr_cooldown': 0,
                'min_lr': 0,
                'eps': 1e-8,
-               'seed': 1,
+               'seed': 33,
                'profiler': None,
                'wandb_save_dir': project_config.PROJECT_DIR / 'wandb' / 'preprocess',
                
