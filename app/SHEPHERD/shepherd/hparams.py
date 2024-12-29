@@ -13,7 +13,7 @@ def get_pretrain_hparams(args, combined=False):
     hparams = {
                # Tunable parameters
                'nfeat': 512, # Set by Julian
-                'nfeat': args.nfeat if not combined else 4096,
+                # 'nfeat': args.nfeat if not combined else 4096,
                'hidden': args.hidden if not combined else 256,
                'output': args.output if not combined else 128,
                'n_heads': args.n_heads if not combined else 2,

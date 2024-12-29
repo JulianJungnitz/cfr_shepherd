@@ -103,11 +103,8 @@ class NeighborSampler(torch.utils.data.DataLoader):
                  transform: Callable = None,
                  do_filter_edges: bool = True, 
                  **kwargs):
-        print("NeighborSampler init")
         edge_index = edge_index.to('cpu')
-        print("NeighborSampler edge_index works")
         sample_edge_index = sample_edge_index.to('cpu')
-        print("NeighborSampler sample_edge_index works")
 
         # add self loops
         sample_edge_index, _ = add_self_loops(sample_edge_index)
