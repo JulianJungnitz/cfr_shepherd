@@ -109,6 +109,10 @@ def run_pretraining(config):
         "KG_node_map.txt",
         "--save_dir",
         save_dir,
+        "--resume",
+        "true",
+        "--best_ckpt",
+        "pretrain.ckpt",
     ]
     utils.run_subprocess(command)
 
