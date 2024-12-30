@@ -44,7 +44,7 @@ def get_pretrain_hparams(args, combined=False):
                'lr_cooldown': 0,
                'min_lr': 0,
                'eps': 1e-8,
-               'seed': 33,
+               'seed': 1,
                'profiler': None,
                'wandb_save_dir': project_config.PROJECT_DIR / 'wandb' / 'preprocess',
                
