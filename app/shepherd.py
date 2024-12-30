@@ -101,7 +101,7 @@ def run_pretraining(config):
     dir = utils.SHEPHERD_DIR
     save_dir = utils.SCRATCH_DIR + "/pretrain"
 
-    USE_HAUNER_GRAPH = config["USE_HAUNER_GRAPH"]
+    USE_HAUNER_GRAPH = config["shepherd"]["USE_HAUNER_GRAPH"]
     graph_shema = "hauner" if USE_HAUNER_GRAPH else "primeKG"
     command = [
         "python",
