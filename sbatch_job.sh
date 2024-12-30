@@ -6,11 +6,11 @@
 #SBATCH -e /work/home/jj56rivo/cfr_shepherd/out/e_%j.txt
 #SBATCH -o /work/home/jj56rivo/cfr_shepherd/out/o_%j.txt
 
-#SBATCH -n 1
+#SBATCH -n 4
 #SBATCH --mem-per-cpu=200G
 #SBATCH --time=12:00:00
 #SBATCH --cpus-per-task=1
-#SBATCH --gres=gpu:v100
+#SBATCH --gres=gpu:v100:2
 
 
 

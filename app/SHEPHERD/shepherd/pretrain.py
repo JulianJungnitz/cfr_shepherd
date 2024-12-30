@@ -112,8 +112,6 @@ def train(args, hparams):
         limit_train_batches = 1.0
         limit_val_batches = 1.0
 
-    # log hparams to wandb
-    wandb_logger.experiment.config.update(hparams)
 
     trainer = pl.Trainer(gpus=hparams['n_gpus'], logger=wandb_logger, 
                          max_epochs=hparams['max_epochs'], 
