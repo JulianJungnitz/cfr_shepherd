@@ -19,7 +19,8 @@ def get_pretrain_hparams(args, combined=False):
                'n_heads': args.n_heads if not combined else 2,
                'wd': args.wd if not combined else 5e-4,
                'dropout': args.dropout if not combined else 0.2,
-               'lr': args.lr if not combined else 0.0001,
+            #    'lr': args.lr if not combined else 0.0001,
+                'lr': 0.001,
                "graph_shema": "shepherd",
 
                # Fixed parameters
@@ -34,7 +35,7 @@ def get_pretrain_hparams(args, combined=False):
                'batch_size': 512, # reduced by Julian from 512
                'inference_batch_size': 64,
                'neighbor_sampler_sizes': [15, 10, 5], # reduced by Julian from [15, 10, 5]
-               'max_epochs': 1000,
+               'max_epochs': 200,
                'gradclip': 1.0,
                'lr_factor': 0.01,
                'lr_patience': 1000,
