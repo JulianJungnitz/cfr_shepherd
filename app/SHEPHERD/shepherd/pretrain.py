@@ -41,6 +41,7 @@ def parse_args():
     parser.add_argument("--edgelist", type=str, default=None, help="File with edge list")
     parser.add_argument("--node_map", type=str, default=None, help="File with node list")
     parser.add_argument('--save_dir', type=str, default=None, help='Directory for saving files')
+    parser.add_argument('--graph_shema', type=str, default=None, help='Graph schema')
     
     # Tunable parameters
     parser.add_argument('--nfeat', type=int, default=2048, help='Dimension of embedding layer') 
@@ -58,6 +59,7 @@ def parse_args():
     
     # Output
     parser.add_argument('--save_embeddings', action='store_true')
+
 
     args = parser.parse_args()
     return args
@@ -107,8 +109,11 @@ def train(args, hparams):
         limit_val_batches = 1.0 
         hparams['max_epochs'] = 3
     else:
-        limit_train_batches = 1
-        limit_val_batches = 1
+        limit_train_batches = 1.0
+        limit_val_batches = 1.0
+
+    # log hparams to wandb
+    wandb_logger.experiment.config.update(hparams)
 
     trainer = pl.Trainer(gpus=hparams['n_gpus'], logger=wandb_logger, 
                          max_epochs=hparams['max_epochs'], 
@@ -126,6 +131,7 @@ def train(args, hparams):
     
     # Test
     trainer.test(ckpt_path='best', test_dataloaders=test_dataloader)
+
 
 @torch.no_grad()
 def save_embeddings(args, hparams):

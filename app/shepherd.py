@@ -100,6 +100,9 @@ def run_pretraining(config):
     print("Running shepherd pretraining")
     dir = utils.SHEPHERD_DIR
     save_dir = utils.SCRATCH_DIR + "/pretrain"
+
+    USE_HAUNER_GRAPH = config["USE_HAUNER_GRAPH"]
+    graph_shema = "hauner" if USE_HAUNER_GRAPH else "primeKG"
     command = [
         "python",
         dir + "/shepherd/pretrain.py",
@@ -109,6 +112,9 @@ def run_pretraining(config):
         "KG_node_map.txt",
         "--save_dir",
         save_dir,
+        "--graph_shema", 
+        graph_shema,
+
         # "--resume",
         # "resume_hauner_checkpoint_215",
         # "--best_ckpt",
