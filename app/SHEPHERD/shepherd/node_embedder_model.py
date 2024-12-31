@@ -298,12 +298,13 @@ class NodeEmbeder(pl.LightningModule):
         self._logger(logs)
         return {'loss': loss, 'logs': logs}
 
-    def on_train_epoch_end(self, outputs):     
+    def on_train_epoch_end(self, ):     
         roc_train = []
         ap_train = []
         acc_train = []
         f1_train = []
         total_train_loss = []
+        outputs = self.trainer.callback_metrics
 
         for batch_log in outputs:
             roc_train.append(batch_log['logs']["train/node_roc"])

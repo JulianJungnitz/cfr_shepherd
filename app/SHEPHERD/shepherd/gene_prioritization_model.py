@@ -510,7 +510,8 @@ class CombinedGPAligner(pl.LightningModule):
         if loop_type == 'val':
             self.log(f'curr_epoch', self.current_epoch, prog_bar=False)
 
-    def on_train_epoch_end(self, outputs):
+    def on_train_epoch_end(self, ):
+        outputs = self.trainer.callback_metrics
 
         if self.hparams.hparams['plot_intrain']:
             all_train_nodes, counts = torch.unique(torch.cat([x['train/n_id'] for x in outputs], dim=0), return_counts=True)
