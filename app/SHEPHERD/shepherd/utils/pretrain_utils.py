@@ -58,7 +58,8 @@ def get_batched_data(data, all_data):
     # print(f"edge_index: {all_data.edge_index.device}")
     # print(f"edge_attr: {all_data.edge_attr[adjs[0].e_id].device}")
     # print(f"adj: {adjs[0].device}")
-    data.to(device)
+    adjs.to(device)
+    n_id = n_id.to(device)
     
     adjs = [HeterogeneousEdgeIndex(adj.edge_index, adj.e_id, all_data.edge_attr[adj.e_id], adj.size) for adj in adjs] 
     
