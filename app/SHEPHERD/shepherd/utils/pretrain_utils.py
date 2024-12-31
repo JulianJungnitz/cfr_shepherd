@@ -59,6 +59,12 @@ def get_batched_data(data, all_data):
     # print(f"edge_attr: {all_data.edge_attr[adjs[0].e_id].device}")
     # print(f"adj: {adjs[0].device}")
     # adjs.to(device)
+
+    device = adjs[0].e_id.device
+
+    # Move all_data.edge_attr to the same device
+    all_data.edge_attr = all_data.edge_attr.to(device)
+
     for adj in adjs:
         print(f"adj.edge_index.device: {adj.edge_index.device}")
         print(f"adj.e_id.device: {adj.e_id.device}")
