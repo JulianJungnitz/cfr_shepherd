@@ -63,6 +63,7 @@ def get_batched_data(data, all_data):
         print(f"adj.edge_index.device: {adj.edge_index.device}")
         print(f"adj.e_id.device: {adj.e_id.device}")
         print(f"all_data.edge_attr.device: {all_data.edge_attr.device}")
+        adj.e_id.to("cpu")
 
     print(f"n_id.device: {n_id.device}")
     
