@@ -60,7 +60,7 @@ def get_batched_data(data, all_data):
     # print(f"adj: {adjs[0].device}")
     
     # move all to the same device
-    n_id = n_id.to(all_data.edge_index.device)
+    n_id = n_id.to("cpu")
     
     adjs = [HeterogeneousEdgeIndex(adj.edge_index, adj.e_id, all_data.edge_attr[adj.e_id], adj.size) for adj in adjs] 
     
