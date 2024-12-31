@@ -343,13 +343,17 @@ class NodeEmbeder(pl.LightningModule):
         total_val_loss = []
         print("on_validation_epoch")
 
-        for batch_log in self.trainer.callback_metrics:
-            print(batch_log)
-            roc_val.append(batch_log["val/node_roc"])
-            ap_val.append(batch_log["val/node_ap"])
-            acc_val.append(batch_log["val/node_acc"])
-            f1_val.append(batch_log["val/node_f1"])
-            total_val_loss.append(batch_log["val/node_batch_loss"])
+        for batch_log, value in self.trainer.callback_metrics:
+            print(batch_log, ": ", value)
+            if("val/node_roc" in batch_log):
+                roc_val.append(value)
+            if("val/node_ap" in batch_log):
+                ap_val.append(value)
+            # roc_val.append(batch_log["val/node_roc"])
+            # ap_val.append(batch_log["val/node_ap"])
+            # acc_val.append(batch_log["val/node_acc"])
+            # f1_val.append(batch_log["val/node_f1"])
+            # total_val_loss.append(batch_log["val/node_batch_loss"])
         
         self._logger({"val/node_total_loss": torch.mean(torch.Tensor(total_val_loss)), 
                       "val/node_total_roc": np.mean(roc_val), 
