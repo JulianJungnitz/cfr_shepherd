@@ -114,10 +114,10 @@ def run_pretraining(config):
         save_dir,
         "--graph_shema", 
         graph_shema,
-        "--resume",
-        "resume_best_full_epoch_3",
-        "--best_ckpt",
-        "best_full_epoch_3.ckpt",
+        # "--resume",
+        # "resume_best_full_epoch_3",
+        # "--best_ckpt",
+        # "best_full_epoch_3.ckpt",
     ]
     utils.run_subprocess(command)
 

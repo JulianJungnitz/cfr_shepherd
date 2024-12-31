@@ -128,8 +128,12 @@ class NodeEmbeder(pl.LightningModule):
             
             # Update node embeddings
             x_target = x[:size[1]]  # Target nodes are always placed first. 
+            
+            print("Type: ", type(edge_index))
+            print("Edge Index size: ", edge_index.size)
+            print("Edge Index (E_i) size: ", edge_index.edge_index.size())
 
-            x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index, return_attention_weights=True)
+            x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index.edge_index, return_attention_weights=True)
 
             edge_i = edge_i.detach().cpu()
             alpha = alpha.detach().cpu()
@@ -294,7 +298,7 @@ class NodeEmbeder(pl.LightningModule):
         self._logger(logs)
         return {'loss': loss, 'logs': logs}
 
-    def training_epoch_end(self, outputs):     
+    def on_train_epoch_end(self, outputs):     
         roc_train = []
         ap_train = []
         acc_train = []
@@ -330,7 +334,7 @@ class NodeEmbeder(pl.LightningModule):
         self._logger(logs)
         return logs
 
-    def validation_epoch_end(self, outputs):
+    def on_validation_epoch_end(self, outputs):
         roc_val = []
         ap_val = []
         acc_val = []

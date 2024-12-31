@@ -13,6 +13,7 @@ from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Sigmoid
 from torch_geometric.data import Dataset, NeighborSampler, Data
+from torch_geometric.loader.neighbor_sampler import EdgeIndex
 
 # Sci-kit Learn
 from sklearn.metrics import roc_auc_score, average_precision_score, accuracy_score, f1_score, roc_curve, precision_recall_curve
@@ -54,7 +55,10 @@ class HeterogeneousEdgeIndex(NamedTuple): #adopted from NeighborSampler code in 
 
 def get_batched_data(data, all_data):
     batch_size, n_id, adjs = data
-    adjs = [HeterogeneousEdgeIndex(adj.edge_index, adj.e_id, all_data.edge_attr[adj.e_id], adj.size) for adj in adjs] 
+    adjs = [
+    HeterogeneousEdgeIndex(adj, adj.e_id, all_data.edge_attr[adj.e_id], adj.size)
+    for adj in adjs
+]
     data = Data(adjs = adjs, 
                 batch_size = batch_size,
                 n_id = n_id, 

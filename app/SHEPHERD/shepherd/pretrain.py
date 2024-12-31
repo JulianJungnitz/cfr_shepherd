@@ -18,8 +18,8 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 
 # Pytorch Geo
-from torch_geometric.data.sampler import NeighborSampler as PyGeoNeighborSampler
-from torch_geometric.data import Data, DataLoader
+from torch_geometric.loader.neighbor_sampler import NeighborSampler as PyGeoNeighborSampler
+from torch_geometric.loader import  DataLoader
 
 # W&B
 import wandb
@@ -113,7 +113,7 @@ def train(args, hparams):
         limit_val_batches = 1.0
 
 
-    trainer = pl.Trainer(gpus=hparams['n_gpus'], logger=wandb_logger, 
+    trainer = pl.Trainer(accelerator="auto", logger=wandb_logger, 
                          max_epochs=hparams['max_epochs'], 
                          callbacks=[checkpoint_callback, lr_monitor], 
                          gradient_clip_val=hparams['gradclip'],
@@ -147,7 +147,7 @@ def save_embeddings(args, hparams):
                                             num_nodes=len(nodes["node_idx"].unique()), combined_training=False) 
    
     dataloader = DataLoader([all_data], batch_size=1)
-    trainer = pl.Trainer(gpus=0, 
+    trainer = pl.Trainer(accelerator="auto",
                         gradient_clip_val=hparams['gradclip']
                     ) 
     embeddings = trainer.predict(model, dataloaders=dataloader)  

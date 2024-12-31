@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch_sparse import SparseTensor
 from torch_cluster import random_walk
-from torch_geometric.data.sampler import EdgeIndex, Adj
+from torch_geometric.loader.neighbor_sampler import EdgeIndex,Adj
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset
 from torch_geometric.utils import add_self_loops, add_remaining_self_loops
@@ -220,7 +220,15 @@ class NeighborSampler(torch.utils.data.DataLoader):
 
                 if self.do_filter_edges and self.dataset_type == 'train':
                     edge_index, e_id = self.filter_edges(edge_index, e_id, source_batch, target_batch)
+                
+                # print types of edge_index and e_id and size
+                print("\n=== EDGE LIST TYPES DEBUG ===")
+                print("edge_index:", edge_index.size())
+                print("e_id:", e_id.size())
+                print("size:", size)
+
                 adjs.append(EdgeIndex(edge_index, e_id, size))
+
 
         adjs = adjs[0] if len(adjs) == 1 else adjs[::-1]
         out = (batch_size, n_id, adjs)
