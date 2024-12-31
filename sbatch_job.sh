@@ -6,7 +6,7 @@
 #SBATCH -e /work/home/jj56rivo/cfr_shepherd/out/e_%j.txt
 #SBATCH -o /work/home/jj56rivo/cfr_shepherd/out/o_%j.txt
 
-#SBATCH -n 16
+#SBATCH -n 1
 #SBATCH --mem-per-cpu=200G
 #SBATCH --time=00:30:00
 #SBATCH --cpus-per-task=1
