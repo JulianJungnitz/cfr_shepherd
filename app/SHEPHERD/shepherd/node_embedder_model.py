@@ -340,7 +340,7 @@ class NodeEmbeder(pl.LightningModule):
         acc_val = []
         f1_val = []
         total_val_loss = []
-        print()
+        print("on_validation_epoch")
 
         for batch_log in self.trainer.callback_metrics:
             print(batch_log)
