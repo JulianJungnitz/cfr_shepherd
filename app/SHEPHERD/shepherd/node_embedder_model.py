@@ -133,7 +133,7 @@ class NodeEmbeder(pl.LightningModule):
             # print("Edge Index size: ", edge_index.size)
             # print("Edge Index (E_i) size: ", edge_index.edge_index.size())
 
-            x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index.edge_index, return_attention_weights=True)
+            x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index, return_attention_weights=True)
 
             edge_i = edge_i.detach().cpu()
             alpha = alpha.detach().cpu()
