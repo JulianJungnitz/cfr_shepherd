@@ -374,17 +374,17 @@ class NodeEmbeder(pl.LightningModule):
         self._logger(logs)
         return logs
 
-    def test_epoch_end(self, outputs):
+    def on_test_epoch_end(self, ):
         roc = []
         ap = []
         acc = []
         f1 = []
 
-        for batch_log in outputs:
-            roc.append(batch_log["test/node_roc"])
-            ap.append(batch_log["test/node_ap"])
-            acc.append(batch_log["test/node_acc"])
-            f1.append(batch_log["test/node_f1"])
+        outputs = self.trainer.callback_metrics
+        roc.append(outputs["test/node_roc"].cpu().item())
+        ap.append(outputs["test/node_ap"].cpu().item())
+        acc.append(outputs["test/node_acc"].cpu().item())
+        f1.append(outputs["test/node_f1"].cpu().item())
         
         self._logger({"test/node_total_roc": np.mean(roc), 
                       "test/node_total_ap": np.mean(ap), 

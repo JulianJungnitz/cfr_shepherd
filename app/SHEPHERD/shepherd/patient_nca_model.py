@@ -473,7 +473,8 @@ class CombinedPatientNCA(pl.LightningModule):
     def on_validation_epoch_end(self,):
         self._epoch_end(self.trainer.callback_metrics, 'val')
 
-    def test_epoch_end(self, outputs):
+    def on_test_epoch_end(self, ):
+        outputs = self.trainer.callback_metrics
         self._epoch_end(outputs, 'test')
 
     def configure_optimizers(self):
