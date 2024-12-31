@@ -105,8 +105,8 @@ def train(args, hparams):
     wandb_logger.watch(model, log='all')
 
     if hparams['debug']:
-        limit_train_batches = 1
-        limit_val_batches = 1.0 
+        limit_train_batches = 0.1
+        limit_val_batches = 0.1
         hparams['max_epochs'] = 3
     else:
         limit_train_batches = 1.0
