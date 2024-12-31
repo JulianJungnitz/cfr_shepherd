@@ -342,13 +342,12 @@ class NodeEmbeder(pl.LightningModule):
         f1_val = []
         total_val_loss = []
         print("on_validation_epoch")
+        print("Trainer Callback Metrics: ", self.trainer.callback_metrics)
+        print("------------------------------------")
 
-        for batch_log, value in self.trainer.callback_metrics:
-            print(batch_log, ": ", value)
-            if("val/node_roc" in batch_log):
-                roc_val.append(value)
-            if("val/node_ap" in batch_log):
-                ap_val.append(value)
+        for batch_log in self.trainer.callback_metrics:
+            print(batch_log)
+            
             # roc_val.append(batch_log["val/node_roc"])
             # ap_val.append(batch_log["val/node_ap"])
             # acc_val.append(batch_log["val/node_acc"])
