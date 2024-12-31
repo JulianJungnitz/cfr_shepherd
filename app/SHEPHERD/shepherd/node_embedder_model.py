@@ -341,7 +341,7 @@ class NodeEmbeder(pl.LightningModule):
         f1_val = []
         total_val_loss = []
 
-        for batch_log in self.validation_step_outputs:
+        for batch_log in self.trainer.callback_metrics:
             roc_val.append(batch_log["val/node_roc"])
             ap_val.append(batch_log["val/node_ap"])
             acc_val.append(batch_log["val/node_acc"])

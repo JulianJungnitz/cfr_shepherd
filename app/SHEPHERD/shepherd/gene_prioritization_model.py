@@ -534,7 +534,7 @@ class CombinedGPAligner(pl.LightningModule):
         self._epoch_end(outputs, 'train')
 
     def on_validation_epoch_end(self, ):
-        self._epoch_end(self.validation_step_outputs, 'val')
+        self._epoch_end(self.trainer.callback_metrics, 'val')
 
     def test_epoch_end(self, outputs):
         self._epoch_end(outputs, 'test')
