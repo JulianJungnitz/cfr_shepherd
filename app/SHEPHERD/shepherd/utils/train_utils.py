@@ -9,7 +9,7 @@ import pandas as pd
 # Matplotlib
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
-import plotly.express as px
+# import plotly.express as px
 
 ####################################
 # Evaluation utils
@@ -151,14 +151,16 @@ def weighted_sum(matrix: torch.Tensor, attention: torch.Tensor) -> torch.Tensor:
 
 def mrr_vs_percent_overlap(correct_gene_rank, percent_overlap_train):
     df = pd.DataFrame({"Percent of Phenotypes Found in Single Train Patient": percent_overlap_train.squeeze(), "Rank of Correct Gene": correct_gene_rank})
-    fig = px.scatter(df, x = "Percent of Phenotypes Found in Single Train Patient", y = "Rank of Correct Gene")
-    return fig
+    # fig = px.scatter(df, x = "Percent of Phenotypes Found in Single Train Patient", y = "Rank of Correct Gene")
+    # return fig
+    return None
 
 def plot_softmax(softmax):
     softmax = [s.detach().item() for s in softmax]
     df = pd.DataFrame({'softmax':softmax})
-    fig = px.histogram(df, x="softmax")
-    return fig
+    # fig = px.histogram(df, x="softmax")
+    # return fig
+    return None
 
 def fit_umap(embed, labels={}, n_neighbors=15, min_dist=0.1, n_components=2, metric='euclidean', random_state=3):
     embed = embed.detach().cpu()
@@ -168,9 +170,10 @@ def fit_umap(embed, labels={}, n_neighbors=15, min_dist=0.1, n_components=2, met
     data = {"x": embedding[:, 0], "y": embedding[:, 1]}
     if len(labels) > 0: data.update(labels)
     df = pd.DataFrame(data)
-    if len(labels) > 0: fig = px.scatter(df, x = "x", y = "y", color = "Node Type", hover_data=list(labels.keys()))
-    else: fig = px.scatter(df, x = "x", y = "y")
-    return fig
+    # if len(labels) > 0: fig = px.scatter(df, x = "x", y = "y", color = "Node Type", hover_data=list(labels.keys()))
+    # else: fig = px.scatter(df, x = "x", y = "y")
+    # return fig
+    return None
 
 def plot_degree_vs_attention(attn_weights, phenotype_names, single_patient=False):
     if single_patient:
@@ -182,8 +185,9 @@ def plot_degree_vs_attention(attn_weights, phenotype_names, single_patient=False
         data = [(w.item(), p_name[1]) for attn_w, phen_name in data for w, p_name in zip(attn_w, phen_name)] 
     attn_weights, degrees = zip(*data)
     df = pd.DataFrame({"Node Degree": degrees, "Attention Weight": attn_weights})
-    fig = px.scatter(df, x = "Node Degree", y = "Attention Weight")
-    return fig
+    # fig = px.scatter(df, x = "Node Degree", y = "Attention Weight")
+    # return fig
+    return None
 
 def plot_nhops_to_gene_vs_attention(attn_weights, phenotype_names, nhops_g_p, single_patient=False):
     if single_patient:
@@ -196,8 +200,9 @@ def plot_nhops_to_gene_vs_attention(attn_weights, phenotype_names, nhops_g_p, si
         data = [(w.item(), hop) for attn_w, nhops in data for w, hop in zip(attn_w, nhops)] 
     attn_weights, n_hops_g_p = zip(*data)
     df = pd.DataFrame({"Number of Hops to Gene in KG": n_hops_g_p, "Attention Weight": attn_weights})
-    fig = px.scatter(df, x = "Number of Hops to Gene in KG", y = "Attention Weight")
-    return fig
+    # fig = px.scatter(df, x = "Number of Hops to Gene in KG", y = "Attention Weight")
+    # return fig
+    return None
 
 def plot_gene_rank_vs_x_intrain(corr_gene_ranks, in_train):
     if sum(in_train == 1) == 0: 
@@ -213,15 +218,17 @@ def plot_gene_rank_vs_x_intrain(corr_gene_ranks, in_train):
         values_not_in_train = torch.mean(corr_gene_ranks[in_train == 0].float())
         err_not_in_train = torch.std(corr_gene_ranks[in_train == 0].float())
     df = pd.DataFrame({"Average Rank of Correct Gene": [values_in_train, values_not_in_train], "In Train or Not": ["True", "False"], "Error Bars": [err_in_train, err_not_in_train]})
-    fig = px.bar(df, x = "In Train or Not", y = "Average Rank of Correct Gene", error_y = "Error Bars")
-    return fig
+    # fig = px.bar(df, x = "In Train or Not", y = "Average Rank of Correct Gene", error_y = "Error Bars")
+    # return fig
+    return None
 
 def plot_gene_rank_vs_numtrain(corr_gene_ranks, correct_gene_nid, train_corr_gene_nid):
     gene_counts = [train_corr_gene_nid[g] if g in train_corr_gene_nid else 0 for g in list(correct_gene_nid.numpy())]
     data = {"Rank of Correct Gene": corr_gene_ranks.cpu(), "Number of Times Seen": gene_counts, "Gene ID": correct_gene_nid}
     df = pd.DataFrame(data)
-    fig = px.scatter(df, x = "Number of Times Seen", y = "Rank of Correct Gene", hover_data=list(data.keys()))
-    return fig, gene_counts
+    # fig = px.scatter(df, x = "Number of Times Seen", y = "Rank of Correct Gene", hover_data=list(data.keys()))
+    # return fig, gene_counts
+    return None, gene_counts
 
 
 def plot_gene_rank_vs_trainset(corr_gene_ranks, correct_gene_nid, gene_counts): # train_corr_gene_nid has dimension num_gene x num_sets (corr, cand, sparse, target)
@@ -239,15 +246,17 @@ def plot_gene_rank_vs_trainset(corr_gene_ranks, correct_gene_nid, gene_counts): 
         gene_ranks_dict[l_full].append(int(r))
     avg_gene_ranks = {l: np.mean(r) for l, r in gene_ranks_dict.items()}
     df = pd.DataFrame({"Train Set": list(avg_gene_ranks.keys()), "Average Rank of Correct Gene": list(avg_gene_ranks.values())})
-    fig = px.bar(df, x = "Train Set", y = "Average Rank of Correct Gene")
-    return fig
+    # fig = px.bar(df, x = "Train Set", y = "Average Rank of Correct Gene")
+    # return fig
+    return None
 
 
 def plot_gene_rank_vs_fraction_phenotype(corr_gene_ranks, frac_p):
     df = pd.DataFrame({"Rank of Correct Gene": corr_gene_ranks, "Fraction of Phenotypes": frac_p})
     df = df[df["Fraction of Phenotypes"] > -1]
-    fig = px.scatter(df, x = "Fraction of Phenotypes", y = "Rank of Correct Gene")
-    return fig
+    # fig = px.scatter(df, x = "Fraction of Phenotypes", y = "Rank of Correct Gene")
+    # return fig
+    return None
 
 
 def plot_gene_rank_vs_hops(corr_gene_ranks, n_hops):
@@ -262,8 +271,9 @@ def plot_gene_rank_vs_hops(corr_gene_ranks, n_hops):
             mean_hops.append(torch.mean(filtered_hops).item())
             min_hops.append(torch.min(filtered_hops).item())
         
-    df = pd.DataFrame({"Rank of Correct Gene": corr_gene_ranks, "Mean Number of Hops": mean_hops})
-    fig_mean = px.scatter(df, x = "Mean Number of Hops", y = "Rank of Correct Gene")
-    df = pd.DataFrame({"Rank of Correct Gene": corr_gene_ranks, "Min Number of Hops": min_hops})
-    fig_min = px.scatter(df, x = "Min Number of Hops", y = "Rank of Correct Gene")
-    return fig_mean, fig_min
+    # df = pd.DataFrame({"Rank of Correct Gene": corr_gene_ranks, "Mean Number of Hops": mean_hops})
+    # fig_mean = px.scatter(df, x = "Mean Number of Hops", y = "Rank of Correct Gene")
+    # df = pd.DataFrame({"Rank of Correct Gene": corr_gene_ranks, "Min Number of Hops": min_hops})
+    # fig_min = px.scatter(df, x = "Min Number of Hops", y = "Rank of Correct Gene")
+    # return fig_mean, fig_min
+    return None, None
