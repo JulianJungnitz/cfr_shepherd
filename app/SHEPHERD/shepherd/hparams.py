@@ -50,7 +50,7 @@ def get_pretrain_hparams(args, combined=False):
                
                'log_every_n_steps': 10,
                'time': False,
-               'debug': True
+               'debug': False
         }
 
     hparams = add_wandb_hparams(args, hparams)
