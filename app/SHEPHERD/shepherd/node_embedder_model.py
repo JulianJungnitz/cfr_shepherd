@@ -306,11 +306,11 @@ class NodeEmbeder(pl.LightningModule):
         total_train_loss = []
         outputs = self.trainer.callback_metrics
 
-        # roc_train.append(outputs['logs']["train/node_roc"].cpu().item())
-        # ap_train.append(outputs['logs']["train/node_ap"].cpu().item())
-        # acc_train.append(outputs['logs']["train/node_acc"].cpu().item())
-        # f1_train.append(outputs['logs']["train/node_f1"].cpu().item())
-        # total_train_loss.append(outputs['logs']["train/node_batch_loss"].cpu().item())
+        roc_train.append(outputs['logs']["train/node_roc"].cpu().item())
+        ap_train.append(outputs['logs']["train/node_ap"].cpu().item())
+        acc_train.append(outputs['logs']["train/node_acc"].cpu().item())
+        f1_train.append(outputs['logs']["train/node_f1"].cpu().item())
+        total_train_loss.append(outputs['logs']["train/node_batch_loss"].cpu().item())
 
         self._logger({"train/node_total_loss": torch.mean(torch.Tensor(total_train_loss)), 
                       "train/node_total_roc": np.mean(roc_train), 
