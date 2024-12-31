@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -A project02537
-#SBATCH -J cfr_shepherd_install_v3
+#SBATCH -J cfr_shepherd
 #SBATCH --mail-user=julian.jungnitz@web.de
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH -e /work/home/jj56rivo/cfr_shepherd/out/e_%j.txt
