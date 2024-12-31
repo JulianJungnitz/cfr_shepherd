@@ -105,9 +105,9 @@ def train(args, hparams):
     wandb_logger.watch(model, log='all')
 
     if hparams['debug']:
-        limit_train_batches = 0.1
-        limit_val_batches = 0.1
-        hparams['max_epochs'] = 3
+        limit_train_batches = 0.01
+        limit_val_batches = 0.01
+        hparams['max_epochs'] = 1
     else:
         limit_train_batches = 1.0
         limit_val_batches = 1.0
@@ -128,7 +128,7 @@ def train(args, hparams):
     trainer.fit(model, train_dataloader, val_dataloader)
     
     # Test
-    trainer.test(ckpt_path='best', test_dataloaders=test_dataloader)
+    trainer.test(ckpt_path='best', dataloaders=test_dataloader)
 
 
 @torch.no_grad()
