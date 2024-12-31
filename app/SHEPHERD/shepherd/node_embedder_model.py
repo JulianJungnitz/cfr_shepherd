@@ -129,9 +129,9 @@ class NodeEmbeder(pl.LightningModule):
             # Update node embeddings
             x_target = x[:size[1]]  # Target nodes are always placed first. 
             
-            print("Type: ", type(edge_index))
-            print("Edge Index size: ", edge_index.size)
-            print("Edge Index (E_i) size: ", edge_index.edge_index.size())
+            # print("Type: ", type(edge_index))
+            # print("Edge Index size: ", edge_index.size)
+            # print("Edge Index (E_i) size: ", edge_index.edge_index.size())
 
             x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index.edge_index, return_attention_weights=True)
 

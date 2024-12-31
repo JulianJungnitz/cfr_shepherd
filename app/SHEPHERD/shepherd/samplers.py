@@ -222,10 +222,10 @@ class NeighborSampler(torch.utils.data.DataLoader):
                     edge_index, e_id = self.filter_edges(edge_index, e_id, source_batch, target_batch)
                 
                 # print types of edge_index and e_id and size
-                print("\n=== EDGE LIST TYPES DEBUG ===")
-                print("edge_index:", edge_index.size())
-                print("e_id:", e_id.size())
-                print("size:", size)
+                # print("\n=== EDGE LIST TYPES DEBUG ===")
+                # print("edge_index:", edge_index.size())
+                # print("e_id:", e_id.size())
+                # print("size:", size)
 
                 adjs.append(EdgeIndex(edge_index, e_id, size))
 
