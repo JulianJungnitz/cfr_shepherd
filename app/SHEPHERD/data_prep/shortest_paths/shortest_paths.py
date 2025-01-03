@@ -8,10 +8,12 @@ import pandas as pd
 import sys
 #sys.path.insert(0, '..') # add config to path
 sys.path.insert(0, '../..') # add config to path
-import project_config
+sys.path.insert(0, '../../..') # add config to path
+sys.path.insert(0, '../../../..') # add config to path
+from app.SHEPHERD import project_config
 
 # Filenames
-suffix = "_noGO" # ""
+suffix = "" # "_noGO" or ""
 edgelist_f = "KG_edgelist_mask%s.txt" % suffix
 nodemap_f = "KG_node_map%s.txt" % suffix
 spl_mat_all_f = "KG_shortest_path_matrix%s.npy" % suffix
