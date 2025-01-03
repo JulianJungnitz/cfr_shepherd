@@ -74,10 +74,9 @@ print("Finished multiprocessing")
 all_shortest_paths = np.stack(shortest_paths_from_phens)  # shape = (M, N)
 print("Shape of BFS results (pheno->all):", all_shortest_paths.shape)
 
-# Now subset the columns so we only keep distances to phenotype nodes
-# This yields an M x M matrix (phenotype->phenotype)
-all_shortest_paths_to_phens = all_shortest_paths[:, phenotype_ids]
-print("Shape of BFS results (pheno->pheno):", all_shortest_paths_to_phens.shape)
+# Save the transposed matrix
+all_shortest_paths_to_phens = all_shortest_paths.T
+
 
 t1 = time.time()
 print(f"It took {t1 - t0:.4f}s to calculate the phenotype-only shortest paths")
