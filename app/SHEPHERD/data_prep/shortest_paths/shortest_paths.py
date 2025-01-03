@@ -81,11 +81,9 @@ all_shortest_paths_to_phens = all_shortest_paths.T
 t1 = time.time()
 print(f"It took {t1 - t0:.4f}s to calculate the phenotype-only shortest paths")
 
-# Save only the phenotype->phenotype matrix
 with open(project_config.KG_DIR / spl_mat_onlyphenotypes_f, "wb") as f:
     np.save(f, all_shortest_paths_to_phens)
 
-print("Saved shortest path matrix for phenotype->phenotype only!")
 
 
 
