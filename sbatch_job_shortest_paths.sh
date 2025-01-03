@@ -9,7 +9,7 @@
 #SBATCH -n 1
 #SBATCH --mem-per-cpu=200G
 #SBATCH --time=00:30:00
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=96
 #SBATCH --nodelist=mpzd0001
 
 
