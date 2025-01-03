@@ -5,38 +5,40 @@ import time
 import snap
 from tqdm import tqdm
 import pandas as pd
+from functools import partial
 
-import sys
-
-# sys.path.insert(0, '..') # add config to path
-sys.path.insert(0, "../..")  # add config to path
-sys.path.insert(0, "../../..")  # add config to path
-sys.path.insert(0, "../../../..")  # add config to path
+# Extend sys.path for project imports
+sys.path.insert(0, "../..")  
+sys.path.insert(0, "../../..")
+sys.path.insert(0, "../../../..")
 from app.SHEPHERD import project_config
 
 # Filenames
-suffix = ""  # "_noGO" or ""
+suffix = ""  # e.g., "_noGO"
 edgelist_f = "KG_edgelist_mask%s.txt" % suffix
 nodemap_f = "KG_node_map%s.txt" % suffix
-spl_mat_all_f = "KG_shortest_path_matrix%s.npy" % suffix
-spl_mat_onlyphenotypes_f = "KG_shortest_path_matrix_onlyphenotypes%s.npy" % suffix
+spl_mat_all_f = "KG_shortest_path_matrix_chunked%s.npy" % suffix
+spl_mat_onlyphenotypes_f = "KG_shortest_path_matrix_onlyphenotypes_chunked%s.npy" % suffix
 
-print("Filenames :")
+print("Filenames:")
 print(edgelist_f)
 print(nodemap_f)
 print(spl_mat_all_f)
 print(spl_mat_onlyphenotypes_f)
-
 print("Starting to calculate shortest paths...")
 
 processes = multiprocessing.cpu_count()
 print("Available processes:", processes)
 
-# INPUT KG FILE
+# Load node map
 node_map = pd.read_csv(project_config.KG_DIR / nodemap_f, sep="\t")
+print("Node map loaded")
+
+# Load the SNAP graph
 snap_graph = snap.LoadEdgeList(
     snap.PUNGraph, str(project_config.KG_DIR / edgelist_f), 0, 1
 )
+print("Graph loaded")
 
 t0 = time.time()
 
@@ -51,44 +53,64 @@ if "noGO" not in edgelist_f:
 print("Node map has the same number of nodes as the graph")
 
 
-def get_shortest_path(node_id):
-    # print("Calculating shortest paths for node", node_id)
-    NIdToDistH = snap.TIntH()
-    path_len = snap.GetShortPath(snap_graph, int(node_id), NIdToDistH)
-    paths = np.zeros((n_nodes))
-    for dest_node in NIdToDistH:
-        paths[dest_node] = NIdToDistH[dest_node]
-    return paths
+def get_shortest_paths_for_chunk(node_chunk, snap_graph, n_nodes):
+    """Compute shortest paths for all node_ids in node_chunk."""
+    chunk_results = []
+    for node_id in node_chunk:
+        NIdToDistH = snap.TIntH()
+        snap.GetShortPath(snap_graph, int(node_id), NIdToDistH)
+        paths = np.zeros(n_nodes)
+        for dest_node in NIdToDistH:
+            paths[dest_node] = NIdToDistH[dest_node]
+        chunk_results.append(paths)
+    return chunk_results
 
 
-# available processes
+def process_chunk(chunk,  n_nodes):
+    """Wrapper to call get_shortest_paths_for_chunk."""
+    return get_shortest_paths_for_chunk(chunk, snap_graph, n_nodes)
 
+
+# Chunk the node IDs to reduce overhead
+chunk_size = 100
+node_chunks = [node_ids[i : i + chunk_size] for i in range(0, len(node_ids), chunk_size)]
+
+all_results = []
+
+# Create a partial function carrying snap_graph and n_nodes
+func = partial(process_chunk,  n_nodes=n_nodes)
+
+# Multiprocessing pool: each worker processes a chunk of node IDs
 with multiprocessing.Pool(processes=processes) as pool:
     print("Starting multiprocessing")
-    shortest_paths = []
-    for result in tqdm(pool.imap_unordered(get_shortest_path, node_ids), total=len(node_ids), desc="Processing Nodes"):
-        shortest_paths.append(result)
-    print("Finished multiprocessing")
-all_shortest_paths = np.stack(shortest_paths)
+    for chunk_output in tqdm(
+        pool.imap_unordered(func, node_chunks),
+        total=len(node_chunks),
+        desc="Processing Chunks"
+    ):
+        all_results.extend(chunk_output)
+
+all_shortest_paths = np.stack(all_results)
 print(all_shortest_paths.shape)
 t1 = time.time()
-print(f"It took {t1-t0:0.4f}s to calculate the shortest paths")
+print(f"It took {t1 - t0:0.4f}s to calculate the shortest paths")
 
-# save all shortest paths (requires no missing nodes)
+# Save all shortest paths (requires no missing nodes)
 if "noGO" not in spl_mat_all_f:
     np.save(project_config.KG_DIR / spl_mat_all_f, all_shortest_paths)
     print("Saved all shortest paths")
-# subset to shortest paths from all nodes to phenotypes
+
+# Subset to shortest paths from all nodes to phenotypes
 print("Subsetting to only phenotypes")
 desired_idx = node_map[node_map["node_type"] == "Phenotype"]["node_idx"].tolist()
 print("Desired index found")
 try:
-    print("Len: ", len(desired_idx))
-
+    print("Len:", len(desired_idx))
 except Exception as e:
     print(e)
-    print("Failed to len")
+    print("Failed to get length of desired_idx")
 
 all_shortest_paths_to_phens = all_shortest_paths[:, desired_idx]
 with open(project_config.KG_DIR / spl_mat_onlyphenotypes_f, "wb") as f:
     np.save(f, all_shortest_paths_to_phens)
+print("Saved shortest paths to phenotypes")
