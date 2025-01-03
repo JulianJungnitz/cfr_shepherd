@@ -9,8 +9,8 @@
 #SBATCH -n 1
 #SBATCH --mem-per-cpu=8G
 #SBATCH --time=23:00:00
-#SBATCH --cpus-per-task=92
-#SBATCH -C AVX512
+#SBATCH --cpus-per-task=104
+#SBATCH -C i02
 
 
 echo "Job started"
