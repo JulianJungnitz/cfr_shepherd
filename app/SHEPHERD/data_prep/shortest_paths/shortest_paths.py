@@ -65,7 +65,9 @@ def get_shortest_path(node_id):
 # available processes
 
 with multiprocessing.Pool(processes=processes) as pool:
-    print(f"Using {pool._processes} processes.")
+    print(f"Using {pool._processes} processes.") # write this to file
+    with open(project_config.KG_DIR / "shortest_paths_processes.txt", "w") as f:
+        f.write(f"Using {pool._processes} processes.")
     print("Starting multiprocessing")
     shortest_paths = []
     for result in tqdm(pool.imap_unordered(get_shortest_path, node_ids), total=len(node_ids), desc="Processing Nodes"):
