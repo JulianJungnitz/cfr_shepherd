@@ -10,7 +10,7 @@
 #SBATCH --mem-per-cpu=200G
 #SBATCH --time=00:30:00
 #SBATCH --cpus-per-task=1
-#SBATCH --nodelist=gaod0001
+#SBATCH --nodelist=mpzd0001
 
 
 echo "Job started"
