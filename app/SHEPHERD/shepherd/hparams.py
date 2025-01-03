@@ -12,7 +12,7 @@ def get_pretrain_hparams(args, combined=False):
     # Default
     hparams = {
                # Tunable parameters
-               'nfeat': 512, # Set by Julian
+               'nfeat': 2048, # Set by Julian
                 # 'nfeat': args.nfeat if not combined else 4096,
                'hidden': args.hidden if not combined else 256,
                'output': args.output if not combined else 128,
@@ -20,7 +20,8 @@ def get_pretrain_hparams(args, combined=False):
                'wd': args.wd if not combined else 5e-4,
                'dropout': args.dropout if not combined else 0.2,
                'lr': args.lr if not combined else 0.0001,
-               "graph_shema": "shepherd",
+                # 'lr': 0.001, # Set by Julian
+               "graph_shema": args.graph_shema,
 
                # Fixed parameters
                'decoder_type': 'bilinear',
@@ -29,12 +30,12 @@ def get_pretrain_hparams(args, combined=False):
                'pred_threshold': 0.5,
                'negative_sampler_approach': 'by_edge_type',
                'filter_edges': True,
-               'n_gpus': 1,
-               'num_workers': 1,
+               'n_gpus': 1, # Set by Julian from 1
+               'num_workers': 1, # Set by Julian from 4
                'batch_size': 512, # reduced by Julian from 512
                'inference_batch_size': 64,
                'neighbor_sampler_sizes': [15, 10, 5], # reduced by Julian from [15, 10, 5]
-               'max_epochs': 400,
+               'max_epochs': 200,
                'gradclip': 1.0,
                'lr_factor': 0.01,
                'lr_patience': 1000,
