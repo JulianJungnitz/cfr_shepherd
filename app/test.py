@@ -87,7 +87,7 @@ def read_spl_matrix(file_path: str):
     print(spl_matrix[:10, :10])
 
 if __name__ == "__main__":
-    read_spl_matrix("work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/8.9.21_kg/KG_shortest_path_matrix_onlyphenotypes.npy")
+    read_spl_matrix("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/KG_shortest_path_matrix_onlyphenotypes.npy")
     # add_reverse_edges("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
     # list_all_relationship_types("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
 
