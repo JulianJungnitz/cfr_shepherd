@@ -21,7 +21,7 @@ nodemap_f = "KG_node_map%s.txt" % suffix
 spl_mat_all_f = "KG_shortest_path_matrix%s.npy" % suffix
 spl_mat_onlyphenotypes_f = "KG_shortest_path_matrix_onlyphenotypes%s.npy" % suffix
 
-print("Filenames:")
+print("Filenames :")
 print(edgelist_f)
 print(nodemap_f)
 print(spl_mat_all_f)

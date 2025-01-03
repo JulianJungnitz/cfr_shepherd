@@ -8,7 +8,7 @@
 
 #SBATCH -n 1
 #SBATCH --mem-per-cpu=200G
-#SBATCH --time=00:30:00
+#SBATCH --time=22:00:00
 #SBATCH --cpus-per-task=1
 
 
@@ -30,7 +30,7 @@ conda activate shepherd
 export PYTHONPATH="/home/jj56rivo/cfr_shepherd:$PYTHONPATH"
 
 
-echo "Memory usage before running predict.py:"
+echo "Memory usage before running the script:"
 free -h
 
 cd ../..
@@ -39,7 +39,7 @@ cd ../..
 # bash app/SHEPHERD/predict_disease_categorization.sh phenotypes
 python app/SHEPHERD/data_prep//shortest_paths/shortest_paths.py 
 
-echo "Memory usage after running predict.py:"
+echo "Memory usage after running the script:"
 free -h
 
 
