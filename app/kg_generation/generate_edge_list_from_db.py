@@ -5,6 +5,7 @@ import random
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import utils as utils
+import pandas as pd
 
 
 
@@ -91,5 +92,20 @@ def export_edge_list():
 
             f.flush()
 
+
+
+def add_reverse_edges(file_path: str):
+    print("Adding reverse edges")
+    df = pd.read_csv(file_path, sep="\t", header=0)
+    df_reverse = df.copy()
+    df_reverse[["x_idx", "y_idx"]] = df_reverse[["y_idx", "x_idx"]]
+    df_reverse["full_relation"] = df_reverse["full_relation"].apply(
+        lambda r: ";".join([r.split(";")[2], r.split(";")[1], r.split(";")[0]]) if len(r.split(";")) == 3 else r
+    )
+    df_combined = pd.concat([df, df_reverse], ignore_index=True)
+    file_base = file_path.rsplit(".", 1)[0]
+    df_combined.to_csv(file_base + "_with_rev.txt", sep="\t", header=True, index=False)
+
 if __name__ == "__main__":
     export_edge_list()
+    add_reverse_edges("KG_edgelist_mask.txt")
