@@ -7,6 +7,7 @@ neo4j_credentials:
 shepherd:
   RUN_PRETRAINING: True
   USE_HAUNER_GRAPH: True
+  USE_SIMULATED_DATA: True
 
   OVERWRITE_PREPROCESSED_DATA: False # If True, the patients data will be pulled from the neo4j database
   LIMIT_SAMPLE_SIZE: False 
@@ -15,7 +16,7 @@ shepherd:
   ONLY_PATIENTS_WITH_PHENOTYPES: True 
   ONLY_PATIENTS_WITH_GENES: True
 
-  CREATE_SPL_MATRIX: False # This is necessary if the algo is run on new data
+  CREATE_SPL_MATRIX: True # This is necessary if the algo is run on new data
 
   # this runs the predictions
   RUN_PATIENTS_LIKE_ME: False
