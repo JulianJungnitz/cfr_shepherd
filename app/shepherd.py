@@ -68,10 +68,11 @@ def predict_disease_categorization(
 
 def run_training_disease_characterization(PATIENTS_AGGR_NODES=None):
     print("Training disease characterization")
+    data_type = "disease_simulated"
     command = [
         "bash",
         utils.SHEPHERD_DIR + "/shepherd/train_disease_characterization.sh",
-        PATIENTS_AGGR_NODES,
+        PATIENTS_AGGR_NODES, data_type
     ]
     utils.run_subprocess(command)
 
