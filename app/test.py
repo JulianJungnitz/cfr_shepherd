@@ -51,6 +51,7 @@ def add_reverse_edges(file_path: str):
     print(df_reverse.shape)
     df = pd.concat([df, df_reverse])
     print(df.shape)
+    file_path = file_path.split(".")[0]
     df.to_csv(file_path + "_with_rev.txt", sep="\t", header=False, index=False)
 
 def convert_types(file_path: str):
@@ -78,8 +79,8 @@ def list_all_relationship_types(file_path: str):
     print(df[2].unique())
 
 if __name__ == "__main__":
-    # add_reverse_edges("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
-    list_all_relationship_types("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
+    add_reverse_edges("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
+    # list_all_relationship_types("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
 
     # add_headers("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
     # convert_types("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask_rev.txt")

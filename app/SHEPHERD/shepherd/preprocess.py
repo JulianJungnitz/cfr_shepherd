@@ -163,48 +163,57 @@ def preprocess_graph(args):
         "Protein;ANNOTATED_IN_PATHWAY;Pathway",
         "Protein;IS_BIOMARKER_OF_DISEASE;Disease",
         "Functional_region;FOUND_IN_PROTEIN;Protein",
-    
     ] 
-    edge_attr_list_shepherd =  [
+    edge_attr_list_shepherd = [
         ## 8.9.21_kg - old shepherd graph
-          'effect/phenotype;phenotype_protein;gene/protein',
-          'gene/protein;phenotype_protein;effect/phenotype',
-          'disease;disease_phenotype_negative;effect/phenotype',
-          'effect/phenotype;disease_phenotype_negative;disease',
-          'disease;disease_phenotype_positive;effect/phenotype',
-          'effect/phenotype;disease_phenotype_positive;disease',
-          'gene/protein;protein_pathway;pathway',
-          'pathway;protein_pathway;gene/protein',
-          'disease;disease_protein;gene/protein',
-          'gene/protein;disease_protein;disease',
-          'gene/protein;protein_molfunc;molecular_function',
-          'molecular_function;protein_molfunc;gene/protein',
-          'gene/protein;protein_cellcomp;cellular_component',
-          'cellular_component;protein_cellcomp;gene/protein',
-          'gene/protein;protein_bioprocess;biological_process',
-          'biological_process;protein_bioprocess;gene/protein',
-          'biological_process;bioprocess_bioprocess;biological_process',
-          'biological_process;bioprocess_bioprocess_rev;biological_process',
-          'molecular_function;molfunc_molfunc;molecular_function',
-          'molecular_function;molfunc_molfunc_rev;molecular_function',
-          'cellular_component;cellcomp_cellcomp;cellular_component',
-          'cellular_component;cellcomp_cellcomp_rev;cellular_component',
-          'effect/phenotype;phenotype_phenotype;effect/phenotype',
-          'effect/phenotype;phenotype_phenotype_rev;effect/phenotype',
-          'gene/protein;protein_protein;gene/protein',
-          'gene/protein;protein_protein_rev;gene/protein',
-          'disease;disease_disease;disease',
-          'disease;disease_disease_rev;disease',
-          'pathway;pathway_pathway;pathway',
-          'pathway;pathway_pathway_rev;pathway'
+        "effect/phenotype;phenotype_protein;gene/protein",
+        "gene/protein;phenotype_protein;effect/phenotype",
+        "disease;disease_phenotype_negative;effect/phenotype",
+        "effect/phenotype;disease_phenotype_negative;disease",
+        "disease;disease_phenotype_positive;effect/phenotype",
+        "effect/phenotype;disease_phenotype_positive;disease",
+        "gene/protein;protein_pathway;pathway",
+        "pathway;protein_pathway;gene/protein",
+        "disease;disease_protein;gene/protein",
+        "gene/protein;disease_protein;disease",
+        "gene/protein;protein_molfunc;molecular_function",
+        "molecular_function;protein_molfunc;gene/protein",
+        "gene/protein;protein_cellcomp;cellular_component",
+        "cellular_component;protein_cellcomp;gene/protein",
+        "gene/protein;protein_bioprocess;biological_process",
+        "biological_process;protein_bioprocess;gene/protein",
+        "biological_process;bioprocess_bioprocess;biological_process",
+        "biological_process;bioprocess_bioprocess_rev;biological_process",
+        "molecular_function;molfunc_molfunc;molecular_function",
+        "molecular_function;molfunc_molfunc_rev;molecular_function",
+        "cellular_component;cellcomp_cellcomp;cellular_component",
+        "cellular_component;cellcomp_cellcomp_rev;cellular_component",
+        "effect/phenotype;phenotype_phenotype;effect/phenotype",
+        "effect/phenotype;phenotype_phenotype_rev;effect/phenotype",
+        "gene/protein;protein_protein;gene/protein",
+        "gene/protein;protein_protein_rev;gene/protein",
+        "disease;disease_disease;disease",
+        "disease;disease_disease_rev;disease",
+        "pathway;pathway_pathway;pathway",
+        "pathway;pathway_pathway_rev;pathway",
     ]
 
     is_shepherd = "8.9.21_kg" in project_config.KG_DIR.name
-    print("Using shepherd graph edgelist" if is_shepherd else "Using hauner graph edgelist")
+    print(
+        "Using shepherd graph edgelist"
+        if is_shepherd
+        else "Using hauner graph edgelist"
+    )
     edge_attr_list = edge_attr_list_shepherd if is_shepherd else edge_attr_list_hauner
 
-
     edge_attr_to_idx_dict = {attr: i for i, attr in enumerate(edge_attr_list)}
+
+    edge_attr_set = set(edge_attr)
+    if not edge_attr_set.issubset(edge_attr_to_idx_dict):
+        raise ValueError(
+            f"Edge attribute set is not a subset of the edge attribute list: {edge_attr_set - set(edge_attr_list)}"
+        )
+
     edge_attr = torch.LongTensor(
         np.vectorize(edge_attr_to_idx_dict.get)(edge_attr.values)
     )
