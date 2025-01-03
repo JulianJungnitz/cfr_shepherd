@@ -84,7 +84,7 @@ import numpy as np
 def read_spl_matrix(file_path: str):
     spl_matrix = np.load(file_path)
     print(spl_matrix.shape)
-    print(spl_matrix[:10, :10])
+    print(spl_matrix[:100, :100])
 
 if __name__ == "__main__":
     read_spl_matrix("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_shortest_path_matrix_onlyphenotypes.npy")
