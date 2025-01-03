@@ -9,7 +9,7 @@
 #SBATCH -n 1
 #SBATCH --mem-per-cpu=8G
 #SBATCH --time=23:00:00
-#SBATCH --cpus-per-task=64
+#SBATCH --cpus-per-task=52
 
 
 echo "Job started"
