@@ -3,6 +3,7 @@ import numpy as np
 import sys
 import time
 import snap
+from tqdm import tqdm
 import pandas as pd
 
 import sys
@@ -51,7 +52,7 @@ print("Node map has the same number of nodes as the graph")
 
 
 def get_shortest_path(node_id):
-    print("Calculating shortest paths for node", node_id)
+    # print("Calculating shortest paths for node", node_id)
     NIdToDistH = snap.TIntH()
     path_len = snap.GetShortPath(snap_graph, int(node_id), NIdToDistH)
     paths = np.zeros((n_nodes))
@@ -64,7 +65,9 @@ def get_shortest_path(node_id):
 
 with multiprocessing.Pool(processes=processes) as pool:
     print("Starting multiprocessing")
-    shortest_paths = pool.map(get_shortest_path, node_ids)
+    shortest_paths = []
+    for result in tqdm(pool.imap_unordered(get_shortest_path, node_ids), total=len(node_ids), desc="Processing Nodes"):
+        shortest_paths.append(result)
     print("Finished multiprocessing")
 all_shortest_paths = np.stack(shortest_paths)
 print(all_shortest_paths.shape)
