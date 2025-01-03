@@ -74,9 +74,18 @@ print(f"It took {t1-t0:0.4f}s to calculate the shortest paths")
 # save all shortest paths (requires no missing nodes)
 if "noGO" not in spl_mat_all_f:
     np.save(project_config.KG_DIR / spl_mat_all_f, all_shortest_paths)
-
+    print("Saved all shortest paths")
 # subset to shortest paths from all nodes to phenotypes
-desired_idx = node_map[node_map["node_type"] == "effect/phenotype"]["node_idx"].tolist()
+print("Subsetting to only phenotypes")
+desired_idx = node_map[node_map["node_type"] == "Phenotype"]["node_idx"].tolist()
+print("Desired index found")
+try:
+    print("Len: ", len(desired_idx))
+
+except Exception as e:
+    print(e)
+    print("Failed to len")
+
 all_shortest_paths_to_phens = all_shortest_paths[:, desired_idx]
 with open(project_config.KG_DIR / spl_mat_onlyphenotypes_f, "wb") as f:
     np.save(f, all_shortest_paths_to_phens)
