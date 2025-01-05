@@ -98,13 +98,16 @@ def move_results_to_output_dir():
 def run_shepherd_preprocessing(config):
     print("Running shepherd preprocessing")
     dir = utils.SHEPHERD_DIR
+    use_simulated_data = config["shepherd"]["USE_SIMULATED_PATIENTS"]
+
     command = [
         "python",
         dir + "/data_prep/preprocess_patients_and_kg.py",
         "-split_dataset",
-        "-simulated_path",
-        dir + "/data/patients/hauner_data/data.txt",
     ]
+    if not use_simulated_data:
+        command.append( "-simulated_path",)
+        command.append(dir + "/data/patients/hauner_data/data.txt",)
     utils.run_subprocess(command)
 
 def run_pretraining(config):
