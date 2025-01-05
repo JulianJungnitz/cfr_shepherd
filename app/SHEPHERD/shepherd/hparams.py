@@ -90,6 +90,7 @@ def get_train_hparams(args):
                'kappa': (1 - args.lmbda) * args.kappa,
                'seed': args.seed,
                'batch_size': args.batch_size,
+               "graph_shema": args.graph_shema,
                
                'augment_genes': False if args.aug_gene_w > 0 else False,
                'n_sim_genes': args.n_sim_genes,
