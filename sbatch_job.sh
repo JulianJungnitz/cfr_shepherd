@@ -25,13 +25,13 @@ set -e
 source /work/home/jj56rivo/miniconda3/etc/profile.d/conda.sh
 # source ~/anaconda3/etc/profile.d/conda.sh
 
-conda activate v4_shepherd
+conda activate v5_shepherd
 # bash install_pyg.sh
 
 
 export PYTHONPATH="/home/jj56rivo/cfr_shepherd:$PYTHONPATH"
 
-conda activate v4_shepherd
+conda activate v5_shepherd
 
 
 echo "Memory usage before running predict.py:"
