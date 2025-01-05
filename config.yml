@@ -5,7 +5,7 @@ neo4j_credentials:
   NEO4J_DB: neo4j
 
 shepherd:
-  RUN_PRETRAINING: True
+  RUN_PRETRAINING: False
   USE_HAUNER_GRAPH: True
   USE_SIMULATED_PATIENTS: True
 
