@@ -235,9 +235,8 @@ def train(args, hparams):
     n_nodes = len(nodes["node_idx"].unique())
     print(f'Number of nodes: {n_nodes}')
     
-    raise("USE hparams for shema type")
-    gene_phen_dis_node_types = ['gene/protein', 'effect/phenotype', 'disease'] if hparams['graph_shema'] == "hauner" else ['gene/protein', 'effect/phenotype', 'disease']
-    gene_phen_dis_node_idx = torch.LongTensor(nodes.loc[nodes['node_type'].isin(['gene/protein', 'effect/phenotype', 'disease']), 'node_idx'].values)
+    gene_phen_dis_node_types = ['Gene', 'Phenotype', 'Disease'] if hparams['graph_shema'] == "hauner" else ['gene/protein', 'effect/phenotype', 'disease']
+    gene_phen_dis_node_idx = torch.LongTensor(nodes.loc[nodes['node_type'].isin(gene_phen_dis_node_types), 'node_idx'].values)
     
     print("Gene/Phenotype/Disease Node Index Len: ", len(gene_phen_dis_node_idx))
 
