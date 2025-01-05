@@ -87,6 +87,44 @@ results = {'edge_metrics/node.Biological_process;HAS_PARENT;Biological_process_t
  'test/node_total_f1': 0.5589882135391235,
  'test/node_total_roc': 0.5700039863586426}
 
+rel_count ={
+  "VARIANT_IS_CLINICALLY_RELEVANT": 169,
+  "DETECTED_IN_PATHOLOGY_SAMPLE": 1697248,
+  "LINKED_VIA_D_TO": 7244703,
+  "ACTS_ON": 988705,
+  "VARIANT_FOUND_IN_GENE": 10638935,
+  "CURATED_INTERACTS_WITH": 299188,
+  "IS_SUBSTRATE_OF": 994,
+  "ASSOCIATED_WITH": 31105535,
+  "TRANSLATED_INTO": 374294,
+  "BELONGS_TO_PROTEIN": 3629058,
+  "PUBLISHED_IN": 3939,
+  "LOCATED_IN": 335339,
+  "ANNOTATED_IN_PATHWAY": 1203809,
+  "HAS_PROTEIN": 40000,
+  "HAS_DAMAGE": 1499,
+  "HAS_PHENOTYPE": 1776,
+  "MENTIONED_IN_PUBLICATION": 111109238,
+  "IS_BIOMARKER_OF_DISEASE": 515,
+  "IS_SUBUNIT_OF": 10968,
+  "STUDIES_TRAIT": 9250,
+  "HAS_MODIFIED_SITE": 21421,
+  "HAS_MODIFICATION": 21407,
+  "HAS_DISEASE": 1611,
+  "VARIANT_FOUND_IN_CHROMOSOME": 10630108,
+  "VARIANT_FOUND_IN_GWAS": 16128,
+  "BELONGS_TO_SUBJECT": 100,
+  "HAS_ENROLLED": 100,
+  "VARIANT_FOUND_IN_PROTEIN": 26807293,
+  "TRANSCRIBED_INTO": 258487,
+  "COMPILED_INTERACTS_WITH": 1956612,
+  "HAS_PARENT": 2731475,
+  "CURATED_AFFECTS_INTERACTION_WITH": 10873,
+  "FOUND_IN_PROTEIN": 204244,
+  "MAPS_TO": 14339,
+  "IS_QCMARKER_IN_TISSUE": 249
+}
+
 
 def analyze_results(results):
     edge_metrics = {}
@@ -145,8 +183,26 @@ def filter_by_simatricall():
     plt.show()
     return symmetrical, not_symmetrical
 
+def map_by_relationship_count():
+    x_vals, y_vals = [], []
+    for k, v in edge_metrics.items():
+        parts = k.split(';')
+        if len(parts) > 1 and parts[1] in rel_count:
+            x_vals.append(rel_count[parts[1]])
+            y_vals.append(v)
+    fig, ax = plt.subplots()
+    ax.scatter(x_vals, y_vals)
+    ax.set_xlabel("Count")
+    ax.set_ylabel("Metric")
+    plt.title("Relationship Count vs Edge Metric")
+    plt.show()
+    return x_vals, y_vals
+    
+    
+
 if __name__ == "__main__":
     edge_metrics = analyze_results(results)
-    disease_metrics, not_disease_metrics = plot_by_disease_or_not(edge_metrics)
-    filter_by_value()
-    filter_by_simatricall()
+    # disease_metrics, not_disease_metrics = plot_by_disease_or_not(edge_metrics)
+    # filter_by_value()
+    # filter_by_simatricall()
+    map_by_relationship_count()

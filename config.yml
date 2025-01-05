@@ -7,6 +7,7 @@ neo4j_credentials:
 shepherd:
   RUN_PRETRAINING: False
   USE_HAUNER_GRAPH: True
+  USE_SIMULATED_PATIENTS: True
 
   OVERWRITE_PREPROCESSED_DATA: False # If True, the patients data will be pulled from the neo4j database
   LIMIT_SAMPLE_SIZE: False 
@@ -27,6 +28,6 @@ shepherd:
   MOVE_RESULTS_TO_OUTPUT_DIR: False # This moves the results to the output directory after every prediction
 
   RUN_PREPROCESSING: False # This runs the preprocessing for training the model
-  RUN_TRAINING_DISEASE_CHARACTERIZATION: True 
+  RUN_TRAINING_DISEASE_CHARACTERIZATION: False 
 
   
