@@ -2,6 +2,7 @@ cd app/SHEPHERD/shepherd
 patient_aggr_nodes=$1
 patient_data=$2
 checkpoint=$3
+graph_shema=$4
 # Bash script to train SHEPHERD for novel disease characterization
 
 # Command to run this bash script:
@@ -20,4 +21,5 @@ python train.py \
         --neighbor_sampler_size 15 \
         --lmbda 0.9 \
         --kappa 0.029999999999999992 \
-        --patient_aggr_nodes $patient_aggr_nodes
+        --patient_aggr_nodes $patient_aggr_nodes \
+        --graph_shema $graph_shema 

@@ -78,6 +78,7 @@ def parse_args():
     parser.add_argument('--seed', default=33, type=int)
     parser.add_argument('--batch_size', default=64, type=int) 
     parser.add_argument('--patient_aggr_nodes', default="phenotypes", type=str, choices=["phenotypes", "phenotypes_and_genes"])
+    parser.add_argument('--graph_shema', default="primeKG", type=str, choices=["primeKG","hauner"])
     
     
     # Resume / run inference with best checkpoint

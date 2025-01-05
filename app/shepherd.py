@@ -77,10 +77,12 @@ def run_training_disease_characterization(config, PATIENTS_AGGR_NODES=None):
     checkpoint = "checkpoints/pretrain.ckpt"
     if USE_HAUNER_GRAPH:
         checkpoint = "checkpoints/pretrain_hauner.ckpt"
+        
+    graph_shema = "hauner" if USE_HAUNER_GRAPH else "primeKG"
     command = [
         "bash",
         utils.SHEPHERD_DIR + "/shepherd/train_disease_characterization.sh",
-        PATIENTS_AGGR_NODES, data_type, checkpoint
+        PATIENTS_AGGR_NODES, data_type, checkpoint, graph_shema
     ]
     utils.run_subprocess(command)
 
