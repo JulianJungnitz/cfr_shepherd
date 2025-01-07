@@ -8,6 +8,7 @@ import utils as utils
 
 sys.path.insert(0, utils.SHEPHERD_DIR)
 from preprocess_data import create_patients_data_file, generate_spl_matrix
+from app.SHEPHERD.project_config import PROJECT_DIR
 
 
 
@@ -106,8 +107,9 @@ def run_shepherd_preprocessing(config):
         "-split_dataset",
     ]
     if not use_simulated_data:
+        dataDir = PROJECT_DIR
         command.append( "-simulated_path",)
-        command.append(dir + "/data/patients/hauner_data/data.txt",)
+        command.append(dataDir + "/patients/hauner_data/data.txt",)
     utils.run_subprocess(command)
 
 def run_pretraining(config):

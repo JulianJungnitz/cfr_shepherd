@@ -362,8 +362,9 @@ def main():
         #     dx_split_train_patient_ids.to_csv(project_config.PROJECT_DIR / 'patients' / f'simulated_patients'/ f'disease_split_train_sim_patients_kg_{project_config.CURR_KG}_patient_ids.csv')
         #     dx_split_val_patient_ids.to_csv(project_config.PROJECT_DIR / 'patients' / f'simulated_patients'/ f'disease_split_val_sim_patients_kg_{project_config.CURR_KG}_patient_ids.csv')
 
-        write_patients(dx_split_train_patients, project_config.PROJECT_DIR / 'patients' / 'hauner_data'/ f'disease_split_train_sim_patients_{project_config.CURR_KG}.txt')
-        write_patients(dx_split_val_patients, project_config.PROJECT_DIR / 'patients' / 'hauner_data'/ f'disease_split_val_sim_patients_{project_config.CURR_KG}.txt')
+        savePath = args.simulated_path.split('/')[:-1]
+        write_patients(dx_split_train_patients, savePath / f'disease_split_train_sim_patients_{project_config.CURR_KG}.txt')
+        write_patients(dx_split_val_patients, savePath / f'disease_split_val_sim_patients_{project_config.CURR_KG}.txt')
 
 
 
