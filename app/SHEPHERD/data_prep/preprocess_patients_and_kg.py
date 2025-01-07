@@ -365,8 +365,8 @@ def main():
         savePath = args.simulated_path.split('/')[:-1]
         savePath = '/'.join(savePath)
         print(f'Saving to: {savePath}')
-        write_patients(dx_split_train_patients, savePath / f'disease_split_train_sim_patients_{project_config.CURR_KG}.txt')
-        write_patients(dx_split_val_patients, savePath / f'disease_split_val_sim_patients_{project_config.CURR_KG}.txt')
+        write_patients(dx_split_train_patients, savePath + f'/disease_split_train_sim_patients_{project_config.CURR_KG}.txt')
+        write_patients(dx_split_val_patients, savePath + f'/disease_split_val_sim_patients_{project_config.CURR_KG}.txt')
 
 
 
