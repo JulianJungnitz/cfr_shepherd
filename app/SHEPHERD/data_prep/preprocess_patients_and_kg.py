@@ -275,7 +275,9 @@ def create_disease_split_dataset(filtered_patients, frac_train=0.7, frac_val_tes
     # divide patients by disease ID into train/val/test
 
     for p in filtered_patients:
-        p['disease_id'] = p['true_diseases'][0]
+        # only if has a true_disease and no disease_id
+        if 'true_diseases' in p and 'disease_id' not in p:
+            p['disease_id'] = p['true_diseases'][0]
 
     diseases = list(set([p['disease_id'] for p in filtered_patients]))
 
