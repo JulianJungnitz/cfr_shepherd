@@ -333,7 +333,8 @@ def main():
 
     # ## read in data, normalize genes to ensembl ids, and create maps from genes/phenotypes to node idx
     node_df, node_type_dict, sim_patients, orphanet_metadata, mondo_orphanet_map, orphanet_mondo_map, hp_map_dict, mondo_to_hpo_dict = read_data(args)
-    hpo_to_idx_dict = create_hpo_to_node_idx_dict(node_df, hp_map_dict)
+    print("Create map from phenotype to the idx in the KG")
+    create_hpo_to_node_idx_dict(node_df, hp_map_dict)
     # node_df, gene_symbol_to_idx_dict, ensembl_to_idx_dict = create_gene_to_node_idx_dict(args,node_df)
     # mondo_to_node_idx_dict = create_mondo_to_node_idx_dict(node_df, mondo_to_hpo_dict)
     # map_diseases_to_orphanet(node_df, mondo_orphanet_map)
