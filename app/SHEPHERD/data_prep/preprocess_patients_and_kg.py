@@ -132,7 +132,7 @@ def create_networkx_graph(edges):
 
 def create_hpo_to_node_idx_dict(node_df, hp_old_new_map):
     # get HPO nodes
-    hpo_nodes = node_df.loc[node_df['node_type'] == 'effect/phenotype']
+    hpo_nodes = node_df.loc[node_df['node_type'] == 'Phenotype']
     hpo_nodes['node_id'] = hpo_nodes['node_id'].astype(str) 
 
     # convert HPO id to string version (e.g. 1 -> HP:0000001)
@@ -143,8 +143,8 @@ def create_hpo_to_node_idx_dict(node_df, hp_old_new_map):
 
     # create dict from HPO ID to node index in graph
     hpo_to_idx_dict = {hpo:idx for hpo, idx in zip(hpo_nodes['hpo_string'].tolist(), hpo_nodes['node_idx'].tolist())}
-    old_hpo_to_idx_dict = {old:hpo_to_idx_dict[new] for old, new in hp_old_new_map.items()}
-    hpo_to_idx_dict = {**hpo_to_idx_dict, **old_hpo_to_idx_dict}
+    # old_hpo_to_idx_dict = {old:hpo_to_idx_dict[new] for old, new in hp_old_new_map.items()}
+    # hpo_to_idx_dict = {**hpo_to_idx_dict, **old_hpo_to_idx_dict}
 
     hpo_to_name_dict = {hpo:name for hpo, name in zip(hpo_nodes['hpo_string'].tolist(), hpo_nodes['node_name'].tolist())}
 
