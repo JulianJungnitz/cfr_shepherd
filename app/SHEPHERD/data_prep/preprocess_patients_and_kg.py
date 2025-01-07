@@ -149,6 +149,7 @@ def create_hpo_to_node_idx_dict(node_df, hp_old_new_map):
     hpo_to_name_dict = {hpo:name for hpo, name in zip(hpo_nodes['hpo_string'].tolist(), hpo_nodes['node_name'].tolist())}
 
     # save to file
+    print("Saving HPO to idx dict. Length: ", len(hpo_to_idx_dict), " to file: ", HPO_TO_IDX_DICT_FILE)
     with open(HPO_TO_IDX_DICT_FILE, 'wb') as handle:
         pickle.dump(hpo_to_idx_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
     with open(HPO_TO_NAME_DICT_FILE, 'wb') as handle:
