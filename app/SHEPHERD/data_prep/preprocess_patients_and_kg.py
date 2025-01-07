@@ -363,6 +363,7 @@ def main():
         #     dx_split_val_patient_ids.to_csv(project_config.PROJECT_DIR / 'patients' / f'simulated_patients'/ f'disease_split_val_sim_patients_kg_{project_config.CURR_KG}_patient_ids.csv')
 
         savePath = args.simulated_path.split('/')[:-1]
+        print(f'Saving to: {savePath}')
         write_patients(dx_split_train_patients, savePath / f'disease_split_train_sim_patients_{project_config.CURR_KG}.txt')
         write_patients(dx_split_val_patients, savePath / f'disease_split_val_sim_patients_{project_config.CURR_KG}.txt')
 
