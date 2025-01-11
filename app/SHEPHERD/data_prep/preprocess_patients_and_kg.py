@@ -163,11 +163,11 @@ def create_gene_to_node_idx_dict(args, node_df):
         node_df = pd.read_csv(ensembl_node_map, sep='\t')
     else:
         print('Generating ensembl_ids for KG')
-        preprocessor = preprocess.Preprocessor() #NOTE: raw data to perform preprocessing is missing from dataverse, but we provide the already processed files for our KG
+        # preprocessor = preprocess.Preprocessor() #NOTE: raw data to perform preprocessing is missing from dataverse, but we provide the already processed files for our KG
 
         # get gene nodes & map to ensembl IDs
         gene_nodes = node_df.loc[node_df['node_type'] == 'Gene']
-        gene_nodes = preprocessor.map_genes(gene_nodes, ['node_name'])
+        # gene_nodes = preprocessor.map_genes(gene_nodes, ['node_name'])
         gene_nodes = gene_nodes.rename(columns={'node_name_ensembl': 'node_name', 'node_name': 'gene_symbol'})
 
         # merge gene names with the original node df
