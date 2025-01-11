@@ -166,7 +166,7 @@ def create_gene_to_node_idx_dict(args, node_df):
         preprocessor = preprocess.Preprocessor() #NOTE: raw data to perform preprocessing is missing from dataverse, but we provide the already processed files for our KG
 
         # get gene nodes & map to ensembl IDs
-        gene_nodes = node_df.loc[node_df['node_type'] == 'gene/protein']
+        gene_nodes = node_df.loc[node_df['node_type'] == 'Gene']
         gene_nodes = preprocessor.map_genes(gene_nodes, ['node_name'])
         gene_nodes = gene_nodes.rename(columns={'node_name_ensembl': 'node_name', 'node_name': 'gene_symbol'})
 
@@ -178,7 +178,7 @@ def create_gene_to_node_idx_dict(args, node_df):
         node_df.to_csv(ensembl_node_map, sep='\t')
 
     # create gene to idx dict
-    gene_nodes = node_df.loc[node_df['node_type'] == 'gene/protein']
+    gene_nodes = node_df.loc[node_df['node_type'] == 'Gene']
     gene_symbol_to_idx_dict = {gene:idx for gene, idx in zip(gene_nodes['old_node_name'].tolist(), gene_nodes['node_idx'].tolist())}
     ensembl_to_idx_dict = {gene:idx for gene, idx in zip(gene_nodes['node_name'].tolist(), gene_nodes['node_idx'].tolist())}
 
@@ -335,7 +335,7 @@ def main():
     node_df, node_type_dict, sim_patients, orphanet_metadata, mondo_orphanet_map, orphanet_mondo_map, hp_map_dict, mondo_to_hpo_dict = read_data(args)
     print("Create map from phenotype to the idx in the KG")
     create_hpo_to_node_idx_dict(node_df, hp_map_dict)
-    # node_df, gene_symbol_to_idx_dict, ensembl_to_idx_dict = create_gene_to_node_idx_dict(args,node_df)
+    node_df, gene_symbol_to_idx_dict, ensembl_to_idx_dict = create_gene_to_node_idx_dict(args,node_df)
     # mondo_to_node_idx_dict = create_mondo_to_node_idx_dict(node_df, mondo_to_hpo_dict)
     # map_diseases_to_orphanet(node_df, mondo_orphanet_map)
     # edges = pd.read_csv(project_config.KG_DIR / args.edgelist, sep="\t")
