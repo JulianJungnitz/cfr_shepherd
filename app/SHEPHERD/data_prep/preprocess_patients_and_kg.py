@@ -212,8 +212,20 @@ def create_mondo_to_node_idx_dict(node_df, ):
     mondo_to_idx_dict = {}
     print('Creating mondo to idx dict')
     # get disease nodes
-    disease_nodes = node_df.loc[(node_df['node_type'] == 'Disease')]
+    doid_to_mondo_dict = {v: k for k, v in mondo_to_doid_dict.items()}
 
+    mondo_to_name_dict = {}
+    mondo_to_idx_dict = {}
+    print('Creating mondo to idx dict')
+
+    disease_nodes = node_df.loc[node_df["node_type"] == "Disease"]
+
+    for _, row in disease_nodes.iterrows():
+        doid = row["node_name"]
+        if doid in doid_to_mondo_dict:
+            mondo_id = doid_to_mondo_dict[doid]
+            mondo_to_idx_dict[mondo_id] = row["node_idx"]
+            mondo_to_name_dict[mondo_id] = doid
     
 
     # save to file
