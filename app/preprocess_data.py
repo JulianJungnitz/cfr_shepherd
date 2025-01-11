@@ -91,13 +91,19 @@ def create_patients_data_file(
     write_to_file(data, file_name)
 
 
-def generate_spl_matrix():
+def generate_spl_matrix(graph_shema, use_sim_patients=False,):
     path = utils.SHEPHERD_DIR + "/data_prep/shortest_paths"
     command = [
         "python",
         path + "/add_spl_to_patients.py",
-        "--only_test_data",
+        "--graph_shema",
+        graph_shema,
     ]
+    if use_sim_patients:
+        command.append("--simulated_path")
+    else:
+        command.append("--only_test_data",)
+    
     utils.run_subprocess(command)
 
 

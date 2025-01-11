@@ -11,7 +11,6 @@ from preprocess_data import create_patients_data_file, generate_spl_matrix
 from app.SHEPHERD.project_config import PROJECT_DIR
 
 
-
 def start_preprocessing_data(config):
     NUMBER_OF_SAMPLES_LIMIT = config["shepherd"]["NUMBER_OF_SAMPLES_LIMIT"]
     OVERWRITE_PREPROCESSED_DATA = config["shepherd"]["OVERWRITE_PREPROCESSED_DATA"]
@@ -34,13 +33,10 @@ def start_preprocessing_data(config):
         print("Samples written to file: " + file_name)
     else:
         print("Not overwriting preprocessed data")
-    CREATE_SPL_MATRIX = config["shepherd"]["CREATE_SPL_MATRIX"]
-    if CREATE_SPL_MATRIX:
-        generate_spl_matrix()
 
 
 def predict_patients_like_me(
-    PATIENTS_AGGR_NODES=None, 
+    PATIENTS_AGGR_NODES=None,
 ):
     dir = utils.SHEPHERD_DIR
     print("Predicting patients like me. Dir: " + dir)
@@ -58,9 +54,7 @@ def predict_causal_gene_discovery():
     utils.run_subprocess(command)
 
 
-def predict_disease_categorization(
-    PATIENTS_AGGR_NODES=None
-):
+def predict_disease_categorization(PATIENTS_AGGR_NODES=None):
     dir = utils.SHEPHERD_DIR
     print("Predicting disease categorization. Dir: " + dir)
     command = ["bash", dir + "/predict_disease_categorization.sh", PATIENTS_AGGR_NODES]
@@ -78,18 +72,26 @@ def run_training_disease_characterization(config, PATIENTS_AGGR_NODES=None):
     checkpoint = "checkpoints/pretrain.ckpt"
     if USE_HAUNER_GRAPH:
         checkpoint = "checkpoints/pretrain_hauner.ckpt"
-        
+
     graph_shema = "hauner" if USE_HAUNER_GRAPH else "primeKG"
     command = [
         "bash",
         utils.SHEPHERD_DIR + "/shepherd/train_disease_characterization.sh",
-        PATIENTS_AGGR_NODES, data_type, checkpoint, graph_shema
+        PATIENTS_AGGR_NODES,
+        data_type,
+        checkpoint,
+        graph_shema,
     ]
     utils.run_subprocess(command)
 
 
 def move_results_to_output_dir():
-    print("Moving results to output directory: res: " + utils.RESULTS_DIR + " out: " + utils.OUTPUT_DIR)
+    print(
+        "Moving results to output directory: res: "
+        + utils.RESULTS_DIR
+        + " out: "
+        + utils.OUTPUT_DIR
+    )
     resDir = utils.RESULTS_DIR
     outDir = utils.OUTPUT_DIR
     command = ["cp", "-r", resDir, outDir]
@@ -108,9 +110,14 @@ def run_shepherd_preprocessing(config):
     ]
     if not use_simulated_data:
         dataDir = PROJECT_DIR
-        command.append( "-simulated_path",)
-        command.append(dataDir + "/patients/hauner_data/data.txt",)
+        command.append(
+            "-simulated_path",
+        )
+        command.append(
+            dataDir + "/patients/hauner_data/data.txt",
+        )
     utils.run_subprocess(command)
+
 
 def run_pretraining(config):
     print("Running shepherd pretraining")
@@ -128,7 +135,7 @@ def run_pretraining(config):
         "KG_node_map.txt",
         "--save_dir",
         save_dir,
-        "--graph_shema", 
+        "--graph_shema",
         graph_shema,
         # "--resume",
         # "resume_best_full_epoch_3",
@@ -146,6 +153,16 @@ def main():
 
     config = utils.read_config()
     start_preprocessing_data(config)
+
+    CREATE_SPL_MATRIX = config["shepherd"]["CREATE_SPL_MATRIX"]
+    USE_SIMULATED_DATA = config["shepherd"]["USE_SIMULATED_PATIENTS"]
+    USE_HAUNER_GRAPH = config["shepherd"]["USE_HAUNER_GRAPH"]
+    if CREATE_SPL_MATRIX:
+        generate_spl_matrix(
+            "shepherd" if USE_HAUNER_GRAPH else "primeKG",
+            use_sim_patients=USE_SIMULATED_DATA,
+        )
+
     PATIENTS_AGGR_NODES = config["shepherd"]["PATIENTS_AGGR_NODES"]
 
     RUN_PRETRAINING = config["shepherd"]["RUN_PRETRAINING"]
@@ -170,8 +187,7 @@ def main():
 
     RUN_CAUSAL_GENE_DISCOVERY = config["shepherd"]["RUN_CAUSAL_GENE_DISCOVERY"]
     if RUN_CAUSAL_GENE_DISCOVERY:
-        predict_causal_gene_discovery(
-        )
+        predict_causal_gene_discovery()
 
     RUN_DISEASE_CATEGORIZATION = config["shepherd"]["RUN_DISEASE_CATEGORIZATION"]
     if RUN_DISEASE_CATEGORIZATION:

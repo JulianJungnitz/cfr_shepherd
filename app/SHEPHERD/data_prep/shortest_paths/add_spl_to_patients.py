@@ -104,6 +104,7 @@ def main():
 
     parser.add_argument('--only_test_data', action='store_true', help='Only calculate SPL for the test data. You might want to do this if you have separate runs for many different test datasets and want to generate separate SPL for train/val & testing')
     parser.add_argument('--only_train_val_data', action='store_true', help='Only calculate SPL for the train/val data. You might want to do this if you have separate runs for many different test datasets and want to generate separate SPL for train/val & testing')
+    parser.add_argument('--graph_shema', type=str, default=["primeKG","shepherd"], help='')
     
     args = parser.parse_args()
     print('Aggregation type: ', args.agg_type)
@@ -116,11 +117,13 @@ def main():
     else: raise NotImplementedError
 
     node_df = pd.read_csv(project_config.KG_DIR / args.node_map, sep='\t')
-    all_gene_idx = node_df.loc[node_df['node_type'] == 'gene/protein', 'node_idx'].tolist()
+    gene_identifier = "gene/protein" if args.graph_shema == "primeKG" else "Gene"
+    all_gene_idx = node_df.loc[node_df['node_type'] == gene_identifier, 'node_idx'].tolist()
 
     # read in SPL matrix from all nodes to phenotypes
     #map from overall node id to idx within SPL matrix
-    nid_to_spl_dict = {nid: idx for idx, nid in enumerate(node_df[node_df["node_type"] == "effect/phenotype"]["node_idx"].tolist())}
+    phen_identifier = "effect/phenotype" if args.graph_shema == "primeKG" else "Phenotype"
+    nid_to_spl_dict = {nid: idx for idx, nid in enumerate(node_df[node_df["node_type"] == phen_identifier]["node_idx"].tolist())}
     spl_matrix = np.load(project_config.KG_DIR / args.spl_matrix) 
     print('spl_matrix shape: ', spl_matrix.shape)
 
