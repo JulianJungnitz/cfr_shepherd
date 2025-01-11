@@ -325,11 +325,13 @@ def create_disease_split_dataset(filtered_patients, frac_train=0.7, frac_val_tes
 
 def create_node_idx_to_degree_dict(node_df,):
     edge_list = pd.read_csv(project_config.KG_DIR / 'KG_edgelist_mask.txt', sep='\t')
-    node_idx_to_degree_dict = {node_idx:0 for node_idx in node_df['node_idx']}
-
     
-    for idx, row in tqdm(edge_list.iterrows(), total=edge_list.shape[0]):
-        node_idx_to_degree_dict[row['x_idx']] += 1
+    node_idx_to_degree_dict = defaultdict(int)
+
+    counts = edge_list["x_idx"].value_counts()
+
+    for idx, cnt in counts.items():
+        node_idx_to_degree_dict[idx] += cnt
 
     with open(project_config.PROJECT_DIR / 'knowledge_graph' / project_config.CURR_KG / f'degree_dict_{project_config.CURR_KG}.pkl', 'wb') as handle:
         pickle.dump(node_idx_to_degree_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
