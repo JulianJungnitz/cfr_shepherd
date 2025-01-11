@@ -327,9 +327,9 @@ def create_node_idx_to_degree_dict(node_df,):
     edge_list = pd.read_csv(project_config.KG_DIR / 'KG_edgelist_mask.txt', sep='\t')
     
     node_idx_to_degree_dict = defaultdict(int)
-
+    print('Creating node idx to degree dict')
     counts = edge_list["x_idx"].value_counts()
-
+    print(f'Number of unique nodes: {len(counts)}')
     for idx, cnt in counts.items():
         node_idx_to_degree_dict[idx] += cnt
 
