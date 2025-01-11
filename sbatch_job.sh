@@ -7,10 +7,9 @@
 #SBATCH -o /work/home/jj56rivo/cfr_shepherd/out/o_%j.txt
 
 #SBATCH -n 1
-#SBATCH --mem-per-cpu=200G
-#SBATCH --time=7-00:00:00
-#SBATCH --cpus-per-task=1
-#SBATCH --gres=gpu:h100:1
+#SBATCH --mem-per-cpu=4G
+#SBATCH --time=06:00:00
+#SBATCH --cpus-per-task=52
 
 
 
