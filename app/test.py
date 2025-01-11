@@ -93,7 +93,7 @@ def read_mondo_to_idx_pkl(file_name: str):
         print(data)
 
 if __name__ == "__main__":
-    read_mondo_to_idx_pkl("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/mondo_to_name_dict_8.9.21_kg.pkl")
+    read_mondo_to_idx_pkl("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/degree_dict_8.9.21_kg.pkl")
     # add_reverse_edges("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
     # list_all_relationship_types("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
 

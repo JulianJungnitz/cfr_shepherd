@@ -323,6 +323,18 @@ def create_disease_split_dataset(filtered_patients, frac_train=0.7, frac_val_tes
     print(f'There are {len(dx_split_train_patients)} patients in the disease split train set and {len(dx_split_val_patients)} in the val set.')
     return dx_split_train_patients, dx_split_val_patients,  dx_split_train_patient_ids, dx_split_val_patient_ids
 
+def create_node_idx_to_degree_dict(node_df,):
+    edge_list = pd.read_csv(project_config.KG_DIR / 'KG_edgelist_mask.txt', sep='\t')
+    node_idx_to_degree_dict = {node_idx:0 for node_idx in node_df['node_idx']}
+
+    
+    for idx, row in tqdm(edge_list.iterrows(), total=edge_list.shape[0]):
+        node_idx_to_degree_dict[row['x_idx']] += 1
+
+    with open(project_config.PROJECT_DIR / 'knowledge_graph' / project_config.CURR_KG / f'degree_dict_{project_config.CURR_KG}.pkl', 'wb') as handle:
+        pickle.dump(node_idx_to_degree_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    
+
 
 
 
@@ -353,6 +365,7 @@ def main():
     create_hpo_to_node_idx_dict(node_df, hp_map_dict)
     node_df, gene_symbol_to_idx_dict, ensembl_to_idx_dict = create_gene_to_node_idx_dict(args,node_df)
     mondo_to_node_idx_dict = create_mondo_to_node_idx_dict(node_df,)
+    create_node_idx_to_degree_dict(node_df)
     # map_diseases_to_orphanet(node_df, mondo_orphanet_map)
     # edges = pd.read_csv(project_config.KG_DIR / args.edgelist, sep="\t")
     # graph = create_networkx_graph(edges)
