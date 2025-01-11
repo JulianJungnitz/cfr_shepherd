@@ -99,9 +99,7 @@ def generate_spl_matrix(graph_shema, use_sim_patients=False,):
         "--graph_shema",
         graph_shema,
     ]
-    if use_sim_patients:
-        command.append("--simulated_path")
-    else:
+    if not use_sim_patients:
         command.append("--only_test_data",)
     
     utils.run_subprocess(command)
