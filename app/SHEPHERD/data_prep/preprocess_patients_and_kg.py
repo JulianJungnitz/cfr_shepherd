@@ -168,7 +168,7 @@ def create_gene_to_node_idx_dict(args, node_df):
         # get gene nodes & map to ensembl IDs
         gene_nodes = node_df.loc[node_df['node_type'] == 'Gene']
         # gene_nodes = preprocessor.map_genes(gene_nodes, ['node_name'])
-        gene_nodes = gene_nodes.rename(columns={'node_name_ensembl': 'node_name', 'node_name': 'gene_symbol'})
+        # gene_nodes = gene_nodes.rename(columns={'node_name_ensembl': 'node_name', 'node_name': 'gene_symbol'})
 
         # merge gene names with the original node df
         node_df['old_node_name'] = node_df['node_name']
