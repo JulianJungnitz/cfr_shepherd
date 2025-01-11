@@ -86,8 +86,15 @@ def read_spl_matrix(file_path: str):
     print(spl_matrix.shape)
     print(spl_matrix[:100, :100])
 
+def read_mondo_to_idx_pkl(file_name: str):
+    import pickle
+    with open(file_name, "rb") as f:
+        data = pickle.load(f)
+        print(data)
+
 if __name__ == "__main__":
-    add_reverse_edges("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
+    read_mondo_to_idx_pkl("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/mondo_to_name_dict_8.9.21_kg.pkl")
+    # add_reverse_edges("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
     # list_all_relationship_types("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
 
     # add_headers("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")

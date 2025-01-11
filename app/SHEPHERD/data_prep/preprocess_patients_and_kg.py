@@ -10,6 +10,7 @@ import random
 import pickle
 from tqdm import tqdm
 from collections import defaultdict, Counter
+from pronto import Ontology
 
 from pathlib import Path
 from copy import deepcopy
@@ -118,6 +119,7 @@ def read_data(args):
     mondo2hpo = pd.read_csv(MONDOTOHPO)
     mondo_to_hpo_dict =  {mondo:hpo for hpo,mondo in zip(mondo2hpo['ontology_id'], mondo2hpo['mondo_id'])}
 
+
     return node_df, node_type_dict, sim_patients, orphanet_metadata, merged_mondo_to_orphanet_map, orphanet_to_mondo_dict, hp_map_dict, mondo_to_hpo_dict
 
 def create_networkx_graph(edges):
@@ -191,26 +193,28 @@ def create_gene_to_node_idx_dict(args, node_df):
         
     return node_df, gene_symbol_to_idx_dict, ensembl_to_idx_dict
 
-def create_mondo_to_node_idx_dict(node_df, mondo_to_hpo_dict):
+def create_mondo_to_node_idx_dict(node_df, ):
     '''create mondo disease to node_idx map'''
 
+    mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
+    mondo_to_doid_dict = {}
+    print('Creating mondo to DOID dict')
+    for term in mondo_ontology.terms():
+        if term.id.startswith("MONDO:"):
+            for xref in term.xrefs:
+                if xref.id.startswith("DOID:"):
+                    # Just store the first one and break
+                    mondo_to_doid_dict[term.id] = xref.id
+                    break
+    print(f'Number of mondo terms with DOID: {len(mondo_to_doid_dict)}')
+    print("first 10 entries: ", list(mondo_to_doid_dict.items())[:10])
+    mondo_to_name_dict = {}
+    mondo_to_idx_dict = {}
+    print('Creating mondo to idx dict')
     # get disease nodes
-    disease_nodes = node_df.loc[(node_df['node_type'] == 'disease')]
-    disease_nodes['node_id'] = disease_nodes['node_id'].str.replace('.0', '', regex=False)
-    mondo_strs = [str(mondo_str) for mondo, idx in zip(disease_nodes['node_id'].tolist(), disease_nodes['node_idx'].tolist()) for mondo_str in mondo.split('_')]
-    assert len(mondo_strs) == len(list(set(mondo_strs))), 'The following dict may overwrite some mappings if because there are duplicates in the mondo ids'
-    mondo_to_idx_dict = {str(mondo_str):idx for mondo, idx in zip(disease_nodes['node_id'].tolist(), disease_nodes['node_idx'].tolist()) for mondo_str in mondo.split('_')}
+    disease_nodes = node_df.loc[(node_df['node_type'] == 'Disease')]
+
     
-    # get mapping from phenotypes to KG idx
-    phenotype_nodes = node_df.loc[node_df['node_type'] == 'effect/phenotype']
-    phen_to_idx_dict = {int(phen):idx for phen, idx in zip(phenotype_nodes['node_id'].tolist(), phenotype_nodes['node_idx'].tolist()) if int(phen) in mondo_to_hpo_dict.values()}
-    disease_mapped_phen_to_idx_dict = {str(mondo):phen_to_idx_dict[hpo] for mondo, hpo in mondo_to_hpo_dict.items()}
-
-    # merge two mappings
-    mondo_to_idx_dict = {**mondo_to_idx_dict, **disease_mapped_phen_to_idx_dict}
-
-    #TODO: this dict is missing some names from phenotype diseases. This needs to be fixed.
-    mondo_to_name_dict = {mondo_str:name for mondo, name in zip(disease_nodes['node_id'].tolist(), disease_nodes['node_name'].tolist()) for mondo_str in mondo.split('_')}
 
     # save to file
     with open(MONDO_TO_NAME_DICT_FILE, 'wb') as handle:
@@ -223,7 +227,7 @@ def create_mondo_to_node_idx_dict(node_df, mondo_to_hpo_dict):
 def map_diseases_to_orphanet(node_df, mondo_orphanet_map):
     all_orphanet_ids = []
     for node_id, node_type  in zip(node_df['node_id'], node_df['node_type']):
-        if node_type == 'disease':
+        if node_type == 'Disease':
             mondo_ids = node_id.split('_')
             orphanet_ids = [mondo_orphanet_map[m] for m in mondo_ids if m in mondo_orphanet_map]
             orphanet_ids = [str(o) for l in orphanet_ids for o in l]
@@ -336,7 +340,7 @@ def main():
     print("Create map from phenotype to the idx in the KG")
     create_hpo_to_node_idx_dict(node_df, hp_map_dict)
     node_df, gene_symbol_to_idx_dict, ensembl_to_idx_dict = create_gene_to_node_idx_dict(args,node_df)
-    # mondo_to_node_idx_dict = create_mondo_to_node_idx_dict(node_df, mondo_to_hpo_dict)
+    mondo_to_node_idx_dict = create_mondo_to_node_idx_dict(node_df,)
     # map_diseases_to_orphanet(node_df, mondo_orphanet_map)
     # edges = pd.read_csv(project_config.KG_DIR / args.edgelist, sep="\t")
     # graph = create_networkx_graph(edges)
