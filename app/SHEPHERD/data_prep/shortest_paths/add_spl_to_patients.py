@@ -31,6 +31,7 @@ def add_spl_info(patients, spl_matrix, hpo_to_idx_dict, ensembl_to_idx_dict , ni
     avg_spl_matrix = np.zeros((len(patients), len(all_gene_idx)))
     print('spl_matrix shape:', spl_matrix.shape)
     print('avg_spl_matrix shape:', avg_spl_matrix.shape)
+    print('There are', len(hpo_to_idx_dict), 'phenotypes in the dataset')
     spl_indexing = {}
     for i, patient in enumerate(tqdm(patients)):
         patient_id = patient['id']
