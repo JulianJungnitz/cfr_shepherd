@@ -1,7 +1,8 @@
-#%%
+# %%
 
 
 import pandas as pd
+
 
 def get_relations_of_node(file_path: str):
     node_id = 1
@@ -17,14 +18,13 @@ def get_relations_of_node(file_path: str):
     relations_from_str = df[df[1] == node_id_str]
     relations_to_str = df[df[0] == node_id_str]
 
-    #transform relations_from and relations_to to string
+    # transform relations_from and relations_to to string
     relations_from = relations_from.astype(str)
     relations_to = relations_to.astype(str)
 
-
     relations_from = pd.concat([relations_from, relations_from_str])
     relations_to = pd.concat([relations_to, relations_to_str])
-    
+
     # sort by node_id
     relations_to = relations_to.sort_values(by=0)
     relations_from = relations_from.sort_values(by=1)
@@ -34,10 +34,9 @@ def get_relations_of_node(file_path: str):
     print("\n----------------------------------------------")
     for i, row in relations_from.iterrows():
         print(f"{row[1]} - {row[0]} with relation {row[2]}")
-    
+
     print("Length of relations_to: ", len(relations_to))
     print("Length of relations_from: ", len(relations_from))
-
 
 
 def add_reverse_edges(file_path: str):
@@ -60,11 +59,12 @@ def convert_types(file_path: str):
     df = df[df["x_idx"] != "y_idx"]
     print("length: ", len(df))
     print("file read")
-    df["x_idx"] = pd.to_numeric(df["x_idx"], errors='raise')
+    df["x_idx"] = pd.to_numeric(df["x_idx"], errors="raise")
     print("converted x_idx")
-    df["y_idx"] = pd.to_numeric(df["y_idx"], errors='raise')
+    df["y_idx"] = pd.to_numeric(df["y_idx"], errors="raise")
     print("converted y_idx")
     df.to_csv(file_path + "_conv.txt", sep="\t", header=True, index=False)
+
 
 def add_headers(file_path: str):
     # x_idx	y_idx	full_relation	mask
@@ -73,27 +73,93 @@ def add_headers(file_path: str):
     df.columns = headers
     df.to_csv(file_path, sep="\t", header=True, index=False)
 
+
 def list_all_relationship_types(file_path: str):
     df = pd.read_csv(file_path, sep="\t", header=None)
     print(df[2].unique())
 
     add_reverse_edges
 
+
 import numpy as np
+
 
 def read_spl_matrix(file_path: str):
     spl_matrix = np.load(file_path)
     print(spl_matrix.shape)
     print(spl_matrix[:100, :100])
 
+
 def read_mondo_to_idx_pkl(file_name: str):
     import pickle
+
     with open(file_name, "rb") as f:
         data = pickle.load(f)
         print(data)
 
+
+def test_hpo_dict(file_name):
+    import pickle
+    from tqdm import tqdm
+
+    with open(file_name, "rb") as f:
+        data = pickle.load(f)
+
+    hpo_term = "HP:0033373"
+    print(data[hpo_term])
+    # # print random HPO terms
+    # for i in range(10):
+    #     r  = np.random.randint(0, len(data))
+    #     print(list(data.keys())[r])
+
+    # hpo_numbers = sorted(int(k.split(":")[1]) for k in data.keys())
+    # missing_sections = {}
+    # print("HPO range:", hpo_numbers[0], hpo_numbers[-1])
+    # print("Number of missing:", (hpo_numbers[-1] - hpo_numbers[0] + 1) - len(hpo_numbers))
+
+    # prev = hpo_numbers[0]
+    # for n in tqdm(hpo_numbers[1:], desc="Processing HPOs"):
+    #     if n > prev + 1:
+    #         missing_sections[prev + 1] = n - 1
+    #     prev = n
+
+    # print("Missing sections:", missing_sections)
+   
+
+def create_hpo_to_idx_dict():
+    import numpy as np
+    import pickle
+    node_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/KG_node_map.txt"
+    hpo_to_idx_dict = {}
+    idx_to_hpo_dict = {}
+    df = pd.read_csv(node_file, sep="\t", )
+    print(df.head())
+    phen_df= df[df["node_type"] == "Phenotype"]
+    for i, row in phen_df.iterrows():
+        hpo_to_idx_dict[row["node_name"]] = row["node_idx"]
+    
+    for k, v in hpo_to_idx_dict.items():
+        idx_to_hpo_dict[v] = k
+
+    save_file_hpo_to_idx_dict = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/hpo_to_idx_dict_hauner_graph_reduced_new.pkl"
+    with open(save_file_hpo_to_idx_dict, "wb") as f:
+        pickle.dump(hpo_to_idx_dict, f)
+    
+    save_file_idx_to_hpo_dict = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/idx_to_hpo_dict_hauner_graph_reduced_new.pkl"
+    with open(save_file_idx_to_hpo_dict, "wb") as f:
+        pickle.dump(idx_to_hpo_dict, f)
+    
+
+
+
 if __name__ == "__main__":
-    read_mondo_to_idx_pkl("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/degree_dict_8.9.21_kg.pkl")
+    create_hpo_to_idx_dict()
+    # test_hpo_dict(
+    #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/hpo_to_idx_dict_hauner_graph_reduced_new.pkl"
+    # )
+    # read_mondo_to_idx_pkl(
+    #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/degree_dict_8.9.21_kg.pkl"
+    # )
     # add_reverse_edges("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
     # list_all_relationship_types("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
 

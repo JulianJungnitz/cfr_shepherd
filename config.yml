@@ -7,7 +7,7 @@ neo4j_credentials:
 shepherd:
   RUN_PRETRAINING: False
   USE_HAUNER_GRAPH: True
-  USE_SIMULATED_PATIENTS: False
+  USE_SIMULATED_PATIENTS: True
 
   OVERWRITE_PREPROCESSED_DATA: False # If True, the patients data will be pulled from the neo4j database
   LIMIT_SAMPLE_SIZE: False 
