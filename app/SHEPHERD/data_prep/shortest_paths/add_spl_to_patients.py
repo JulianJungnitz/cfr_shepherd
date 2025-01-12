@@ -36,7 +36,12 @@ def add_spl_info(patients, spl_matrix, hpo_to_idx_dict, ensembl_to_idx_dict , ni
     for i, patient in enumerate(tqdm(patients)):
         patient_id = patient['id']
         spl_indexing[patient_id] = i
-        hpo_idx = [hpo_to_idx_dict[p] for p in patient['positive_phenotypes'] if p in hpo_to_idx_dict]
+        hpo_idx = []
+        for p in patient['positive_phenotypes']:
+            print(f"[DEBUG] Patient {patient_id}: checking if {p} is in hpo_to_idx_dict")
+            print("type of p: ", type(p))
+            if p in hpo_to_idx_dict:
+                hpo_idx.append(hpo_to_idx_dict[p])
         if agg_type == 'mean':
             print(f"[DEBUG] Patient {patient_id}: calculating mean SPL for {len(hpo_idx)} phenotypes.")
             avg_spl_matrix[i, :] = [
