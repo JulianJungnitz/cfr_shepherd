@@ -321,6 +321,7 @@ def train(args, hparams):
                                 limit_train_batches=limit_train_batches, 
                                 limit_val_batches=limit_val_batches,
                                 # weights_summary="full",
+                                enable_model_summary=True,
                                 gradient_clip_val=hparams['gradclip'])
 
     #  Train
