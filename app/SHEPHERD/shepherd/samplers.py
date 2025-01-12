@@ -618,6 +618,9 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         t00 = time.time()
         phenotype_node_idx, candidate_gene_node_idx, correct_genes_node_idx, disease_node_idx, labels, additional_labels, patient_ids = zip(*batch)
 
+        first_cand_gene = candidate_gene_node_idx[0]
+        print("collate first_cand_gene", first_cand_gene)
+        print("collate first_cand_gene type", type(first_cand_gene))
         # Up-sample under-represented candidate genes
         t0 = time.time()
         if self.upsample_cand > 0:
