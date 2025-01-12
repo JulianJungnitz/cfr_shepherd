@@ -90,7 +90,7 @@ def read_spl_matrix(file_path: str):
     print(spl_matrix[:100, :100])
 
 
-def read_mondo_to_idx_pkl(file_name: str):
+def read_pkl_file(file_name: str):
     import pickle
 
     with open(file_name, "rb") as f:
@@ -124,42 +124,86 @@ def test_hpo_dict(file_name):
     #     prev = n
 
     # print("Missing sections:", missing_sections)
-   
+
 
 def create_hpo_to_idx_dict():
     import numpy as np
     import pickle
+
     node_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/KG_node_map.txt"
     hpo_to_idx_dict = {}
     idx_to_hpo_dict = {}
-    df = pd.read_csv(node_file, sep="\t", )
+    df = pd.read_csv(
+        node_file,
+        sep="\t",
+    )
     print(df.head())
-    phen_df= df[df["node_type"] == "Phenotype"]
+    phen_df = df[df["node_type"] == "Phenotype"]
     for i, row in phen_df.iterrows():
         hpo_to_idx_dict[row["node_name"]] = row["node_idx"]
-    
+
     for k, v in hpo_to_idx_dict.items():
         idx_to_hpo_dict[v] = k
 
     save_file_hpo_to_idx_dict = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/hpo_to_idx_dict_hauner_graph_reduced_new.pkl"
     with open(save_file_hpo_to_idx_dict, "wb") as f:
         pickle.dump(hpo_to_idx_dict, f)
-    
+
     save_file_idx_to_hpo_dict = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/idx_to_hpo_dict_hauner_graph_reduced_new.pkl"
     with open(save_file_idx_to_hpo_dict, "wb") as f:
         pickle.dump(idx_to_hpo_dict, f)
-    
 
+
+def create_ensembl_to_idx_dict():
+    import numpy as np
+    import pickle
+    import pronto
+    from tqdm import tqdm
+
+    node_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/KG_node_map.txt"
+    ensembl_to_idx_dict = {}
+    df = pd.read_csv(
+        node_file,
+        sep="\t",
+    )
+    gene_df = df[df["node_type"] == "Gene"]
+    print(gene_df.head())
+    gen_id_to_ens = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/gene_id_to_ens.csv"
+    gene_id_to_ens_df = pd.read_csv(gen_id_to_ens, sep=",")
+    print(gene_id_to_ens_df.head())
+    node_to_ensembl = {}
+    for i, row in gene_id_to_ens_df.iterrows():
+        node_to_ensembl[row["ens_id"]] = row["gene_id"]
+
+        
+    not_found = []
+
+    for ens_id, gene_id in tqdm(node_to_ensembl.items()):
+        matches = gene_df[gene_df["node_name"] == gene_id]["node_idx"]
+        if len(matches) == 0:
+            not_found.append(ens_id)
+        else:
+            ensembl_to_idx_dict[ens_id] = matches.values[0]
+
+    print("Number of not found genes: ", len(not_found))
+    print("Number of found genes: ", len(ensembl_to_idx_dict))
+
+    
+    save_file_ensembl_to_idx_dict = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/ensembl_to_idx_dict_hauner_graph_reduced_new.pkl"
+    with open(save_file_ensembl_to_idx_dict, "wb") as f:
+        pickle.dump(ensembl_to_idx_dict, f)
 
 
 if __name__ == "__main__":
-    create_hpo_to_idx_dict()
+    # create_hpo_to_idx_dict()
+    create_ensembl_to_idx_dict()
     # test_hpo_dict(
     #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/hpo_to_idx_dict_hauner_graph_reduced_new.pkl"
     # )
-    # read_mondo_to_idx_pkl(
-    #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/degree_dict_8.9.21_kg.pkl"
+    # read_pkl_file(
+    # "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/ensembl_to_idx_dict_8.9.21_kg.pkl"
     # )
+
     # add_reverse_edges("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
     # list_all_relationship_types("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
 

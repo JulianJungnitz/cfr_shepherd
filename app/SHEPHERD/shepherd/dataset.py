@@ -191,6 +191,7 @@ class PatientDataset(Dataset):
                 if g in self.ensembl_to_idx_dict
             ]
             print("candidate_gene_node_idx: ", candidate_gene_node_idx)
+            
         else:
             print("all_candidate_genes not in patient")
             candidate_gene_node_idx = []
