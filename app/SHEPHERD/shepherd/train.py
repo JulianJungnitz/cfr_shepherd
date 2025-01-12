@@ -317,7 +317,7 @@ def train(args, hparams):
                                 max_epochs=hparams['max_epochs'], 
                                 callbacks=[patient_checkpoint_callback],
                                 profiler=hparams['profiler'],
-                                log_gpu_memory=hparams['log_gpu_memory'],
+                                # log_gpu_memory=hparams['log_gpu_memory'],
                                 limit_train_batches=limit_train_batches, 
                                 limit_val_batches=limit_val_batches,
                                 weights_summary="full",
