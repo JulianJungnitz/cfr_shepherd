@@ -119,11 +119,13 @@ def main():
     node_df = pd.read_csv(project_config.KG_DIR / args.node_map, sep='\t')
     gene_identifier = "gene/protein" if args.graph_shema == "primeKG" else "Gene"
     all_gene_idx = node_df.loc[node_df['node_type'] == gene_identifier, 'node_idx'].tolist()
+    print(f'There are {len(all_gene_idx)} genes in the dataset')
 
     # read in SPL matrix from all nodes to phenotypes
     #map from overall node id to idx within SPL matrix
     phen_identifier = "effect/phenotype" if args.graph_shema == "primeKG" else "Phenotype"
     nid_to_spl_dict = {nid: idx for idx, nid in enumerate(node_df[node_df["node_type"] == phen_identifier]["node_idx"].tolist())}
+    print(f'There are {len(nid_to_spl_dict)} phenotypes in the dataset')
     spl_matrix = np.load(project_config.KG_DIR / args.spl_matrix) 
     print('spl_matrix shape: ', spl_matrix.shape)
 
