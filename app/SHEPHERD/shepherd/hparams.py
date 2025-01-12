@@ -198,7 +198,7 @@ def get_patient_data_args(args, hparams):
         hparams.update({'train_data': f'simulated_patients/disease_split_train_sim_patients_{project_config.CURR_KG}.txt',
                         'validation_data': f'simulated_patients/disease_split_val_sim_patients_{project_config.CURR_KG}.txt', 
                         'test_data': f'simulated_patients/disease_split_all_sim_patients_{project_config.CURR_KG}.txt',
-                        'spl': f'simulated_patients/disease_split_all_sim_patients_{project_config.CURR_KG}_agg=mean_spl_matrix.npy',
+                        'spl': f'simulated_patients/disease_split_all_sim_patients_kg_{project_config.CURR_KG}_agg=mean_spl_matrix.npy',
                         'spl_index': f'simulated_patients/disease_split_all_sim_patients_{project_config.CURR_KG}_spl_index_dict.pkl'
                         })
     elif args.patient_data == "my_data":
