@@ -184,16 +184,16 @@ class PatientDataset(Dataset):
             if g in self.ensembl_to_idx_dict
         ]
         if "all_candidate_genes" in patient:
-            print("all_candidate_genes in patient")
+            # print("all_candidate_genes in patient")
             candidate_gene_node_idx = [
                 self.ensembl_to_idx_dict[g]
                 for g in patient["all_candidate_genes"]
                 if g in self.ensembl_to_idx_dict
             ]
-            print("candidate_gene_node_idx: ", candidate_gene_node_idx)
-            
+            # print("candidate_gene_node_idx: ", candidate_gene_node_idx)
+
         else:
-            print("all_candidate_genes not in patient")
+            # print("all_candidate_genes not in patient")
             candidate_gene_node_idx = []
 
 
