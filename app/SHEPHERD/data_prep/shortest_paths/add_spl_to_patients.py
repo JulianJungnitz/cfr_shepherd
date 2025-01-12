@@ -41,7 +41,9 @@ def add_spl_info(patients, spl_matrix, hpo_to_idx_dict, ensembl_to_idx_dict , ni
             print(f"[DEBUG] Patient {patient_id}: checking if {p} is in hpo_to_idx_dict")
             print("type of p: ", type(p))
             if p in hpo_to_idx_dict:
+                print(f"[DEBUG] Patient {patient_id}: {p} is in hpo_to_idx_dict")
                 hpo_idx.append(hpo_to_idx_dict[p])
+                print("appended hpo_idx: ", hpo_idx)
         if agg_type == 'mean':
             print(f"[DEBUG] Patient {patient_id}: calculating mean SPL for {len(hpo_idx)} phenotypes.")
             avg_spl_matrix[i, :] = [
