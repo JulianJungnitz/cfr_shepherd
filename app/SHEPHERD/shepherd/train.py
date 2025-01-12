@@ -312,7 +312,7 @@ def train(args, hparams):
         limit_val_batches=1.0
 
     print('initialize trainer')
-    patient_trainer = pl.Trainer(gpus=hparams['n_gpus'], 
+    patient_trainer = pl.Trainer(accelerator="auto",
                                 logger=wandb_logger, 
                                 max_epochs=hparams['max_epochs'], 
                                 callbacks=[patient_checkpoint_callback],
