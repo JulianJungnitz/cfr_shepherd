@@ -29,27 +29,25 @@ def add_spl_info(patients, spl_matrix, hpo_to_idx_dict, ensembl_to_idx_dict , ni
     max_spl = -1
     min_spl = 1000
     avg_spl_matrix = np.zeros((len(patients), len(all_gene_idx)))
-    print('spl_matrix', spl_matrix.shape)
+    print('spl_matrix shape:', spl_matrix.shape)
+    print('avg_spl_matrix shape:', avg_spl_matrix.shape)
     spl_indexing = {}
     for i, patient in enumerate(tqdm(patients)):
         patient_id = patient['id']
         spl_indexing[patient_id] = i
-        hpo_idx = [hpo_to_idx_dict[p] for p in patient['positive_phenotypes'] if p in hpo_to_idx_dict ]
+        hpo_idx = [hpo_to_idx_dict[p] for p in patient['positive_phenotypes'] if p in hpo_to_idx_dict]
         if agg_type == 'mean':
-            avg_spl_matrix[i, :] = [np.mean([spl_matrix[g, nid_to_spl_dict[p]] for p in hpo_idx]) for g in all_gene_idx]
-        elif agg_type == 'max':
-            avg_spl_matrix[i, :] = np.array([np.max([spl_matrix[g, nid_to_spl_dict[p]] for p in hpo_idx]) for g in all_gene_idx])
-        elif agg_type == 'min':
-            avg_spl_matrix[i, :] = np.array([np.min([spl_matrix[g, nid_to_spl_dict[p]] for p in hpo_idx]) for g in all_gene_idx])
-        elif agg_type == 'median':
-            avg_spl_matrix[i, :] = np.array([np.median([spl_matrix[g, nid_to_spl_dict[p]] for p in hpo_idx]) for g in all_gene_idx])
-        else:
-            raise NotImplementedError
+            print(f"[DEBUG] Patient {patient_id}: calculating mean SPL for {len(hpo_idx)} phenotypes.")
+            avg_spl_matrix[i, :] = [
+                np.mean([spl_matrix[g, nid_to_spl_dict[p]] for p in hpo_idx]) 
+                for g in all_gene_idx
+            ]
+            print(f"[DEBUG] Patient {patient_id}: mean SPL row (before normalization):", avg_spl_matrix[i, :])
         if np.max(avg_spl_matrix[i, :]) > max_spl:
-            max_spl = np.max(avg_spl_matrix[i,:])
+            max_spl = np.max(avg_spl_matrix[i, :])
         if np.min(avg_spl_matrix[i, :]) < min_spl:
             min_spl = np.min(avg_spl_matrix[i, :])
-        avg_spl_matrix[i,:] = [normalize(mean, x_max=x_max) for mean in avg_spl_matrix[i,:]]
+        avg_spl_matrix[i, :] = [normalize(val, x_max=x_max) for val in avg_spl_matrix[i, :]]
 
     print('Max avg SPL from gene to phenotypes:', max_spl)
     print('Min avg SPL from gene to phenotypes:', min_spl)
