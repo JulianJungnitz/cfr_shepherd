@@ -50,7 +50,9 @@ def add_spl_info(patients, spl_matrix, hpo_to_idx_dict, ensembl_to_idx_dict , ni
             else:
                 print(f"[DEBUG] Patient {patient_id}: {p} is not in hpo_to_idx_dict")
                 for key in hpo_to_idx_dict.keys():
-                    if p in key:
+                    hpo_number = key.split(":")[1]
+                    p_number = p.split(":")[1]
+                    if str(hpo_number) == str(p_number):
                         print(f"[DEBUG] Patient {patient_id}: {p} is in {key}")
                         # hpo_idx.append(hpo_to_idx_dict[key])
                         # print("appended hpo_idx: ", hpo_idx)
