@@ -320,7 +320,7 @@ def train(args, hparams):
                                 # log_gpu_memory=hparams['log_gpu_memory'],
                                 limit_train_batches=limit_train_batches, 
                                 limit_val_batches=limit_val_batches,
-                                weights_summary="full",
+                                # weights_summary="full",
                                 gradient_clip_val=hparams['gradclip'])
 
     #  Train
