@@ -95,7 +95,8 @@ def predict(args):
     # Read KG
     all_data, edge_attr_dict, nodes = preprocess.preprocess_graph(args)
     n_nodes = len(nodes["node_idx"].unique())
-    gene_phen_dis_node_idx = torch.LongTensor(nodes.loc[nodes['node_type'].isin(['gene/protein', 'effect/phenotype', 'disease']), 'node_idx'].values)
+    identifiers = ['gene/protein', 'effect/phenotype', 'disease'] if hparams['graph_schema'] == 'primeKG' else ['Gene', 'Phenotype', 'Disease']
+    gene_phen_dis_node_idx = torch.LongTensor(nodes.loc[nodes['node_type'].isin(identifiers), 'node_idx'].values)
 
 
     # Get dataset
