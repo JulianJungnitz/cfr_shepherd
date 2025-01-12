@@ -41,28 +41,28 @@ def add_spl_info(patients, spl_matrix, hpo_to_idx_dict, ensembl_to_idx_dict , ni
         spl_indexing[patient_id] = i
         hpo_idx = []
         for p in patient['positive_phenotypes']:
-            print(f"[DEBUG] Patient {patient_id}: checking if {p} is in hpo_to_idx_dict")
-            print("type of p: ", type(p))
-            if p in hpo_to_idx_dict.keys():
-                print(f"[DEBUG] Patient {patient_id}: {p} is in hpo_to_idx_dict")
+            # print(f"[DEBUG] Patient {patient_id}: checking if {p} is in hpo_to_idx_dict")
+            # print("type of p: ", type(p))
+            if p in hpo_to_idx_dict:
+                # print(f"[DEBUG] Patient {patient_id}: {p} is in hpo_to_idx_dict")
                 hpo_idx.append(hpo_to_idx_dict[p])
-                print("appended hpo_idx: ", hpo_idx)
-            else:
-                print(f"[DEBUG] Patient {patient_id}: {p} is not in hpo_to_idx_dict")
-                for key in hpo_to_idx_dict.keys():
-                    hpo_number = key.split(":")[1]
-                    p_number = p.split(":")[1]
-                    if str(hpo_number) == str(p_number):
-                        print(f"[DEBUG] Patient {patient_id}: {p} is in {key}")
-                        # hpo_idx.append(hpo_to_idx_dict[key])
-                        # print("appended hpo_idx: ", hpo_idx)
+            #     # print("appended hpo_idx: ", hpo_idx)
+            # else:
+            #     print(f"[DEBUG] Patient {patient_id}: {p} is not in hpo_to_idx_dict")
+            #     for key in hpo_to_idx_dict.keys():
+            #         hpo_number = key.split(":")[1]
+            #         p_number = p.split(":")[1]
+            #         if str(hpo_number) == str(p_number):
+            #             print(f"[DEBUG] Patient {patient_id}: {p} is in {key}")
+            #             # hpo_idx.append(hpo_to_idx_dict[key])
+            #             # print("appended hpo_idx: ", hpo_idx)
         if agg_type == 'mean':
-            print(f"[DEBUG] Patient {patient_id}: calculating mean SPL for {len(hpo_idx)} phenotypes.")
+            # print(f"[DEBUG] Patient {patient_id}: calculating mean SPL for {len(hpo_idx)} phenotypes.")
             avg_spl_matrix[i, :] = [
                 np.mean([spl_matrix[g, nid_to_spl_dict[p]] for p in hpo_idx]) 
                 for g in all_gene_idx
             ]
-            print(f"[DEBUG] Patient {patient_id}: mean SPL row (before normalization):", avg_spl_matrix[i, :])
+            # print(f"[DEBUG] Patient {patient_id}: mean SPL row (before normalization):", avg_spl_matrix[i, :])
         if np.max(avg_spl_matrix[i, :]) > max_spl:
             max_spl = np.max(avg_spl_matrix[i, :])
         if np.min(avg_spl_matrix[i, :]) < min_spl:
