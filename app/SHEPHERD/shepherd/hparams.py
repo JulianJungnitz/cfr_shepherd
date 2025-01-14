@@ -89,7 +89,7 @@ def get_train_hparams(args):
                'alpha': args.alpha, # Contribution of GP gate. NOTE: This is not used for patients-like-me or novel disease characterization
                'kappa': (1 - args.lmbda) * args.kappa,
                'seed': args.seed,
-               'batch_size': args.batch_size,
+               'batch_size': 32, # Set by Julian from args.batch_size,
                "graph_shema": args.graph_shema,
                
                'augment_genes': False if args.aug_gene_w > 0 else False,
@@ -114,7 +114,7 @@ def get_train_hparams(args):
                'combined_training': True,
                'sample_from_gpd': True,
                'attention_type': 'bilinear',
-               'n_cand_diseases': 1000,
+               'n_cand_diseases': 500, # set by Julian from 1000
                'test_n_cand_diseases': -1, 
                'candidate_disease_type': 'all_kg_nodes',
                'patient_similarity_type': 'gene', # How we determine labels for similar patients in "Patients Like Me"
