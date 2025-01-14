@@ -585,6 +585,7 @@ def train(args, hparams):
         # weights_summary="full",
         enable_model_summary=True,
         gradient_clip_val=hparams["gradclip"],
+        precision="bf16"
     )
 
     #  Train
