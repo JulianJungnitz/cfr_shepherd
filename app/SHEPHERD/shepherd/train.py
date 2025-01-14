@@ -571,7 +571,9 @@ def train(args, hparams):
     else:
         limit_train_batches = 1.0
         limit_val_batches = 1.0
-
+    
+    print("limit_train_batches: ", limit_train_batches)
+    print("limit_val_batches: ", limit_val_batches)
     print("initialize trainer")
     patient_trainer = pl.Trainer(
         accelerator="auto",
