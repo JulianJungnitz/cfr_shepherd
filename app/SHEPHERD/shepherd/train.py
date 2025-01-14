@@ -566,7 +566,7 @@ def train(args, hparams):
     # initialize trainer
     if hparams["debug"]:
         limit_train_batches = 1
-        limit_val_batches = 1
+        limit_val_batches = 0.1
         hparams["max_epochs"] = 6
     else:
         limit_train_batches = 1.0
