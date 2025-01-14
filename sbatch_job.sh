@@ -30,6 +30,8 @@ conda activate v5_shepherd
 
 
 export PYTHONPATH="/home/jj56rivo/cfr_shepherd:$PYTHONPATH"
+export PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True"
+
 
 conda activate v5_shepherd
 
