@@ -28,10 +28,6 @@ sys.path.insert(0, '..') # add project_config to path
 import project_config
 
 class CombinedPatientNCA(pl.LightningModule):
-    validation_step_outputs = []
-    train_step_outputs = []
-    test_step_outputs = []
-
     def __init__(self, edge_attr_dict, all_data, n_nodes=None, node_ckpt=None, hparams=None):
         super().__init__()
         self.save_hyperparameters('hparams') 
@@ -174,7 +170,7 @@ class CombinedPatientNCA(pl.LightningModule):
                 'train/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
                 'train/patient.disease_embed': cand_disease_embeddings.detach().cpu()
             })
-        self.train_step_outputs.append(batch_results)
+            
         return batch_results
 
     def validation_step(self, batch, batch_idx):
@@ -206,7 +202,6 @@ class CombinedPatientNCA(pl.LightningModule):
                                   'val/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
                                   'val/patient.disease_embed': cand_disease_embeddings.detach().cpu()
                                 })
-        self.validation_step_outputs.append(batch_results)
         return batch_results 
 
     def write_results_to_file(self, batch, softmax, correct_ranks, labels, phenotype_mask, disease_mask, attn_weights,  gat_attn, node_embeddings, phenotype_embeddings, disease_embeddings, save=True, loop_type='predict'):
@@ -319,7 +314,7 @@ class CombinedPatientNCA(pl.LightningModule):
                 'test/cand_disease_names': None
 
             })
-        self.test_step_outputs.append(batch_results)
+        
         return batch_results
 
     
@@ -471,13 +466,16 @@ class CombinedPatientNCA(pl.LightningModule):
         self.log(f'{loop_type}/mrr', mrr, prog_bar=False)
 
     def on_train_epoch_end(self, ):
-        self._epoch_end(self.train_step_outputs, 'train')
+        outputs = self.trainer.callback_metrics['train']
+        self._epoch_end(outputs, 'train')
 
     def on_validation_epoch_end(self,):
-        self._epoch_end(self.validation_step_outputs, 'val')
+        outputs = self.trainer.callback_metrics['val']
+        self._epoch_end(outputs, 'val')
 
     def on_test_epoch_end(self, ):
-        self._epoch_end(self.test_step_outputs, 'test')
+        outputs = self.trainer.callback_metrics['test']
+        self._epoch_end(outputs, 'test')
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.hparams.hparams['lr'])
