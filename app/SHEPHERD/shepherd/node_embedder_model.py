@@ -410,7 +410,9 @@ class NodeEmbeder(pl.LightningModule):
             
             # Update node embeddings
             print("Move to GPU: predict - update node embeddings")
-            x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) #
+            print(f"Memory allocated before layer {i}: {torch.cuda.memory_allocated(self.device)} bytes")
+            x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True)
+            print(f"Memory allocated after layer {i}: {torch.cuda.memory_allocated(self.device)} bytes")
             print("Moved: predict - update node embeddings")
 
             edge_i = edge_i.detach().cpu()
