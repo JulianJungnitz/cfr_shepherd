@@ -97,7 +97,7 @@ RUN chmod +x /entrypoint.sh /start_app.sh
 #               --exclude='SHEPHERD/data/knowledge_graph' \
 #               /src_app/ /app/
 
-RUN --mount=type=bind,source=../cfr_shepherd_data,target=/src_app 
+RUN --mount=type=bind,source=../cfr_shepherd_data,target=/src_app \
     rsync -a --exclude='../cfr_shepherd_data/checkpoints' \
               --exclude='../cfr_shepherd_data/knowledge_graph' \
               /src_app/ /app/
