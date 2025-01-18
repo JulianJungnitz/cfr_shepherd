@@ -13,4 +13,4 @@ python predict.py \
     --saved_node_embeddings_path checkpoints/pretrain.ckpt \
     --best_ckpt checkpoints/disease_characterization.ckpt \
     --patient_aggr_nodes $patient_aggr_nodes \
-    --graph_schema $graph_shema
+    --graph_shema $graph_shema

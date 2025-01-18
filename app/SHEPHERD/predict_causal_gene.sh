@@ -1,7 +1,7 @@
 
 cd app/SHEPHERD/shepherd
 
-graph_schema=$1
+graph_shema=$1
 
 python predict.py \
     --run_type causal_gene_discovery \
@@ -10,4 +10,4 @@ python predict.py \
     --node_map KG_node_map.txt \
     --saved_node_embeddings_path checkpoints/pretrain.ckpt \
     --best_ckpt checkpoints/causal_gene_discovery.ckpt\
-    --graph_schema $graph_shema
+    --graph_shema $graph_shema
