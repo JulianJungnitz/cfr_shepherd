@@ -411,7 +411,7 @@ class NodeEmbeder(pl.LightningModule):
             
             # Update node embeddings
             print("Move to GPU: predict - update node embeddings")
-            print(f"Memory allocated before layer {i}: {torch.cuda.memory_allocated(self.device)} bytes")
+            # print(f"Memory allocated before layer {i}: {torch.cuda.memory_allocated(self.device)} bytes")
            
             if self.device == 'cuda':
                 print("Move to GPU: predict - update node embeddings")
