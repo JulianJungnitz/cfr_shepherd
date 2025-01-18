@@ -134,13 +134,13 @@ def predict(args):
     # Get patient model 
     model = get_model(args, hparams, None, all_data, edge_attr_dict,  n_nodes,load_from_checkpoint=True)
 
-    print("Model infos:", model)
-    print("Model hyperparameters:", model.hparams)
-    print("Model state dict:", model.state_dict())
-    print("Model parameters:", model.parameters())
-    print("Model named parameters:", model.named_parameters())
-    print("Model named children:", model.named_children())
-    print("Model named modules:", model.named_modules())
+    # print("Model infos:", model)
+    # print("Model hyperparameters:", model.hparams)
+    # print("Model state dict:", model.state_dict())
+    # print("Model parameters:", model.parameters())
+    # print("Model named parameters:", model.named_parameters())
+    # print("Model named children:", model.named_children())
+    # print("Model named modules:", model.named_modules())
 
 
     trainer = pl.Trainer(accelerator="cpu" ) # accelerator='gpu', devices=hparams['n_gpus'] 
