@@ -5,6 +5,7 @@ import os
 from pronto import Ontology
 
 from SHEPHERD.data_prep.shortest_paths import add_spl_to_patients
+from SHEPHERD import project_config
 import subprocess
 
 
@@ -51,7 +52,7 @@ def query_data(
 
 
 def get_doid_to_mondo():
-    mondo = Ontology("./app/SHEPHERD/data/mondo-rare.obo")
+    mondo = Ontology(project_config.PROJECT_DIR + "/data/mondo-rare.obo")
     doid_to_mondo = {}
     for term in mondo.terms():
         for xref in term.xrefs:
