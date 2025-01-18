@@ -13,7 +13,7 @@ from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Sigmoid
 from torch_geometric.data import Dataset, NeighborSampler, Data
-from torch_geometric.loader.neighbor_sampler import EdgeIndex
+from torch_geometric import EdgeIndex
 
 # Sci-kit Learn
 from sklearn.metrics import roc_auc_score, average_precision_score, accuracy_score, f1_score, roc_curve, precision_recall_curve
