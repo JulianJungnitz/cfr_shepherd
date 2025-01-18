@@ -1,7 +1,6 @@
 import torch, torch.nn as nn, torch.nn.functional as F, numpy as np
 from torch.nn.parameter import Parameter
-from allennlp.modules.attention.attention import Attention
-from allennlp.nn import Activation
+fr
 
 import umap
 import pandas as pd
