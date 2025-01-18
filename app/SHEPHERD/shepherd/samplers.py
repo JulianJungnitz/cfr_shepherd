@@ -244,7 +244,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
                  sample_edge_index: Union[Tensor, SparseTensor],
                  sizes: List[int], 
                  patient_dataset,
-                 all_edge_attributes,
+                 all_edge_attr,
                  n_nodes: int,
                  relevant_node_idx = None,
                  do_filter_edges: Optional[bool] = False,
@@ -282,7 +282,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         self.do_filter_edges = do_filter_edges
         self.relevant_node_idx = relevant_node_idx
         self.n_nodes = n_nodes
-        self.all_edge_attributes = all_edge_attributes
+        self.all_edge_attr = all_edge_attr
         self.dataset_type = dataset_type
         self.sparse_sample = sparse_sample
         self.edge_index = edge_index #always train edge index
@@ -425,7 +425,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
     def add_patient_information(self, patient_ids, phenotype_node_idx, candidate_gene_node_idx, correct_genes_node_idx, sim_gene_node_idx, gene_sims, gene_degs, disease_node_idx, candidate_disease_node_idx, labels, disease_labels, patient_labels, additional_labels, adjs, batch_size, n_id, sparse_idx, target_batch): #candidate_disease_node_idx
 
         # Create Data Object & Add patient level information
-        adjs = [HeterogeneousEdgeIndex(adj.edge_index, adj.e_id, self.all_edge_attributes[adj.e_id], adj.size) for adj in adjs] 
+        adjs = [HeterogeneousEdgeIndex(adj.edge_index, adj.e_id, self.all_edge_attr[adj.e_id], adj.size) for adj in adjs] 
         max_n_candidates = max([len(l) for l in candidate_gene_node_idx])
         data = Data(adjs = adjs, 
                 batch_size = batch_size,
