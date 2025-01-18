@@ -1,7 +1,7 @@
 To run without the docker container use these steps:
 
 conda env create -f ./app/SHEPHERD/original_environment.yml
-bash ./app/SHEPHERD/install_pyg.sh
+bash ./app/SHEPHERD/install_pyg.sh       #or run the install_updated_pyg.sh to match pytorch>2.
 pip install -U --no-deps -r cfr_requirements.txt 
 pip install -U --no-deps -r ./app/additional_pip_requirements_shepherd.txt 
 

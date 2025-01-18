@@ -2,6 +2,7 @@
 cd app/SHEPHERD/shepherd
 
 patient_aggr_nodes=$1
+graph_shema=$2
 
 
 python predict.py \
@@ -11,4 +12,5 @@ python predict.py \
     --node_map KG_node_map.txt \
     --saved_node_embeddings_path checkpoints/pretrain.ckpt \
     --best_ckpt checkpoints/disease_characterization.ckpt \
-    --patient_aggr_nodes $patient_aggr_nodes 
+    --patient_aggr_nodes $patient_aggr_nodes \
+    --graph_schema $graph_shema
