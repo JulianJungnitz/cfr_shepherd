@@ -29,7 +29,7 @@ conda activate v5_shepherd
 # bash install_pyg.sh
 
 
-export PYTHONPATH="/home/vagrant/dev/Julian/cfr_shepherd/cfr_shepherd:$PYTHONPATH"
+export PYTHONPATH="/home/vagrant/dev/Julian/cfr_shepherd:$PYTHONPATH"
 export PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True"
 
 
