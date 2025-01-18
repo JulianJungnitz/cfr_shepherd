@@ -17,7 +17,6 @@ import math
 import tqdm
 import time
 import wandb
-from memory_profiler import profile
 
 
 # Own
@@ -401,7 +400,7 @@ class NodeEmbeder(pl.LightningModule):
                       "test/node_total_f1": np.mean(f1)})
         self._logger({'node_curr_epoch': self.current_epoch})
 
-    @profile
+    
     def predict(self, data):
         n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
 
