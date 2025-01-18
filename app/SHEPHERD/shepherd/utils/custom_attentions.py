@@ -195,7 +195,7 @@ class BilinearAttention(nn.Module):
         self.normalize = normalize
 
         # Initialize
-        nn.init.xavier_uniform_(self.weight)
+        nn.init.xavier_uniform_(self._weight_matrix)
         if self.bias is not None:
             nn.init.zeros_(self.bias)
 
@@ -210,7 +210,7 @@ class BilinearAttention(nn.Module):
         """
         # (1) Multiply query by W => (batch_size, matrix_dim), then unsqueeze(1)
         #     => shape (batch_size, 1, matrix_dim)
-        weighted_query = query @ self.weight
+        weighted_query = query @ self._weight_matrix
         weighted_query = weighted_query.unsqueeze(1)
 
         # (2) Multiply by keys^T => shape (batch_size, 1, seq_len), then squeeze
