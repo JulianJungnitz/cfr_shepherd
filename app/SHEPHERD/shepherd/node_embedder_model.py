@@ -26,7 +26,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class NodeEmbeder(pl.LightningModule):
 
-    def __init__(self, all_data, edge_attr_dict, hp_dict=None, num_nodes=None, combined_training=False, spl_mat=[]):
+    def __init__(self, all_data, edge_attr_dict, hp_dict=None, num_nodes=None, combined_training=False, spl_mat=[], ):
         print("NodeEmbeder: __init__")
         super().__init__()
 
@@ -96,21 +96,25 @@ class NodeEmbeder(pl.LightningModule):
         self.relation_weights = nn.Parameter(torch.Tensor(self.num_relations, self.output * self.n_heads))
 
         # Normalization (applied after a single conv layer)
+
+        fix_layer_size = True # If True, the layer size is fixed to 1
+        print("Sizes: ", self.nhid1*self.n_heads, self.nhid2*self.n_heads, "Fix Layer Size: ", fix_layer_size)
+
         if self.norm_method == "batch":
             self.norms = torch.nn.ModuleList()
-            self.norms.append(BatchNorm(self.nhid1*self.n_heads))
-            self.norms.append(BatchNorm(self.nhid2*self.n_heads))
+            self.norms.append(BatchNorm(self.nhid1*self.n_heads if not fix_layer_size else 1))
+            self.norms.append(BatchNorm(self.nhid2*self.n_heads if not fix_layer_size else 1))
         elif self.norm_method == "layer":
             self.norms = torch.nn.ModuleList()
-            self.norms.append(LayerNorm(self.nhid1*self.n_heads))
-            self.norms.append(LayerNorm(self.nhid2*self.n_heads))
+            self.norms.append(LayerNorm(self.nhid1*self.n_heads if not fix_layer_size else 1))
+            self.norms.append(LayerNorm(self.nhid2*self.n_heads if not fix_layer_size else 1))
         elif self.norm_method == "batch_layer":
             self.batch_norms = torch.nn.ModuleList()
-            self.batch_norms.append(BatchNorm(self.nhid1*self.n_heads))
-            if self.n_layers == 3: self.batch_norms.append(BatchNorm(self.nhid2*self.n_heads))
+            self.batch_norms.append(BatchNorm(self.nhid1*self.n_heads if not fix_layer_size else 1))
+            if self.n_layers == 3: self.batch_norms.append(BatchNorm(self.nhid2*self.n_heads if not fix_layer_size else 1))
             self.layer_norms = torch.nn.ModuleList()
-            self.layer_norms.append(LayerNorm(self.nhid1*self.n_heads))
-            if self.n_layers == 3: self.layer_norms.append(LayerNorm(self.nhid2*self.n_heads))
+            self.layer_norms.append(LayerNorm(self.nhid1*self.n_heads if not fix_layer_size else 1))
+            if self.n_layers == 3: self.layer_norms.append(LayerNorm(self.nhid2*self.n_heads if not fix_layer_size else 1))
 
         self.reset_parameters()
 
