@@ -183,10 +183,10 @@ class BilinearAttention(nn.Module):
     ):
         super().__init__()
         # Weight matrix matches old: _weight_matrix
-        self.weight = nn.Parameter(torch.empty(vector_dim, matrix_dim))
+        self._weight_matrix = nn.Parameter(torch.empty(vector_dim, matrix_dim))
 
         # Optional bias matches old: _bias
-        self.bias = nn.Parameter(torch.empty(1)) if add_bias else None
+        self._bias = nn.Parameter(torch.empty(1)) if add_bias else None
 
         # Optional activation (old default is "linear" -> no-op)
         self.activation = activation or (lambda x: x)
