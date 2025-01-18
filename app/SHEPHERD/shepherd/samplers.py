@@ -243,7 +243,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
     def __init__(self, dataset_type: str, edge_index: Union[Tensor, SparseTensor], 
                  sample_edge_index: Union[Tensor, SparseTensor],
                  sizes: List[int], 
-                 dataset,
+                 patient_dataset,
                  all_edge_attributes,
                  n_nodes: int,
                  relevant_node_idx = None,
@@ -287,7 +287,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         self.sparse_sample = sparse_sample
         self.edge_index = edge_index #always train edge index
         self.sample_edge_index = sample_edge_index # depends on train/val/test
-        self.dataset = dataset
+        self.patient_dataset = patient_dataset
         self.num_nodes = num_nodes
         self.train_phenotype_counter = train_phenotype_counter
         self.train_gene_counter = train_gene_counter
@@ -347,10 +347,11 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         self.adj_t.storage.rowptr()
         self.adj_t_sample.storage.rowptr()
 
-
+        if 'dataset' in kwargs:
+            del kwargs['dataset']
         # print("hyperparameters at end of initialization:", hparams)
         super(PatientNeighborSampler, self).__init__(
-            self.dataset, collate_fn=self.collate, **kwargs)
+            self.patient_dataset, collate_fn=self.collate, **kwargs)
 
     def filter_edges(self, edge_index, e_id, source_nodes, target_nodes):
         '''
@@ -474,13 +475,13 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         node2batch[0] = 0
 
         # add phenotype / gene / disease names
-        data['phenotype_names'] = [[(self.dataset.node_idx_to_name(p.item()), self.dataset.node_idx_to_degree(p.item())) for p in p_list] for p_list in phenotype_node_idx ]
-        data['cand_gene_names'] = [[self.dataset.node_idx_to_name(g.item()) for g in g_list] for g_list in candidate_gene_node_idx ]
-        data['corr_gene_names'] = [[self.dataset.node_idx_to_name(g.item()) for g in g_list] for g_list in correct_genes_node_idx  ]
-        data['disease_names'] = [[self.dataset.node_idx_to_name(d.item()) for d in d_list] for d_list in disease_node_idx ]
+        data['phenotype_names'] = [[(self.patient_dataset.node_idx_to_name(p.item()), self.patient_dataset.node_idx_to_degree(p.item())) for p in p_list] for p_list in phenotype_node_idx ]
+        data['cand_gene_names'] = [[self.patient_dataset.node_idx_to_name(g.item()) for g in g_list] for g_list in candidate_gene_node_idx ]
+        data['corr_gene_names'] = [[self.patient_dataset.node_idx_to_name(g.item()) for g in g_list] for g_list in correct_genes_node_idx  ]
+        data['disease_names'] = [[self.patient_dataset.node_idx_to_name(d.item()) for d in d_list] for d_list in disease_node_idx ]
 
         if self.use_diseases:
-            data['cand_disease_names'] = [[self.dataset.node_idx_to_name(d.item()) for d in d_list] for d_list in candidate_disease_node_idx ]
+            data['cand_disease_names'] = [[self.patient_dataset.node_idx_to_name(d.item()) for d in d_list] for d_list in candidate_disease_node_idx ]
 
 
         #reindex nodes to make room for padding
@@ -534,7 +535,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         return data
 
     def get_candidate_diseases(self, disease_node_idx, candidate_gene_node_idx):
-        cand_diseases = self.dataset.get_candidate_diseases(cand_type=self.hparams['candidate_disease_type'])
+        cand_diseases = self.patient_dataset.get_candidate_diseases(cand_type=self.hparams['candidate_disease_type'])
         if self.n_cand_diseases != -1: cand_diseases = cand_diseases[torch.randperm(len(cand_diseases))][0:self.n_cand_diseases] 
         
         if self.hparams['only_hard_distractors']: #add candidates to every patient
@@ -558,12 +559,12 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
 
     def get_candidate_patients(self, patient_ids):
         # get patients with the same disease/gene
-        similar_pat_ids = [self.dataset.get_similar_patients(p_id, similarity_type=self.hparams['patient_similarity_type']) for p_id in patient_ids]
+        similar_pat_ids = [self.patient_dataset.get_similar_patients(p_id, similarity_type=self.hparams['patient_similarity_type']) for p_id in patient_ids]
         # shuffle patients & subset to n_sim_pats so we have X similar patients per patient in the batch
         similar_pat_ids = [p[:self.hparams['n_similar_patients']] for p in similar_pat_ids] #[torch.randperm(len(p))]
         # Retrieve the patients for each of the sampled patient ids if they aren't already in the batch
         patient_ids = list(patient_ids) 
-        similar_pats = [self.dataset[self.dataset.patient_id_to_index[p_id.item()]] for p_ids in similar_pat_ids for p_id in p_ids if p_id.item() not in patient_ids]
+        similar_pats = [self.patient_dataset[self.patient_dataset.patient_id_to_index[p_id.item()]] for p_ids in similar_pat_ids for p_id in p_ids if p_id.item() not in patient_ids]
         return similar_pats
     
     def sample(self, batch, source_batch, target_batch):
