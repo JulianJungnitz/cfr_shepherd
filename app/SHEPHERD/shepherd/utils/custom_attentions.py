@@ -196,8 +196,8 @@ class BilinearAttention(nn.Module):
 
         # Initialize
         nn.init.xavier_uniform_(self._weight_matrix)
-        if self.bias is not None:
-            nn.init.zeros_(self.bias)
+        if self._bias is not None:
+            nn.init.zeros_(self._bias)
 
     def forward(
         self,
@@ -218,8 +218,8 @@ class BilinearAttention(nn.Module):
         scores = weighted_query.bmm(keys.transpose(1, 2)).squeeze(1)
 
         # (3) Add bias (old code has shape [1], broadcasts across seq_len)
-        if self.bias is not None:
-            scores = scores + self.bias
+        if self._bias is not None:
+            scores = scores + self._bias
 
         # (4) Optional activation
         scores = self.activation(scores)
