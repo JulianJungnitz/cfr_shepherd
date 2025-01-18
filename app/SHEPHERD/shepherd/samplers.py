@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch_sparse import SparseTensor
 from torch_cluster import random_walk
-from torch_geometric import EdgeIndex,Adj
+from torch_geometric.loader.neighbor_sampler import EdgeIndex,Adj
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset
 from torch_geometric.utils import add_self_loops, add_remaining_self_loops
