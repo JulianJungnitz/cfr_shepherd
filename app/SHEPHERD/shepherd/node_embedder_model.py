@@ -90,6 +90,8 @@ class NodeEmbeder(pl.LightningModule):
         self.relation_weights = nn.Parameter(torch.Tensor(self.num_relations, self.output * self.n_heads))
 
         # Normalization (applied after a single conv layer)
+        print("Sizes: ", self.nhid1*self.n_heads, self.nhid2*self.n_heads)
+
         if self.norm_method == "batch":
             self.norms = torch.nn.ModuleList()
             self.norms.append(BatchNorm(self.nhid1*self.n_heads))

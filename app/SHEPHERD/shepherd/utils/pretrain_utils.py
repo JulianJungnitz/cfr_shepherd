@@ -5,7 +5,7 @@ import pandas as pd
 import time
 import math
 from typing import NamedTuple, Optional, Tuple
-import plotly.express as px
+# import plotly.express as px
 
 # Pytorch
 import torch
@@ -13,6 +13,7 @@ from torch import Tensor
 import torch.nn.functional as F
 from torch.nn import Sigmoid
 from torch_geometric.data import Dataset, NeighborSampler, Data
+from torch_geometric.loader.neighbor_sampler import EdgeIndex,Adj
 
 # Sci-kit Learn
 from sklearn.metrics import roc_auc_score, average_precision_score, accuracy_score, f1_score, roc_curve, precision_recall_curve
@@ -152,5 +153,5 @@ def plot_roc_curve(pred, labels):
     data = {"False Positive Rate": fpr, "True Positive Rate": tpr, "Threshold": thresholds, 
             "ROC": [roc] * len(thresholds), "G-Mean": gmeans, "Max G-Mean": [max_gmean] * len(thresholds)}
     df = pd.DataFrame(data)
-    fig = px.line(df, x = "False Positive Rate", y = "True Positive Rate", hover_data=list(data.keys()))
-    return fig
+    # fig = px.line(df, x = "False Positive Rate", y = "True Positive Rate", hover_data=list(data.keys()))
+    # return fig

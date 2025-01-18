@@ -143,3 +143,5 @@ dmypy.json
 SHEPHERD/shepherd/lightning_logs/*
 app/e_log.txt
 app/i_log.txt
+app/kg_generation/KG_edgelist_mask_with_rev.txt
+app/kg_generation/KG_edgelist_mask.txt
