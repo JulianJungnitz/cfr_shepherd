@@ -6,20 +6,20 @@ neo4j_credentials:
 
 shepherd:
   RUN_PRETRAINING: False
-  USE_HAUNER_GRAPH: True
-  USE_SIMULATED_PATIENTS: True
+  USE_HAUNER_GRAPH: False
+  USE_SIMULATED_PATIENTS: False
 
-  OVERWRITE_PREPROCESSED_DATA: False # If True, the patients data will be pulled from the neo4j database
-  LIMIT_SAMPLE_SIZE: False 
+  OVERWRITE_PREPROCESSED_DATA: True # If True, the patients data will be pulled from the neo4j database
+  LIMIT_SAMPLE_SIZE: True 
   NUMBER_OF_SAMPLES_LIMIT: 10
   ONLY_PATIENTS_WITH_DISEASE: False # If True, only patients with disease will be used. If during mapping from DOID to MONDO, no diseases are found, the patient will be excluded.
   ONLY_PATIENTS_WITH_PHENOTYPES: True 
   ONLY_PATIENTS_WITH_GENES: True
 
-  CREATE_SPL_MATRIX: False # This is necessary if the algo is run on new data
+  CREATE_SPL_MATRIX: True # This is necessary if the algo is run on new data
 
   # this runs the predictions
-  RUN_PATIENTS_LIKE_ME: False
+  RUN_PATIENTS_LIKE_ME: True
   RUN_CAUSAL_GENE_DISCOVERY: False
   RUN_DISEASE_CATEGORIZATION: False
 
@@ -28,6 +28,6 @@ shepherd:
   MOVE_RESULTS_TO_OUTPUT_DIR: False # This moves the results to the output directory after every prediction
 
   RUN_PREPROCESSING: False # This runs the preprocessing for training the model
-  RUN_TRAINING_DISEASE_CHARACTERIZATION: True 
+  RUN_TRAINING_DISEASE_CHARACTERIZATION: False 
 
   
