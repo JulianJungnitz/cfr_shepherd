@@ -6,7 +6,7 @@ from torch import Tensor
 from torch_scatter import scatter
 from torch_geometric.utils import degree
 
-from torch.nn.init import ones, zeros
+import torch.nn.init as init
 
 
 class LayerNorm(torch.nn.Module):
@@ -46,8 +46,8 @@ class LayerNorm(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        ones(self.weight)
-        zeros(self.bias)
+        init.ones_(self.weight)
+        init.zeros_(self.bias)
 
 
     def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
