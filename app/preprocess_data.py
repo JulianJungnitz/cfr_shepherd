@@ -52,7 +52,7 @@ def query_data(
 
 
 def get_doid_to_mondo():
-    mondo = Ontology(project_config.PROJECT_DIR / "data/mondo-rare.obo")
+    mondo = Ontology(project_config.PROJECT_DIR / "mondo-rare.obo")
     doid_to_mondo = {}
     for term in mondo.terms():
         for xref in term.xrefs:
