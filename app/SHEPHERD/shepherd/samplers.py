@@ -244,7 +244,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
                  sample_edge_index: Union[Tensor, SparseTensor],
                  sizes: List[int], 
                  patient_dataset,
-                 all_edge_attr,
+                 all_edge_attributes,
                  n_nodes: int,
                  relevant_node_idx = None,
                  do_filter_edges: Optional[bool] = False,
@@ -282,7 +282,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         self.do_filter_edges = do_filter_edges
         self.relevant_node_idx = relevant_node_idx
         self.n_nodes = n_nodes
-        self.all_edge_attr = all_edge_attr
+        self.all_edge_attr = all_edge_attributes
         self.dataset_type = dataset_type
         self.sparse_sample = sparse_sample
         self.edge_index = edge_index #always train edge index
