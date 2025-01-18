@@ -14,3 +14,5 @@ local:
 export PYTHONPATH="/home/julian/Documents/cfr_shepherd:$PYTHONPATH"
 on lichtenberg:
 export PYTHONPATH="/home/jj56rivo/cfr_shepherd:$PYTHONPATH"
+on CCRC
+export PYTHONPATH="/dev/Julian/cfr_shepherd:$PYTHONPATH"
