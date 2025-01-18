@@ -17,6 +17,8 @@ import math
 import tqdm
 import time
 import wandb
+from memory_profiler import profile
+
 
 # Own
 from utils.pretrain_utils import sample_node_for_et, get_batched_data, get_edges, calc_metrics, plot_roc_curve, metrics_per_rel
@@ -399,7 +401,7 @@ class NodeEmbeder(pl.LightningModule):
                       "test/node_total_f1": np.mean(f1)})
         self._logger({'node_curr_epoch': self.current_epoch})
 
-    
+    @profile
     def predict(self, data):
         n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
 
@@ -411,6 +413,7 @@ class NodeEmbeder(pl.LightningModule):
             # Update node embeddings
             print("Move to GPU: predict - update node embeddings")
             print(f"Memory allocated before layer {i}: {torch.cuda.memory_allocated(self.device)} bytes")
+           
             x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True)
             print(f"Memory allocated after layer {i}: {torch.cuda.memory_allocated(self.device)} bytes")
             print("Moved: predict - update node embeddings")
