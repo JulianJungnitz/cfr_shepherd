@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 
 import torch.nn.functional as F
-from torch_geometric.nn import BatchNorm, LayerNorm, GATv2Conv
+from torch_geometric.nn import BatchNorm, GATv2Conv
 
 # Pytorch Lightning
 import pytorch_lightning as pl
@@ -18,6 +18,7 @@ import wandb
 
 # Own
 from utils.pretrain_utils import sample_node_for_et, get_batched_data, get_edges, calc_metrics, plot_roc_curve, metrics_per_rel
+from utils.old_layer_norm import LayerNorm
 from decoders import bilinear, trans, dot
 
 # Global variables
@@ -97,7 +98,7 @@ class NodeEmbeder(pl.LightningModule):
 
         # Normalization (applied after a single conv layer)
 
-        fix_layer_size = True # If True, the layer size is fixed to 1
+        fix_layer_size = False # If True, the layer size is fixed to 1
         print("Sizes: ", self.nhid1*self.n_heads, self.nhid2*self.n_heads, "Fix Layer Size: ", fix_layer_size)
 
         if self.norm_method == "batch":
