@@ -153,7 +153,7 @@ def get_all_patients_diseases(df):
 if __name__ == "__main__":
     ### EXCLUDE CONTROL DISEASE?? ###
     agg_types = [ "phen"]
-    base_res = ["checkpoints.patients_like_me_scores", "checkpoints.disease_characterization_scores"]
+    base_res = ["checkpoints.patients_like_me_scores",]
     dir = project_config.PROJECT_DIR / "results" 
     for agg_type in agg_types:
         for res in base_res:
