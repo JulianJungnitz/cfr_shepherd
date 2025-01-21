@@ -47,6 +47,7 @@ def plot_patient_similarity(patient_sim_map,k_max):
          
         # save to file
         file = project_config.PROJECT_DIR / "plots" / f"patient_{patient_id}_similarity_scores.png"
+        print(f"Saving plot to {file}")
         plt.savefig(file)
 
 def plot_patient_similarity_avg(patient_sim_map,k_max):
