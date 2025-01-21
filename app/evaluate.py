@@ -87,6 +87,9 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
 
     for i, row in group.iterrows():
         candidate_patient_id = row["candidate_patients"]
+        if(candidate_patient_id not in patients_disease_map):
+            print(f"Patient {candidate_patient_id} not found in patients_disease_map")
+            continue
         candidate_patient_disease = patients_disease_map[int(candidate_patient_id)]
         id_similarity_set =set(patient_disease["diseases"]).intersection(set(candidate_patient_disease["diseases"]))
         icd10_similarity_set = set(patient_disease["icd10_codes"]).intersection(set(candidate_patient_disease["icd10_codes"]))
