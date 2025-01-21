@@ -77,6 +77,9 @@ def plot_patient_similarity_avg(patient_sim_map,k_max):
 
 
 def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
+    if(patient_id not in patients_disease_map):
+        print(f"Patient {patient_id} has no diseases")
+        return 0, 0
     patient_disease = patients_disease_map[patient_id]
     id_similar = 0
     icd10_similar = 0
@@ -84,13 +87,13 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
     # sort group by score
     group = group.sort_values(by="similarities", ascending=False)
 
-
+    count = 0
     for i, row in group.iterrows():
-        candidate_patient_id = row["candidate_patients"]
+        candidate_patient_id = int(row["candidate_patients"])
         if(candidate_patient_id not in patients_disease_map):
-            print(f"Patient {candidate_patient_id} not found in patients_disease_map")
+            count += 1
             continue
-        candidate_patient_disease = patients_disease_map[int(candidate_patient_id)]
+        candidate_patient_disease = patients_disease_map[candidate_patient_id]
         id_similarity_set =set(patient_disease["diseases"]).intersection(set(candidate_patient_disease["diseases"]))
         icd10_similarity_set = set(patient_disease["icd10_codes"]).intersection(set(candidate_patient_disease["icd10_codes"]))
         
@@ -104,7 +107,7 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
         if index == k:
             break
         index += 1
-
+    print(f"Patient {patient_id} has {count} patients without diseases")
     return id_similar, icd10_similar
     
 def get_all_patients_diseases(df):
