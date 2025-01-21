@@ -152,12 +152,12 @@ def get_all_patients_diseases(df):
 
 if __name__ == "__main__":
     ### EXCLUDE CONTROL DISEASE?? ###
-    agg_types = ["phen_gen", "phen"]
+    agg_types = [ "phen"]
     base_res = ["checkpoints.patients_like_me_scores", "checkpoints.disease_characterization_scores"]
     dir = project_config.PROJECT_DIR / "results" 
     for agg_type in agg_types:
         for res in base_res:
-            file = dir / f"{res}_{agg_type}_primeKG.csv"
+            file = dir / f"{res}_{agg_type}_primeKG_w_dis.csv"
             evaluate_patients_like_me(file)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
 # %%
