@@ -19,9 +19,9 @@ shepherd:
   CREATE_SPL_MATRIX: True # This is necessary if the algo is run on new data
 
   # this runs the predictions
-  RUN_PATIENTS_LIKE_ME: True
+  RUN_PATIENTS_LIKE_ME: False
   RUN_CAUSAL_GENE_DISCOVERY: False
-  RUN_DISEASE_CATEGORIZATION: False
+  RUN_DISEASE_CATEGORIZATION: True
 
   PATIENTS_AGGR_NODES: phenotypes # Options: phenotypes, phenotypes_and_genes - for patients like me and disease categorization the aggregation for the patient embedding can be changed
 
