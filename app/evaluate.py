@@ -107,7 +107,7 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
         if index == k:
             break
         index += 1
-    print(f"Patient {patient_id} has {count} patients without diseases")
+    # print(f"Patient {patient_id} has {count} patients without diseases")
     return id_similar, icd10_similar
     
 def get_all_patients_diseases(df):
