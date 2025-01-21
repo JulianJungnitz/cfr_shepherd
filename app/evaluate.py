@@ -23,7 +23,7 @@ def evaluate_patients_like_me(score_file_path):
                 patient_sim_map[patient_id] = {}
             patient_sim_map[patient_id][k] = {"id_similar": id_similar, "icd10_similar": icd10_similar}
 
-    plot_patient_similarity_avg(patient_sim_map, max_k)
+    plot_patient_similarity_avg(patient_sim_map, max_k, score_file_path)
 
 def plot_patient_similarity(patient_sim_map,k_max):
     patient_ids = list(patient_sim_map.keys())
@@ -51,7 +51,7 @@ def plot_patient_similarity(patient_sim_map,k_max):
         print(f"Saving plot to {file}")
         plt.savefig(file)
 
-def plot_patient_similarity_avg(patient_sim_map,k_max):
+def plot_patient_similarity_avg(patient_sim_map,k_max, score_file_path):
     patient_ids = list(patient_sim_map.keys())
     k_values = range(1,  k_max+1)
 
@@ -72,7 +72,7 @@ def plot_patient_similarity_avg(patient_sim_map,k_max):
     ax.plot(k_values, list(k_icd10_similar_avg.values()), label="ICD10 Similar")
     ax.set_xlabel("K")
     ax.set_ylabel("Similarity")
-    ax.set_title("Patient Similarity Average of k highest scored patients.\n At least one similar disease")
+    ax.set_title("Patient Similarity Average of k highest scored patients.\n At least one similar disease \n File: " + score_file_path)
     ax.legend()
 
 
