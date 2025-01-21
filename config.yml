@@ -19,11 +19,11 @@ shepherd:
   CREATE_SPL_MATRIX: False # This is necessary if the algo is run on new data
 
   # this runs the predictions
-  RUN_PATIENTS_LIKE_ME: False
-  RUN_CAUSAL_GENE_DISCOVERY: True
-  RUN_DISEASE_CATEGORIZATION: False
+  RUN_PATIENTS_LIKE_ME: True
+  RUN_CAUSAL_GENE_DISCOVERY: False
+  RUN_DISEASE_CATEGORIZATION: True
 
-  PATIENTS_AGGR_NODES: phenotypes # Options: phenotypes, phenotypes_and_genes - for patients like me and disease categorization the aggregation for the patient embedding can be changed
+  PATIENTS_AGGR_NODES: phenotypes_and_genes # Options: phenotypes, phenotypes_and_genes - for patients like me and disease categorization the aggregation for the patient embedding can be changed
 
   MOVE_RESULTS_TO_OUTPUT_DIR: False # This moves the results to the output directory after every prediction
 
