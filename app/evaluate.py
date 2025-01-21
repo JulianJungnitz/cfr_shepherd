@@ -92,10 +92,10 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
         id_similarity_set =set(patient_disease["diseases"]).intersection(set(candidate_patient_disease["diseases"]))
         icd10_similarity_set = set(patient_disease["icd10_codes"]).intersection(set(candidate_patient_disease["icd10_codes"]))
         
-        if len(id_similarity_set) > 0:
-            print(f"Patient {patient_id} and Patient {candidate_patient_id} have similar diseases: {id_similarity_set}")
-        if len(icd10_similarity_set) > 0:
-            print(f"Patient {patient_id} and Patient {candidate_patient_id} have similar icd10 codes: {icd10_similarity_set}")
+        # if len(id_similarity_set) > 0:
+        #     print(f"Patient {patient_id} and Patient {candidate_patient_id} have similar diseases: {id_similarity_set}")
+        # if len(icd10_similarity_set) > 0:
+        #     print(f"Patient {patient_id} and Patient {candidate_patient_id} have similar icd10 codes: {icd10_similarity_set}")
 
         id_similar += len(id_similarity_set) > 0
         icd10_similar += len(icd10_similarity_set) > 0
@@ -120,7 +120,7 @@ def get_all_patients_diseases(df):
     RETURN id(p) as patient_id, collect(id(d)) as diseases, collect([syn IN d.synonyms WHERE syn STARTS WITH "ICD10"] )AS icd10_codes
 
     """
-    res = utils.execute_query(driver, query)
+    res = utils.execute_query(driver, query, debug=False)
 
     for record in res:
         icd10_codes = record["icd10_codes"]
