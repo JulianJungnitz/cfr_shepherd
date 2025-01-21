@@ -23,7 +23,7 @@ shepherd:
   RUN_CAUSAL_GENE_DISCOVERY: False
   RUN_DISEASE_CATEGORIZATION: True
 
-  PATIENTS_AGGR_NODES: phenotypes_and_genes # Options: phenotypes, phenotypes_and_genes - for patients like me and disease categorization the aggregation for the patient embedding can be changed
+  PATIENTS_AGGR_NODES: phenotypes # Options: phenotypes, phenotypes_and_genes - for patients like me and disease categorization the aggregation for the patient embedding can be changed
 
   MOVE_RESULTS_TO_OUTPUT_DIR: False # This moves the results to the output directory after every prediction
 
