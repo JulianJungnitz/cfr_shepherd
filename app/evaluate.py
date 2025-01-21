@@ -25,31 +25,31 @@ def evaluate_patients_like_me(score_file_path):
 
     plot_patient_similarity_avg(patient_sim_map, max_k, score_file_path)
 
-def plot_patient_similarity(patient_sim_map,k_max):
-    patient_ids = list(patient_sim_map.keys())
-    k_values = range(1,  k_max+1)
+# def plot_patient_similarity(patient_sim_map,k_max):
+#     patient_ids = list(patient_sim_map.keys())
+#     k_values = range(1,  k_max+1)
 
-    for patient_id in patient_ids:
-        id_similarities = [patient_sim_map[patient_id][k]["id_similar"] for k in k_values]
-        icd10_similarities = [patient_sim_map[patient_id][k]["icd10_similar"] for k in k_values]
+#     for patient_id in patient_ids:
+#         id_similarities = [patient_sim_map[patient_id][k]["id_similar"] for k in k_values]
+#         icd10_similarities = [patient_sim_map[patient_id][k]["icd10_similar"] for k in k_values]
 
-        plt.figure(figsize=(10, 6))
-        plt.plot(k_values, id_similarities, label="ID Similarity")
-        plt.plot(k_values, icd10_similarities, label="ICD10 Similarity")
+#         plt.figure(figsize=(10, 6))
+#         plt.plot(k_values, id_similarities, label="ID Similarity")
+#         plt.plot(k_values, icd10_similarities, label="ICD10 Similarity")
         
-        plt.title(f"Patient Similarity Scores for Patient ID: {patient_id}")
-        plt.xlabel("Top-K Similar Patients")
-        plt.ylabel("Similarity Count")
-        plt.xticks(k_values)
-        plt.yticks(range(0, 1))
+#         plt.title(f"Patient Similarity Scores for Patient ID: {patient_id}")
+#         plt.xlabel("Top-K Similar Patients")
+#         plt.ylabel("Similarity Count")
+#         plt.xticks(k_values)
+#         plt.yticks(range(0, 1))
 
-        plt.legend()
-        plt.grid(axis="y", linestyle="--", alpha=0.7)
+#         plt.legend()
+#         plt.grid(axis="y", linestyle="--", alpha=0.7)
          
-        # save to file
-        file = project_config.PROJECT_DIR / "plots" / f"patient_{patient_id}_similarity_scores.png"
-        print(f"Saving plot to {file}")
-        plt.savefig(file)
+#         # save to file
+#         file = project_config.PROJECT_DIR / "plots" / f"patient_{patient_id}_similarity_scores.png"
+#         print(f"Saving plot to {file}")
+#         plt.savefig(file)
 
 def plot_patient_similarity_avg(patient_sim_map,k_max, score_file_path):
     patient_ids = list(patient_sim_map.keys())
@@ -74,6 +74,9 @@ def plot_patient_similarity_avg(patient_sim_map,k_max, score_file_path):
     ax.set_ylabel("Similarity")
     ax.set_title("Patient Similarity Average of k highest scored patients.\n At least one similar disease \n File: " + str(score_file_path))
     ax.legend()
+    file = project_config.PROJECT_DIR / "plots" / f"patient_{patient_id}_similarity_scores.png"
+    print(f"Saving plot to {file}")
+    plt.savefig(file)
 
 
 def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
