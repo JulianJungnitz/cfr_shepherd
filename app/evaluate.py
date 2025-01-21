@@ -12,6 +12,8 @@ def evaluate_patients_like_me(score_file_path):
     print(df.head())
 
     patients_disease_map = get_all_patients_diseases(df)
+    
+    print(patients_disease_map.head())
 
     patient_sim_map = {}
     max_k = 10
@@ -82,6 +84,7 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
     index= 0
     # sort group by score
     group = group.sort_values(by="similarities", ascending=False)
+
 
     for i, row in group.iterrows():
         candidate_patient_id = row["candidate_patients"]
