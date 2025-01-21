@@ -2,6 +2,7 @@
 import pandas as pd
 import utils as utils
 import matplotlib.pyplot as plt
+from app.SHEPHERD import project_config
 
 
 def evaluate_patients_like_me(score_file_path):
@@ -43,7 +44,10 @@ def plot_patient_similarity(patient_sim_map,k_max):
 
         plt.legend()
         plt.grid(axis="y", linestyle="--", alpha=0.7)
-        plt.show()
+         
+        # save to file
+        file = project_config.PROJECT_DIR / "plots" / f"patient_{patient_id}_similarity_scores.png"
+        plt.savefig(file)
 
 def plot_patient_similarity_avg(patient_sim_map,k_max):
     patient_ids = list(patient_sim_map.keys())
@@ -139,6 +143,7 @@ def get_all_patients_diseases(df):
 
 if __name__ == "__main__":
     ### EXCLUDE CONTROL DISEASE?? ###
-    evaluate_patients_like_me("SHEPHERD/data/results_only_phenotypes/checkpoints.patients_like_me_scores.csv")
-    evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
+    file = project_config.PROJECT_DIR / "results" / "checkpoints.patients_like_me_scores_phen_primeKG.csv"
+    evaluate_patients_like_me(file)
+    # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
 # %%
