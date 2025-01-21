@@ -72,7 +72,7 @@ def plot_patient_similarity_avg(patient_sim_map,k_max, score_file_path):
     ax.plot(k_values, list(k_icd10_similar_avg.values()), label="ICD10 Similar")
     ax.set_xlabel("K")
     ax.set_ylabel("Similarity")
-    ax.set_title("Patient Similarity Average of k highest scored patients.\n At least one similar disease \n File: " + score_file_path)
+    ax.set_title("Patient Similarity Average of k highest scored patients.\n At least one similar disease \n File: " + str(score_file_path))
     ax.legend()
 
 
