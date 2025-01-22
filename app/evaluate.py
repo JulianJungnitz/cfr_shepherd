@@ -323,7 +323,7 @@ def get_disease_patient_map(df):
 
 
 def evaluate_disease_characterization(file_name,):
-    # df = pd.read_csv(file_name)
+    df = pd.read_csv(file_name)
 
     # return
     
