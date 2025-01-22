@@ -415,11 +415,11 @@ if __name__ == "__main__":
     dir = project_config.PROJECT_DIR / "results"
     file = dir / f"{base_res}_{agg_type}_primeKG_w_dis.csv"
     
-    # evaluate_patients_like_me(file)
+    evaluate_patients_like_me(file)
 
     disease_char_file = (
         dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
     )
-    evaluate_disease_characterization(disease_char_file,)
+    # evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
 # %%
