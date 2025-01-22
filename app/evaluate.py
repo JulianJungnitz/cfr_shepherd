@@ -92,7 +92,7 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
     patient_disease = patients_disease_map[patient_id]
     id_similar = 0
     icd10_similar = 0
-    index= 0
+    index= k-1
     # sort group by score
     group = group.sort_values(by="similarities", ascending=False)
 
