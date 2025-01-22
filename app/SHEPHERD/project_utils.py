@@ -4,6 +4,7 @@ import jsonlines
 import sys
 import pickle
 from app.SHEPHERD import project_config
+from app import utils
 from pronto import Ontology
 
 
@@ -56,14 +57,9 @@ def get_mondo_to_doid_dict():
     return mondo_to_doid_dict
 
 
-def get_mondo_to_ICD10_dict():
-    mondo_onotology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
-    mondo_to_ICD10_dict = {}
-    print('Creating mondo to ICD10 dict')
-    for term in mondo_onotology.terms():
-        if term.id.startswith("MONDO:"):
-            for xref in term.xrefs:
-                if xref.id.startswith("ICD10:"):
-                    mondo_to_ICD10_dict[term.id] = xref.id
-                    break
-    return mondo_to_ICD10_dict
+def get_orphannet_to_mondo():
+    file = utils.SHEPHERD_DIR + '/data_prep/orphanet_to_mondo_dict.pkl'
+    with open(file, 'rb') as handle:
+        orpha_mondo_map = pickle.load(handle)
+    
+    return orpha_mondo_map

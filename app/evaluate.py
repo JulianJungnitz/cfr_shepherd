@@ -264,6 +264,9 @@ def map_disease_to_doid(df):
     print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
     
     mondo_to_doid_dict = {k.replace("MONDO:", "").lstrip("0"): v for k, v in mondo_to_doid_dict.items()}
+    
+    orphanet_to_mondo_dict = project_utils.get_orphannet_to_mondo()
+    print("First orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
 
     print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
     print("First monod values: ", list(mondo_to_doid_dict.values())[:5])
@@ -276,9 +279,12 @@ def map_disease_to_doid(df):
     print("Min Mondo: ", min_mondo)
     print("Max Mondo: ", max_mondo)
 
-   
-    # map df disease from disease to doid
-    df["mondo"] = df["diseases"].map(name_to_mondo_dict)
+
+    df["orphanet"] = df["diseases"].map(orphanet_to_mondo_dict)
+    print("Empty Orphanet: ", df["orphanet"].isnull().sum())
+    print("First empty Orphanet: ", df[df["orphanet"].isnull()].head())
+    
+    df["mondo"] = df["orphanet"].map(name_to_mondo_dict)
     print("Empty Mondo: ", df["mondo"].isnull().sum())
     print("First empty Mondo: ", df[df["mondo"].isnull()].head())
 
