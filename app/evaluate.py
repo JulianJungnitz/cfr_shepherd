@@ -12,7 +12,6 @@ def evaluate_patients_like_me(score_file_path):
 
     patients_disease_map = get_all_patients_diseases(df)
 
-    patients_with_disease = [k for k, v in patients_disease_map.items() if len(v["diseases"]) > 0]
     print(f"Patients with diseases: {len(patients_with_disease)}")
 
     # filtered_df = df.filter(lambda x: x["patient_id"] in patients_with_disease)
@@ -29,7 +28,8 @@ def evaluate_patients_like_me(score_file_path):
                 patient_sim_map[patient_id] = {}
             patient_sim_map[patient_id][k] = {"id_similar": id_similar, "icd10_similar": icd10_similar}
 
-    plot_patient_similarity_avg(patient_sim_map, max_k, score_file_path)
+    number_of_patients = len(patient_sim_map)
+    plot_patient_similarity_avg(patient_sim_map, max_k, score_file_path, number_of_patients= number_of_patients)
 
 # def plot_patient_similarity(patient_sim_map,k_max):
 #     patient_ids = list(patient_sim_map.keys())
@@ -57,7 +57,7 @@ def evaluate_patients_like_me(score_file_path):
 #         print(f"Saving plot to {file}")
 #         plt.savefig(file)
 
-def plot_patient_similarity_avg(patient_sim_map,k_max, score_file_path):
+def plot_patient_similarity_avg(patient_sim_map,k_max, score_file_path, number_of_patients):
     patient_ids = list(patient_sim_map.keys())
     k_values = range(1,  k_max+1)
 
