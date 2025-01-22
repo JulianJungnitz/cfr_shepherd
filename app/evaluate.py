@@ -301,12 +301,12 @@ def get_disease_patient_map(df):
     driver = utils.connect_to_neo4j()
     patient_ids = df["patient_id"].unique()
 
-    diseases = df["diseases"].unique()
+    diseases = df["doid"].unique()
 
     query = f"""
     MATCH (p:Biological_sample)-[:HAS_DISEASE]->(d:Disease)
-    WHERE id(p) in {list(patient_ids)} AND d.name in {list(diseases)}
-    RETURN id(p) as patient_id, d.name as disease_id
+    WHERE id(p) in {list(patient_ids)} AND d.id in {list(diseases)}
+    RETURN id(p) as patient_id, d.id as disease_id
 """
 
     res = utils.execute_query(driver, query, debug=False)
@@ -376,7 +376,7 @@ def evaluate_disease_characterization(file_name,):
 def get_disease_similarity_scores(patient_id, group, disease_patients_map, k=5):
     index = k - 1
     group_sorted = group.sort_values(by="similarities", ascending=False)
-    candidate_disease_id = group_sorted.iloc[index]["diseases"]  
+    candidate_disease_id = group_sorted.iloc[index]["doid"]  
     if len(group_sorted) < k:
         return 0, 0
     if candidate_disease_id not in disease_patients_map:
