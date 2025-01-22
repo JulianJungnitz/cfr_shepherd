@@ -12,7 +12,7 @@ def evaluate_patients_like_me(score_file_path):
 
     patients_disease_map = get_all_patients_diseases(df)
 
-    print(f"Patients with diseases: {len(patients_with_disease)}")
+    # print(f"Patients with diseases: {len(patients_with_disease)}")
 
     # filtered_df = df.filter(lambda x: x["patient_id"] in patients_with_disease)
 
