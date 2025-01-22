@@ -290,7 +290,7 @@ def map_disease_to_doid(df):
     # print("Empty MONDO: ", df["mondo"].isnull().sum())
     # print("First empty MONDO: ", df[df["mondo"].isnull()].head())
     
-
+    print("Total DF: ", len(df))
     df["doid"] = df["diseases"].map(mondo_to_doid_dict)
     print("Empty DOID: ", df["doid"].isnull().sum())
     print("First empty DOID: ", df[df["doid"].isnull()].head())
@@ -329,7 +329,6 @@ def evaluate_disease_characterization(file_name,):
     
     df = map_disease_to_doid(df)
 
-    print("Total lenght: ", len(df))
     print("different diseases: " + str(df["diseases"].nunique()))
     # df = df[df["doid"].notnull()]
 
@@ -384,11 +383,8 @@ def get_disease_similarity_scores(patient_id, group, disease_patients_map, k=5):
     
     overlap_score = 1 if patient_id in disease_patients_map[candidate_disease_id] else 0
     
-    random_disease_id = random.choice(list(disease_patients_map.keys()))
-    random_overlap = disease_patients_map[candidate_disease_id].intersection(
-        disease_patients_map[random_disease_id]
-    )
-    overlap_score_random = 1 if len(random_overlap) > 0 else 0
+    random_dec = random.randint(0, len(disease_patients_map) - 1) 
+    overlap_score_random = 1 if random_dec==1 else 0
     
     return overlap_score, overlap_score_random
 
