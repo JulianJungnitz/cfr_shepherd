@@ -132,12 +132,12 @@ def plot_patient_similarity_avg(
     ax.plot(
         k_values,
         list(k_icd10_first_4_similar_avg.values()),
-        label="ICD10 First 4 Similar",
+        label="ICD10 First 5 Similar",
     )
     ax.plot(
         k_values,
         list(k_icd10_first_4_similar_random_avg.values()),
-        label="ICD10 First 4 Similar Random",
+        label="ICD10 First 5 Similar Random",
     )
     ax.set_xlabel("K")
     ax.set_ylabel("Similarity")
@@ -172,9 +172,9 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
         set(candidate_patient_disease["icd10_codes"])
     )
     icd10_first_4_similarity_set = set(
-        code[:9] for code in patient_disease["icd10_codes"]
+        code[:10] for code in patient_disease["icd10_codes"]
     ).intersection(
-        set(code[:9] for code in candidate_patient_disease["icd10_codes"])
+        set(code[:10] for code in candidate_patient_disease["icd10_codes"])
     )
 
     random_patient_disease = patients_disease_map[
@@ -187,9 +187,9 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
         set(random_patient_disease["icd10_codes"])
     )
     icd10_first_4_similarity_set_random = set(
-        code[:9] for code in patient_disease["icd10_codes"]
+        code[:10] for code in patient_disease["icd10_codes"]
     ).intersection(
-        set(code[:9] for code in random_patient_disease["icd10_codes"]))
+        set(code[:10] for code in random_patient_disease["icd10_codes"]))
 
     # if len(id_similarity_set) > 0:
     #     print(f"Patient {patient_id} and Patient {candidate_patient_id} have similar diseases: {id_similarity_set}")
