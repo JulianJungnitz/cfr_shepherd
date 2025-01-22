@@ -124,6 +124,7 @@ def get_all_patients_diseases(df):
     patient_ids = df["patient_id"].unique()
     candidate_patients = df["candidate_patients"].unique()
     all_patient_ids = list(patient_ids) + list(candidate_patients)
+    print("Head: ", all_patient_ids[:5])
     all_patient_ids = [x[0] for x in all_patient_ids]
     unique_patient_ids = list(set(all_patient_ids))
 
