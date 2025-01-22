@@ -125,30 +125,19 @@ def plot_patient_similarity_avg(
     }
 
     fig, ax = plt.subplots()
-    ax.plot(k_values, list(k_id_similar_avg.values()), label="ID Similar")
-    ax.plot(k_values, list(k_icd10_similar_avg.values()), label="ICD10 Similar")
-    ax.plot(k_values, list(k_id_similar_random_avg.values()), label="ID Similar Random")
-    ax.plot(
-        k_values,
-        list(k_icd10_similar_random_avg.values()),
-        label="ICD10 Similar Random",
-    )
-    ax.plot(
-        k_values,
-        list(k_icd10_first_4_similar_avg.values()),
-        label="ICD10 First 5 Similar",
-    )
-    ax.plot(
-        k_values,
-        list(k_icd10_first_4_similar_random_avg.values()),
-        label="ICD10 First 5 Similar Random",
-    )
+    ax.plot(k_values, list(k_id_similar_avg.values()), label="ID Similar", color='blue')
+    ax.plot(k_values, list(k_id_similar_random_avg.values()), label="ID Similar Random", color='blue', linestyle='--')
+    ax.plot(k_values, list(k_icd10_similar_avg.values()), label="ICD10 Similar", color='green')
+    ax.plot(k_values, list(k_icd10_similar_random_avg.values()), label="ICD10 Similar Random", color='green', linestyle='--')
+    ax.plot(k_values, list(k_icd10_first_4_similar_avg.values()), label="ICD10 First 5 Similar", color='red')
+    ax.plot(k_values, list(k_icd10_first_4_similar_random_avg.values()), label="ICD10 First 5 Similar Random", color='red', linestyle='--')
     ax.set_xlabel("K")
     ax.set_ylabel("Similarity")
-    ax.set_title(
-        "Patient Similarity Average of patient at rank k.\n At least one similar disease or icd10 code"
-    )
-    ax.legend()
+    ax.set_title("Patient Similarity Average of patient at rank k.\n At least one similar disease or icd10 code")
+    handles, labels = ax.get_legend_handles_labels()
+    sorted_handles_labels = sorted(zip(handles, labels), key=lambda x: 'Random' in x[1])
+    sorted_handles, sorted_labels = zip(*sorted_handles_labels)
+    ax.legend(sorted_handles, sorted_labels)
     file = project_config.PROJECT_DIR / "plots" / f"patient_similarity_scores.png"
     print(f"Saving plot to {file}")
     plt.savefig(file)
@@ -281,15 +270,15 @@ def map_disease_to_doid(df):
     print("Max Mondo: ", max_mondo)
 
 
-    df["orphanet"] = df["diseases"].map(orphanet_to_mondo_dict)
-    print("Empty Orphanet: ", df["orphanet"].isnull().sum())
-    print("First empty Orphanet: ", df[df["orphanet"].isnull()].head())
+    df["mondo"] = df["diseases"].map(orphanet_to_mondo_dict)
+    print("Empty Orphanet: ", df["mondo"].isnull().sum())
+    print("First empty Orphanet: ", df[df["mondo"].isnull()].head())
     
-    df["mondo"] = df["orphanet"].apply(lambda x: next((name_to_mondo_dict[item] for item in x if item in name_to_mondo_dict), None) if isinstance(x, list) and x else None)
-    print("Empty Mondo: ", df["mondo"].isnull().sum())
-    print("First empty Mondo: ", df[df["mondo"].isnull()].head())
+    # df["mondo"] = df["orphanet"].apply(lambda x: x[0] if x else None).map(name_to_mondo_dict)
+    # print("Empty Mondo: ", df["mondo"].isnull().sum())
+    # print("First empty Mondo: ", df[df["mondo"].isnull()].head())
 
-    df["doid"] = df["mondo"].map(mondo_to_doid_dict)
+    df["doid"] = df["mondo"].apply(lambda x: x[0] if x else None).map(mondo_to_doid_dict)
     print("Empty DOID: ", df["doid"].isnull().sum())
     print("First empty DOID: ", df[df["doid"].isnull()].head())
     return df
