@@ -323,7 +323,7 @@ def get_disease_patient_map(df):
 
 def evaluate_disease_characterization(file_name,):
     df = pd.read_csv(file_name)
-    print(df.head())
+    return create_names_to_doid_map(df)
     
     df = map_disease_to_doid(df)
 
@@ -420,6 +420,25 @@ def plot_disease_similarity_avg(patient_sim_map, k_max, score_file_path, number_
     print(f"Saving plot to {out_file}")
     plt.savefig(out_file)
     plt.close()
+
+
+def create_names_to_doid_map(df):
+    print(df.head())
+     #    patient_id                                      diseases  similarities         
+    # 0    15013028                           depressive disorder      0.000054       
+    # 1    15013028                  benign blood vessel neoplasm      0.000012      
+    # 2    15013028  autosomal recessive nonsyndromic deafness 53      0.000054    
+    
+    # group by patient_id and sort by similarities
+
+    grouped = df.groupby("patient_id")
+    k=10
+    top_k_unique_diseases = ()
+    for patient_id, group in grouped:
+        group = group.sort_values(by="similarities", ascending=False)
+        top_k_unique_diseases += tuple(group["diseases"].unique()[:k])
+        
+    print("Top K Unique Diseases: ", len(top_k_unique_diseases))
 
 
 if __name__ == "__main__":
