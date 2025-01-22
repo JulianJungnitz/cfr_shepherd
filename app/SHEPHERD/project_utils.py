@@ -45,15 +45,30 @@ def read_dicts():
 
 def get_mondo_to_doid_dict():
     mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
+    mondo_rare_ontology = Ontology(project_config.PROJECT_DIR / 'mondo-rare.obo')
     mondo_to_doid_dict = {}
     print('Creating mondo to DOID dict')
     for term in mondo_ontology.terms():
+        print(term)
+        continue
         if term.id.startswith("MONDO:"):
             for xref in term.xrefs:
                 if xref.id.startswith("DOID:"):
-                    # Just store the first one and break
                     mondo_to_doid_dict[term.id] = xref.id
                     break
+
+    print("len mondo_to_doid_dict: ", len(mondo_to_doid_dict))
+
+    for term in mondo_rare_ontology.terms():
+        if term.id.startswith("MONDO:"):
+            for xref in term.xrefs:
+                if xref.id.startswith("DOID:"):
+                    mondo_to_doid_dict[term.id] = xref.id
+                    break
+
+    print("len after rare dis: ", len(mondo_to_doid_dict))
+
+
 
     return mondo_to_doid_dict
 

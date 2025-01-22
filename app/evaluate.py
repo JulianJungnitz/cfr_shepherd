@@ -245,6 +245,7 @@ def get_all_patients_diseases(df):
 ## DISEASE CHARACTERIZATION --------------------------------------------
 
 def map_disease_to_doid(df):
+    mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
     
 
     return df
@@ -323,6 +324,7 @@ def get_disease_patient_map(df):
 
 def evaluate_disease_characterization(file_name,):
     df = pd.read_csv(file_name)
+
     return create_names_to_doid_map(df)
     
     df = map_disease_to_doid(df)
