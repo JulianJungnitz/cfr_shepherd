@@ -280,9 +280,11 @@ def map_disease_to_doid(df):
     # map df disease from disease to doid
     df["mondo"] = df["diseases"].map(name_to_mondo_dict)
     print("Empty Mondo: ", df["mondo"].isnull().sum())
+    print("First empty Mondo: ", df[df["mondo"].isnull()].head())
 
     df["doid"] = df["mondo"].map(mondo_to_doid_dict)
     print("Empty DOID: ", df["doid"].isnull().sum())
+    print("First empty DOID: ", df[df["doid"].isnull()].head())
     return df
 
 
