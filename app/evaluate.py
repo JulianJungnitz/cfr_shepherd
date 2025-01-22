@@ -279,8 +279,8 @@ def map_disease_to_doid(df):
 
 
     df["orphanet"] = df["diseases"].map(orphanet_names_id_dict)
-    print("Empty Orphanet Names: ", df["mondo"].isnull().sum())
-    print("First empty Orphanet Names: ", df[df["mondo"].isnull()].head())
+    print("Empty Orphanet Names: ", df["orphanet"].isnull().sum())
+    print("First empty Orphanet Names: ", df[df["orphanet"].isnull()].head())
 
     df["mondo"] = df["orphanet"].map(orphanet_to_mondo_dict)
     print("Empty MONDO: ", df["mondo"].isnull().sum())
