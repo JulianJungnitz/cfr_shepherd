@@ -328,7 +328,7 @@ def evaluate_disease_characterization(file_name,):
     df = map_disease_to_doid(df)
 
     print("Total lenght: ", len(df))
-    print("different diseases: " + str(df["diseases"].isnull().sum()))
+    print("different diseases: " + str(df["diseases"].nunique()))
     # df = df[df["doid"].notnull()]
 
     print(df.head())
