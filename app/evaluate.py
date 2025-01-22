@@ -8,11 +8,17 @@ from app.SHEPHERD import project_config
 def evaluate_patients_like_me(score_file_path):
     df = pd.read_csv(score_file_path)
 
-    df = df.groupby("patient_id")
-    print(df.head())
+    
 
     patients_disease_map = get_all_patients_diseases(df)
+
+    patients_with_disease = [k for k, v in patients_disease_map.items() if len(v["diseases"]) > 0]
+    print(f"Patients with diseases: {len(patients_with_disease)}")
+
+    filtered_df = df.filter(lambda x: x["patient_id"] in patients_with_disease)
     
+    df = filtered_df.groupby("patient_id")
+    print(df.head())
 
     patient_sim_map = {}
     max_k = 10
@@ -74,7 +80,7 @@ def plot_patient_similarity_avg(patient_sim_map,k_max, score_file_path):
     ax.set_ylabel("Similarity")
     ax.set_title("Patient Similarity Average of k highest scored patients.\n At least one similar disease \n File: " + str(score_file_path))
     ax.legend()
-    file = project_config.PROJECT_DIR / "plots" / f"patient_{patient_id}_similarity_scores.png"
+    file = project_config.PROJECT_DIR / "plots" / f"patient_similarity_scores.png"
     print(f"Saving plot to {file}")
     plt.savefig(file)
 
