@@ -314,22 +314,23 @@ def evaluate_disease_characterization(file_name,):
 
     disease_patients_map = get_disease_patient_map(df)
     # group by patient_id
-    grouped = df.groupby("doid")
+    grouped = df.groupby("patient_id")
     
     disease_sim_map = {}
-    max_k = 10  # or whatever top K range you want
-    for disease_id, group in grouped:
-        # We'll compute overlap for k=1..max_k
+    max_k = 10  
+    for patient_id, group in grouped:
         for k in range(1, max_k + 1):
             overlap_score, overlap_score_random = get_disease_similarity_scores(
-                disease_id, group, disease_patients_map, k
+                patient_id, group, disease_patients_map, k
             )
-            if disease_id not in disease_sim_map:
-                disease_sim_map[disease_id] = {}
-            disease_sim_map[disease_id][k] = {
+            if patient_id not in disease_sim_map:
+                disease_sim_map[patient_id] = {}
+            disease_sim_map[patient_id][k] = {
                 "overlap_score": overlap_score,
                 "overlap_score_random": overlap_score_random,
             }
+            
+            
     
     number_of_diseases = len(disease_sim_map)
     
@@ -342,22 +343,19 @@ def evaluate_disease_characterization(file_name,):
     return
 
 
-def get_disease_similarity_scores(disease_id, group, disease_patients_map, k=5):
-    if disease_id not in disease_patients_map:
-        return 0, 0
+def get_disease_similarity_scores(patient_id, group, disease_patients_map, k=5):
+    index = k - 1
     group_sorted = group.sort_values(by="similarities", ascending=False)
+    candidate_disease_id = group_sorted.iloc[index]["doid"]  
     if len(group_sorted) < k:
         return 0, 0
-    candidate_disease_id = group_sorted.iloc[k - 1]["doid"]  
     if candidate_disease_id not in disease_patients_map:
         return 0, 0
-    overlap = disease_patients_map[disease_id].intersection(
-        disease_patients_map[candidate_disease_id]
-    )
-    overlap_score = 1 if len(overlap) > 0 else 0
+    
+    overlap_score = 1 if patient_id in disease_patients_map[candidate_disease_id] else 0
     
     random_disease_id = random.choice(list(disease_patients_map.keys()))
-    random_overlap = disease_patients_map[disease_id].intersection(
+    random_overlap = disease_patients_map[candidate_disease_id].intersection(
         disease_patients_map[random_disease_id]
     )
     overlap_score_random = 1 if len(random_overlap) > 0 else 0
