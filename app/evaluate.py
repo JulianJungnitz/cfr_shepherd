@@ -3,6 +3,7 @@ import pandas as pd
 import utils as utils
 import matplotlib.pyplot as plt
 from app.SHEPHERD import project_config
+import random
 
 
 def evaluate_patients_like_me(score_file_path):
@@ -23,10 +24,10 @@ def evaluate_patients_like_me(score_file_path):
     max_k = 10
     for patient_id, group in df:
         for k in range(1, max_k+1):
-            id_similar, icd10_similar = get_patient_similarity_scores(patient_id, group, patients_disease_map,k=k)
+            id_similar, icd10_similar, id_similar_random, icd10_similar_random = get_patient_similarity_scores(patient_id, group, patients_disease_map,k=k)
             if patient_id not in patient_sim_map:
                 patient_sim_map[patient_id] = {}
-            patient_sim_map[patient_id][k] = {"id_similar": id_similar, "icd10_similar": icd10_similar}
+            patient_sim_map[patient_id][k] = {"id_similar": id_similar, "icd10_similar": icd10_similar, "id_similar_random": id_similar_random, "icd10_similar_random": icd10_similar_random}
 
     number_of_patients = len(patient_sim_map)
     plot_patient_similarity_avg(patient_sim_map, max_k, score_file_path, number_of_patients= number_of_patients)
@@ -64,18 +65,28 @@ def plot_patient_similarity_avg(patient_sim_map,k_max, score_file_path, number_o
     len_patient_ids = len(patient_ids)
     k_icd10_similar_total = {k: 0 for k in k_values}
     k_id_similar_total = {k: 0 for k in k_values}
+    k_icd10_similar_random_total = {k: 0 for k in k_values}
+    k_id_similar_random_total = {k: 0 for k in k_values}
 
     for patient_id in patient_ids:
         for k in k_values:
             k_id_similar_total[k] += patient_sim_map[patient_id][k]["id_similar"]
             k_icd10_similar_total[k] += patient_sim_map[patient_id][k]["icd10_similar"]
+            k_id_similar_random_total[k] += patient_sim_map[patient_id][k]["id_similar_random"]
+            k_icd10_similar_random_total[k] += patient_sim_map[patient_id][k]["icd10_similar_random"]
+
     
     k_id_similar_avg = {k: k_id_similar_total[k]/number_of_patients for k in k_values}
     k_icd10_similar_avg = {k: k_icd10_similar_total[k]/number_of_patients for k in k_values}
+    k_id_similar_random_avg = {k: k_id_similar_random_total[k]/number_of_patients for k in k_values}
+    k_icd10_similar_random_avg = {k: k_icd10_similar_random_total[k]/number_of_patients for k in k_values}
+
 
     fig, ax = plt.subplots()
     ax.plot(k_values, list(k_id_similar_avg.values()), label="ID Similar")
     ax.plot(k_values, list(k_icd10_similar_avg.values()), label="ICD10 Similar")
+    ax.plot(k_values, list(k_id_similar_random_avg.values()), label="ID Similar Random")
+    ax.plot(k_values, list(k_icd10_similar_random_avg.values()), label="ICD10 Similar Random")
     ax.set_xlabel("K")
     ax.set_ylabel("Similarity")
     ax.set_title("Patient Similarity Average of patient at rank k.\n At least one similar disease or icd10 code")
@@ -104,6 +115,12 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
     id_similarity_set =set(patient_disease["diseases"]).intersection(set(candidate_patient_disease["diseases"]))
     icd10_similarity_set = set(patient_disease["icd10_codes"]).intersection(set(candidate_patient_disease["icd10_codes"]))
     
+
+    random_patient_disease = patients_disease_map[random.choice(list(patients_disease_map.keys()))]
+    id_similarity_set_random =set(patient_disease["diseases"]).intersection(set(random_patient_disease["diseases"]))
+    icd10_similarity_set_random = set(patient_disease["icd10_codes"]).intersection(set(random_patient_disease["icd10_codes"]))
+
+
     # if len(id_similarity_set) > 0:
     #     print(f"Patient {patient_id} and Patient {candidate_patient_id} have similar diseases: {id_similarity_set}")
     # if len(icd10_similarity_set) > 0:
@@ -111,8 +128,10 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
 
     id_similar += len(id_similarity_set) > 0
     icd10_similar += len(icd10_similarity_set) > 0
+    id_similar_random = len(id_similarity_set_random) > 0
+    icd10_similar_random = len(icd10_similarity_set_random) > 0
         
-    return id_similar, icd10_similar
+    return id_similar, icd10_similar, id_similar_random, icd10_similar_random
     
 def get_all_patients_diseases(df):
     driver = utils.connect_to_neo4j()
@@ -153,7 +172,17 @@ def get_all_patients_diseases(df):
 def evaluate_disease_characterization(file_name):
     df = pd.read_csv(file_name)
     print(df.head())
-    # get all diseases
+    # patient_id                                           diseases  similarities
+    # 0    15015373                     isolated Klippel-Feil syndrome      0.000069
+    # 1    15015373                     congenital structural myopathy      0.000080
+    # 2    15015373                       tooth agenesis, selective, 4      0.000077
+    # 3    15015373  generalized junctional epidermolysis bullosa n...      0.000092
+    # 4    15015373                                lung leiomyosarcoma      0.000009
+
+    # map from disease name back to id
+
+    
+
     return
 
 
@@ -167,9 +196,9 @@ if __name__ == "__main__":
     dir = project_config.PROJECT_DIR / "results" 
     file = dir / f"{base_res}_{agg_type}_primeKG_w_dis.csv"
     print(f"Evalute: {file}")
-    # evaluate_patients_like_me(file)
+    # # evaluate_patients_like_me(file)
 
     disease_char_file = dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
-    evaluate_disease_characterization(disease_char_file)
+    # evaluate_disease_characterization(disease_char_file)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
 # %%
