@@ -249,12 +249,16 @@ def map_disease_to_doid(df):
     mondo_to_name_dict = pickle.load(open(mondo_to_name_dict_file, "rb"))
     name_to_mondo_dict = {v: k for k, v in mondo_to_name_dict.items()}
 
-    mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
-    print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
+    # mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
+    # print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
     
-    mondo_to_doid_dict = {k.replace("MONDO:", "").lstrip("0"): v for k, v in mondo_to_doid_dict.items()}
+    # mondo_to_doid_dict = {k.replace("MONDO:", "").lstrip("0"): v for k, v in mondo_to_doid_dict.items()}
     
     orphanet_to_mondo_dict = project_utils.get_orphannet_to_mondo()
+    print("First orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
+    print("First orphanet values: ", list(orphanet_to_mondo_dict.values())[:5])
+
+    orphanet_to_mondo_dict = {k: int(v[0]) for k, v in orphanet_to_mondo_dict.items()}
     print("First orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
     print("First orphanet values: ", list(orphanet_to_mondo_dict.values())[:5])
 
