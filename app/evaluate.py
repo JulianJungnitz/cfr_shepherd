@@ -259,15 +259,23 @@ def map_disease_to_doid(df):
     mondo_to_name_dict_file = utils.SHEPHERD_DIR + f"/data_prep/mondo_to_name_dict_8.9.21_kg.pkl"
     mondo_to_name_dict = pickle.load(open(mondo_to_name_dict_file, "rb"))
     name_to_mondo_dict = {v: k for k, v in mondo_to_name_dict.items()}
+
     mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
-    # mondo_to_ICD10_dict = project_utils.get_mondo_to_ICD10_dict()
-    # print("First 5 diseases: ", list(mondo_to_ICD10_dict.items())[:5])
-    # remove "MONDO:" from keys
+    
     mondo_to_doid_dict = {k[6:].lstrip("0"): v for k, v in mondo_to_doid_dict.items()}
+
+    print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
+    print("First monod values: ", list(mondo_to_doid_dict.values())[:5])
+    print("First name keys: ", list(name_to_mondo_dict.keys())[:5])
+    print("First name values: ", list(name_to_mondo_dict.values())[:5])
+
    
     # map df disease from disease to doid
     df["mondo"] = df["diseases"].map(name_to_mondo_dict)
+    print("Empty Mondo: ", df["mondo"].isnull().sum())
+
     df["doid"] = df["mondo"].map(mondo_to_doid_dict)
+    print("Empty DOID: ", df["doid"].isnull().sum())
     return df
 
 
