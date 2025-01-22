@@ -49,12 +49,10 @@ def get_mondo_to_doid_dict():
     mondo_to_doid_dict = {}
     print('Creating mondo to DOID dict')
     for term in mondo_ontology.terms():
-        print(term)
-        continue
         if term.id.startswith("MONDO:"):
             for xref in term.xrefs:
                 if xref.id.startswith("DOID:"):
-                    mondo_to_doid_dict[term.id] = xref.id
+                    mondo_to_doid_dict[term.name] = xref.id
                     break
 
     print("len mondo_to_doid_dict: ", len(mondo_to_doid_dict))
@@ -63,7 +61,7 @@ def get_mondo_to_doid_dict():
         if term.id.startswith("MONDO:"):
             for xref in term.xrefs:
                 if xref.id.startswith("DOID:"):
-                    mondo_to_doid_dict[term.id] = xref.id
+                    mondo_to_doid_dict[term.name] = xref.id
                     break
 
     print("len after rare dis: ", len(mondo_to_doid_dict))
