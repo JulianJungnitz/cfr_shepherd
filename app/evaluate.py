@@ -253,6 +253,7 @@ def get_all_patients_diseases(df):
 
     return patient_disease_map
 
+## DISEASE CHARACTERIZATION --------------------------------------------
 
 def map_disease_to_doid(df):
     mondo_to_name_dict_file = utils.SHEPHERD_DIR + f"/data_prep/mondo_to_name_dict_8.9.21_kg.pkl"
@@ -316,27 +317,27 @@ def evaluate_disease_characterization(file_name,):
     # group by patient_id
     grouped = df.groupby("patient_id")
     
-    disease_sim_map = {}
+    patient_sim_map = {}
     max_k = 10  
     for patient_id, group in grouped:
         for k in range(1, max_k + 1):
             overlap_score, overlap_score_random = get_disease_similarity_scores(
                 patient_id, group, disease_patients_map, k
             )
-            if patient_id not in disease_sim_map:
-                disease_sim_map[patient_id] = {}
-            disease_sim_map[patient_id][k] = {
+            if patient_id not in patient_sim_map:
+                patient_sim_map[patient_id] = {}
+            patient_sim_map[patient_id][k] = {
                 "overlap_score": overlap_score,
                 "overlap_score_random": overlap_score_random,
             }
             
             
     
-    number_of_diseases = len(disease_sim_map)
+    number_of_patients = len(patient_sim_map)
     
     # Plot the average overlap vs K
     plot_disease_similarity_avg(
-        disease_sim_map, max_k, file_name, number_of_diseases
+        patient_sim_map, max_k, file_name, number_of_patients
     )
 
 
@@ -364,27 +365,27 @@ def get_disease_similarity_scores(patient_id, group, disease_patients_map, k=5):
 
 
 
-def plot_disease_similarity_avg(disease_sim_map, k_max, score_file_path, number_of_diseases):
+def plot_disease_similarity_avg(patient_sim_map, k_max, score_file_path, number_of_patient):
     k_values = range(1, k_max + 1)
     
     k_overlap_total = {k: 0 for k in k_values}
     k_overlap_random_total = {k: 0 for k in k_values}
     
-    for disease_id in disease_sim_map:
+    for patient_id in patient_sim_map:
         for k in k_values:
-            k_overlap_total[k] += disease_sim_map[disease_id][k]["overlap_score"]
-            k_overlap_random_total[k] += disease_sim_map[disease_id][k]["overlap_score_random"]
+            k_overlap_total[k] += patient_sim_map[patient_id][k]["overlap_score"]
+            k_overlap_random_total[k] += patient_sim_map[patient_id][k]["overlap_score_random"]
     
-    k_overlap_avg = [k_overlap_total[k] / number_of_diseases for k in k_values]
-    k_overlap_random_avg = [k_overlap_random_total[k] / number_of_diseases for k in k_values]
+    k_overlap_avg = [k_overlap_total[k] / number_of_patient for k in k_values]
+    k_overlap_random_avg = [k_overlap_random_total[k] / number_of_patient for k in k_values]
     
     plt.figure(figsize=(8, 6))
-    plt.plot(k_values, k_overlap_avg, label="Overlap in Patients")
+    plt.plot(k_values, k_overlap_avg, label="Patients has disease")
     plt.plot(k_values, k_overlap_random_avg, label="Random Baseline")
     
     plt.xlabel("Top-K Similar Diseases")
-    plt.ylabel("Fraction of Diseases with Overlap")
-    plt.title("Disease Characterization: Average Overlap vs. K")
+    plt.ylabel("Has disease avgerage")
+    plt.title("Disease Characterization: Patient has disease at position k")
     plt.legend()
     plt.grid(axis="y", linestyle="--", alpha=0.7)
     
