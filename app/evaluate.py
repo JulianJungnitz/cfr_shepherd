@@ -269,6 +269,12 @@ def map_disease_to_doid(df):
     print("First name keys: ", list(name_to_mondo_dict.keys())[:5])
     print("First name values: ", list(name_to_mondo_dict.values())[:5])
 
+    min_mondo = min(mondo_to_doid_dict.keys())
+    max_mondo = max(mondo_to_doid_dict.keys())
+
+    print("Min Mondo: ", min_mondo)
+    print("Max Mondo: ", max_mondo)
+
    
     # map df disease from disease to doid
     df["mondo"] = df["diseases"].map(name_to_mondo_dict)
