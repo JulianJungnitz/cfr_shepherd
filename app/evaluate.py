@@ -246,52 +246,52 @@ def get_all_patients_diseases(df):
 
 def map_disease_to_doid(df):
     mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
+    print("First mondo keys: ", list(mondo_to_doid_dict.keys())[:5])
+    print("First mondo values: ", list(mondo_to_doid_dict.values())[:5])
+
+    # mondo_to_name_dict_file = utils.SHEPHERD_DIR + f"/data_prep/mondo_to_name_dict_8.9.21_kg.pkl"
+    # mondo_to_name_dict = pickle.load(open(mondo_to_name_dict_file, "rb"))
+    # name_to_mondo_dict = {v: k for k, v in mondo_to_name_dict.items()}
+
+    # orphanet_names_id_dict = project_utils.get_orphannet_names_to_Id()
+    # print("First Orphanet keys: ", list(orphanet_names_id_dict.keys())[:5])
+    # print("First Orphanet values: ", list(orphanet_names_id_dict.values())[:5])
+
+
+    
+    # orphanet_to_mondo_dict = project_utils.get_orphannet_to_mondo()
+    # print("First orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
+    # print("First orphanet values: ", list(orphanet_to_mondo_dict.values())[:5])
+
+    # orphanet_to_mondo_dict = {k: int(v[0]) for k, v in orphanet_to_mondo_dict.items()}
+    # print("Mapped orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
+    # print("Mapped orphanet values: ", list(orphanet_to_mondo_dict.values())[:5])
+
+    # mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
+    # print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
+    
+    # mondo_to_doid_dict = {int(k.replace("MONDO:", "").lstrip("0")): v for k, v in mondo_to_doid_dict.items()}
+
+    # print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
+    # print("First monod values: ", list(mondo_to_doid_dict.values())[:5])
+
+    # min_mondo = min(int(k) for k in mondo_to_doid_dict.keys())
+    # max_mondo = max(int(k) for k in mondo_to_doid_dict.keys())
+
+    # print("Min Mondo: ", min_mondo)
+    # print("Max Mondo: ", max_mondo)
+
+
+    # df["orphanet"] = df["diseases"].map(orphanet_names_id_dict)
+    # print("Empty Orphanet Names: ", df["orphanet"].isnull().sum())
+    # print("First empty Orphanet Names: ", df[df["orphanet"].isnull()].head())
+
+    # df["mondo"] = df["orphanet"].map(orphanet_to_mondo_dict)
+    # print("Empty MONDO: ", df["mondo"].isnull().sum())
+    # print("First empty MONDO: ", df[df["mondo"].isnull()].head())
     
 
-    return df
-    mondo_to_name_dict_file = utils.SHEPHERD_DIR + f"/data_prep/mondo_to_name_dict_8.9.21_kg.pkl"
-    mondo_to_name_dict = pickle.load(open(mondo_to_name_dict_file, "rb"))
-    name_to_mondo_dict = {v: k for k, v in mondo_to_name_dict.items()}
-
-    orphanet_names_id_dict = project_utils.get_orphannet_names_to_Id()
-    print("First Orphanet keys: ", list(orphanet_names_id_dict.keys())[:5])
-    print("First Orphanet values: ", list(orphanet_names_id_dict.values())[:5])
-
-
-    
-    orphanet_to_mondo_dict = project_utils.get_orphannet_to_mondo()
-    print("First orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
-    print("First orphanet values: ", list(orphanet_to_mondo_dict.values())[:5])
-
-    orphanet_to_mondo_dict = {k: int(v[0]) for k, v in orphanet_to_mondo_dict.items()}
-    print("Mapped orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
-    print("Mapped orphanet values: ", list(orphanet_to_mondo_dict.values())[:5])
-
-    mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
-    print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
-    
-    mondo_to_doid_dict = {int(k.replace("MONDO:", "").lstrip("0")): v for k, v in mondo_to_doid_dict.items()}
-
-    print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
-    print("First monod values: ", list(mondo_to_doid_dict.values())[:5])
-
-    min_mondo = min(int(k) for k in mondo_to_doid_dict.keys())
-    max_mondo = max(int(k) for k in mondo_to_doid_dict.keys())
-
-    print("Min Mondo: ", min_mondo)
-    print("Max Mondo: ", max_mondo)
-
-
-    df["orphanet"] = df["diseases"].map(orphanet_names_id_dict)
-    print("Empty Orphanet Names: ", df["orphanet"].isnull().sum())
-    print("First empty Orphanet Names: ", df[df["orphanet"].isnull()].head())
-
-    df["mondo"] = df["orphanet"].map(orphanet_to_mondo_dict)
-    print("Empty MONDO: ", df["mondo"].isnull().sum())
-    print("First empty MONDO: ", df[df["mondo"].isnull()].head())
-    
-
-    df["doid"] = df["mondo"].map(mondo_to_doid_dict)
+    df["doid"] = df["diseases"].map(mondo_to_doid_dict)
     print("Empty DOID: ", df["doid"].isnull().sum())
     print("First empty DOID: ", df[df["doid"].isnull()].head())
     return df
@@ -325,9 +325,7 @@ def get_disease_patient_map(df):
 def evaluate_disease_characterization(file_name,):
     # df = pd.read_csv(file_name)
 
-    mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
-
-    return
+    # return
     
     df = map_disease_to_doid(df)
 
