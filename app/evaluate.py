@@ -442,8 +442,8 @@ def create_names_to_doid_map(df):
     print("Top K Unique Diseases: ", len(top_k_unique_diseases))
 
     driver = utils.connect_to_neo4j()
-    base_query = """
-    WITH $input AS input
+    base_query = f"""
+    WITH {input} AS input
     MATCH (d:Disease)
     WHERE apoc.text.levenshteinDistance(input, d.name) < 10
     RETURN d.id, apoc.text.levenshteinDistance(input, d.name) AS distance
@@ -454,7 +454,8 @@ def create_names_to_doid_map(df):
     for disease in top_k_unique_diseases:
         clean_name = disease.replace("'", "").replace('"', "")
         params = {"input": clean_name}
-        res = utils.execute_query(driver, base_query, params=params, debug=False)
+        query = base_query.format(**params)
+        res = utils.execute_query(driver, query,  debug=False)
         print(f"Disease: {clean_name}, Result: {res}")
         print(f"Result: {res}")
         if len(res) > 0:
