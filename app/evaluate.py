@@ -258,13 +258,13 @@ def map_disease_to_doid(df):
     print("First orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
     print("First orphanet values: ", list(orphanet_to_mondo_dict.values())[:5])
 
-    print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
-    print("First monod values: ", list(mondo_to_doid_dict.values())[:5])
-    print("First name keys: ", list(name_to_mondo_dict.keys())[:5])
-    print("First name values: ", list(name_to_mondo_dict.values())[:5])
+    # print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
+    # print("First monod values: ", list(mondo_to_doid_dict.values())[:5])
+    # print("First name keys: ", list(name_to_mondo_dict.keys())[:5])
+    # print("First name values: ", list(name_to_mondo_dict.values())[:5])
 
-    min_mondo = min(mondo_to_doid_dict.keys())
-    max_mondo = max(mondo_to_doid_dict.keys())
+    min_mondo = min(int(k) for k in mondo_to_doid_dict.keys())
+    max_mondo = max(int(k) for k in mondo_to_doid_dict.keys())
 
     print("Min Mondo: ", min_mondo)
     print("Max Mondo: ", max_mondo)
@@ -415,11 +415,11 @@ if __name__ == "__main__":
     dir = project_config.PROJECT_DIR / "results"
     file = dir / f"{base_res}_{agg_type}_primeKG_w_dis.csv"
     
-    evaluate_patients_like_me(file)
+    # evaluate_patients_like_me(file)
 
     disease_char_file = (
         dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
     )
-    # evaluate_disease_characterization(disease_char_file,)
+    evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
 # %%
