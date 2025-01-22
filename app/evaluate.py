@@ -150,6 +150,11 @@ def get_all_patients_diseases(df):
     return patient_disease_map
 
 
+def evaluate_disease_characterization(file_name):
+    df = pd.read_csv(file_name)
+    print(df.head())
+    # get all diseases
+    return
 
 
     
@@ -162,6 +167,9 @@ if __name__ == "__main__":
     dir = project_config.PROJECT_DIR / "results" 
     file = dir / f"{base_res}_{agg_type}_primeKG_w_dis.csv"
     print(f"Evalute: {file}")
-    evaluate_patients_like_me(file)
+    # evaluate_patients_like_me(file)
+
+    disease_char_file = dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
+    evaluate_disease_characterization
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
 # %%
