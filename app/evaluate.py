@@ -197,6 +197,8 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
     icd10_similar += len(icd10_similarity_set) > 0
     id_similar_random = len(id_similarity_set_random) > 0
     icd10_similar_random = len(icd10_similarity_set_random) > 0
+    icd10_first_4_similarity_set = len(icd10_first_4_similarity_set) > 0
+    icd10_first_4_similarity_set_random = len(icd10_first_4_similarity_set_random) > 0
 
     return (
         id_similar,
@@ -204,7 +206,7 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
         id_similar_random,
         icd10_similar_random,
         icd10_first_4_similarity_set,
-        icd10_first_4_similarity_set_random,
+        icd10_first_4_similarity_set_random
     )
 
 
