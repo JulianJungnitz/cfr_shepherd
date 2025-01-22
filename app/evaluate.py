@@ -278,7 +278,9 @@ def get_disease_patient_map(df):
 
     query = f"""
     MATCH (p:Biological_sample)-[:HAS_DISEASE]->(d:Disease)
-    WHERE id(p) in {list(patient_ids)} AND id(d) in {list(diseases)}"""
+    WHERE id(p) in {list(patient_ids)} AND id(d) in {list(diseases)}
+    RETURN id(p) as patient_id, d.id as disease_id
+"""
 
     res = utils.execute_query(driver, query, debug=False)
 
