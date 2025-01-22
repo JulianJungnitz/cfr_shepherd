@@ -59,7 +59,6 @@ def get_mondo_to_doid_dict():
 
 def get_orphannet_to_mondo():
     file = utils.SHEPHERD_DIR + '/data_prep/orphanet_to_mondo_dict.pkl'
-    with open(file, 'rb') as handle:
-        orpha_mondo_map = pickle.load(handle)
+    orpha_mondo_map = pickle.load(open(file, 'rb'))
     
     return orpha_mondo_map
