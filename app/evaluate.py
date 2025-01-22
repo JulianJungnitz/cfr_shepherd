@@ -433,10 +433,11 @@ def create_names_to_doid_map(df):
 
     grouped = df.groupby("patient_id")
     k=10
-    top_k_unique_diseases = ()
+    top_k_unique_diseases = []
     for patient_id, group in grouped:
         group = group.sort_values(by="similarities", ascending=False)
-        top_k_unique_diseases += tuple(group["diseases"].unique()[:k])
+        top_k_unique_diseases.extend(group["diseases"].head(k).unique())
+    top_k_unique_diseases = list(set(top_k_unique_diseases))
         
     print("Top K Unique Diseases: ", len(top_k_unique_diseases))
 
