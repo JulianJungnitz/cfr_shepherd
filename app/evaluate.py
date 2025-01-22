@@ -15,9 +15,9 @@ def evaluate_patients_like_me(score_file_path):
     patients_with_disease = [k for k, v in patients_disease_map.items() if len(v["diseases"]) > 0]
     print(f"Patients with diseases: {len(patients_with_disease)}")
 
-    filtered_df = df.filter(lambda x: x["patient_id"] in patients_with_disease)
-    
-    df = filtered_df.groupby("patient_id")
+    # filtered_df = df.filter(lambda x: x["patient_id"] in patients_with_disease)
+
+    df = df.groupby("patient_id")
     print(df.head())
 
     patient_sim_map = {}
