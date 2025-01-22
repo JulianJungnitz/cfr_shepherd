@@ -293,7 +293,7 @@ def get_disease_patient_map(df):
 
 
 
-def evaluate_disease_characterization(file_name, score_file_path):
+def evaluate_disease_characterization(file_name,):
     df = pd.read_csv(file_name)
     print(df.head())
     
@@ -333,7 +333,7 @@ def evaluate_disease_characterization(file_name, score_file_path):
     
     # Plot the average overlap vs K
     plot_disease_similarity_avg(
-        disease_sim_map, max_k, score_file_path, number_of_diseases
+        disease_sim_map, max_k, file_name, number_of_diseases
     )
 
 
@@ -406,6 +406,6 @@ if __name__ == "__main__":
     disease_char_file = (
         dir / "checkpoints.disease_characterization_scores.csv"
     )
-    evaluate_disease_characterization(disease_char_file)
+    evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
 # %%
