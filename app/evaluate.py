@@ -4,9 +4,13 @@ import utils as utils
 import matplotlib.pyplot as plt
 from app.SHEPHERD import project_config
 import random
+import pickle
+import sys
 
+from app.SHEPHERD import project_utils
 
 def evaluate_patients_like_me(score_file_path):
+    print(f"Evalute Patients Like me: {file}")
     df = pd.read_csv(score_file_path)
 
     patients_disease_map = get_all_patients_diseases(df)
@@ -225,7 +229,9 @@ def get_all_patients_diseases(df):
     query = f"""
     MATCH (p:Biological_sample)-[:HAS_DISEASE]->(d:Disease)
     WHERE id(p) in {unique_patient_ids}
-    RETURN id(p) as patient_id, collect(id(d)) as diseases, collect([syn IN d.synonyms WHERE syn STARTS WITH "ICD10"] )AS icd10_codes
+    RETURN  id(p) as patient_id, 
+    collect(id(d)) as diseases, 
+    collect([syn IN d.synonyms WHERE syn STARTS WITH "ICD10"] )AS icd10_codes
 
     """
     res = utils.execute_query(driver, query, debug=False)
@@ -248,19 +254,144 @@ def get_all_patients_diseases(df):
     return patient_disease_map
 
 
-def evaluate_disease_characterization(file_name):
+def map_disease_to_doid(df):
+    mondo_to_name_dict_file = utils.SHEPHERD_DIR + f"/data_prep/mondo_to_name_dict_8.9.21_kg.pkl"
+    mondo_to_name_dict = pickle.load(open(mondo_to_name_dict_file, "rb"))
+    name_to_mondo_dict = {v: k for k, v in mondo_to_name_dict.items()}
+    mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
+    # mondo_to_ICD10_dict = project_utils.get_mondo_to_ICD10_dict()
+    # print("First 5 diseases: ", list(mondo_to_ICD10_dict.items())[:5])
+    # remove "MONDO:" from keys
+    mondo_to_doid_dict = {k[6:].lstrip("0"): v for k, v in mondo_to_doid_dict.items()}
+   
+    # map df disease from disease to doid
+    df["mondo"] = df["diseases"].map(name_to_mondo_dict)
+    df["doid"] = df["mondo"].map(mondo_to_doid_dict)
+    return df
+
+
+def get_disease_patient_map(df):
+    driver = utils.connect_to_neo4j()
+    patient_ids = df["patient_id"].unique()
+
+    diseases = df["doid"].unique()
+
+    query = f"""
+    MATCH (p:Biological_sample)-[:HAS_DISEASE]->(d:Disease)
+    WHERE id(p) in {list(patient_ids)} AND id(d) in {list(diseases)}"""
+
+    res = utils.execute_query(driver, query, debug=False)
+
+    disease_patient_map = {}
+    for record in res:
+        patient_id = record["patient_id"]
+        disease_id = record["disease_id"]
+        if disease_id not in disease_patient_map:
+            disease_patient_map[disease_id] = set()
+        disease_patient_map[disease_id].add(patient_id)
+    return disease_patient_map
+
+
+
+def evaluate_disease_characterization(file_name, score_file_path):
     df = pd.read_csv(file_name)
     print(df.head())
-    # patient_id                                           diseases  similarities
-    # 0    15015373                     isolated Klippel-Feil syndrome      0.000069
-    # 1    15015373                     congenital structural myopathy      0.000080
-    # 2    15015373                       tooth agenesis, selective, 4      0.000077
-    # 3    15015373  generalized junctional epidermolysis bullosa n...      0.000092
-    # 4    15015373                                lung leiomyosarcoma      0.000009
+    
+    df = map_disease_to_doid(df)
 
-    # map from disease name back to id
+    print("Total lenght: ", len(df))
+    print("Not found DOID: " + str(df["doid"].isnull().sum()))
+    df = df[df["doid"].notnull()]
+
+    print(df.head())
+    #    patient_id                                      diseases  similarities  mondo          doid
+    # 0    15013028                           depressive disorder      0.000054   2050     DOID:1596
+    # 1    15013028                  benign blood vessel neoplasm      0.000012  24286    DOID:60006
+    # 2    15013028  autosomal recessive nonsyndromic deafness 53      0.000054  12333  DOID:0110509
+
+
+    disease_patients_map = get_disease_patient_map(df)
+    # group by patient_id
+    grouped = df.groupby("patient_id")
+    
+    disease_sim_map = {}
+    max_k = 10  # or whatever top K range you want
+    for disease_id, group in grouped:
+        # We'll compute overlap for k=1..max_k
+        for k in range(1, max_k + 1):
+            overlap_score, overlap_score_random = get_disease_similarity_scores(
+                disease_id, group, disease_patients_map, k
+            )
+            if disease_id not in disease_sim_map:
+                disease_sim_map[disease_id] = {}
+            disease_sim_map[disease_id][k] = {
+                "overlap_score": overlap_score,
+                "overlap_score_random": overlap_score_random,
+            }
+    
+    number_of_diseases = len(disease_sim_map)
+    
+    # Plot the average overlap vs K
+    plot_disease_similarity_avg(
+        disease_sim_map, max_k, score_file_path, number_of_diseases
+    )
+
 
     return
+
+
+def get_disease_similarity_scores(disease_id, group, disease_patients_map, k=5):
+    if disease_id not in disease_patients_map:
+        return 0, 0
+    group_sorted = group.sort_values(by="similarities", ascending=False)
+    if len(group_sorted) < k:
+        return 0, 0
+    candidate_disease_id = group_sorted.iloc[k - 1]["candidate_disease"]  
+    if candidate_disease_id not in disease_patients_map:
+        return 0, 0
+    overlap = disease_patients_map[disease_id].intersection(
+        disease_patients_map[candidate_disease_id]
+    )
+    overlap_score = 1 if len(overlap) > 0 else 0
+    
+    random_disease_id = random.choice(list(disease_patients_map.keys()))
+    random_overlap = disease_patients_map[disease_id].intersection(
+        disease_patients_map[random_disease_id]
+    )
+    overlap_score_random = 1 if len(random_overlap) > 0 else 0
+    
+    return overlap_score, overlap_score_random
+
+
+
+def plot_disease_similarity_avg(disease_sim_map, k_max, score_file_path, number_of_diseases):
+    k_values = range(1, k_max + 1)
+    
+    k_overlap_total = {k: 0 for k in k_values}
+    k_overlap_random_total = {k: 0 for k in k_values}
+    
+    for disease_id in disease_sim_map:
+        for k in k_values:
+            k_overlap_total[k] += disease_sim_map[disease_id][k]["overlap_score"]
+            k_overlap_random_total[k] += disease_sim_map[disease_id][k]["overlap_score_random"]
+    
+    k_overlap_avg = [k_overlap_total[k] / number_of_diseases for k in k_values]
+    k_overlap_random_avg = [k_overlap_random_total[k] / number_of_diseases for k in k_values]
+    
+    plt.figure(figsize=(8, 6))
+    plt.plot(k_values, k_overlap_avg, label="Overlap in Patients")
+    plt.plot(k_values, k_overlap_random_avg, label="Random Baseline")
+    
+    plt.xlabel("Top-K Similar Diseases")
+    plt.ylabel("Fraction of Diseases with Overlap")
+    plt.title("Disease Characterization: Average Overlap vs. K")
+    plt.legend()
+    plt.grid(axis="y", linestyle="--", alpha=0.7)
+    
+    out_file = project_config.PROJECT_DIR / "plots" / "disease_characterization_scores.png"
+    print(f"Saving plot to {out_file}")
+    plt.savefig(out_file)
+    plt.close()
 
 
 if __name__ == "__main__":
@@ -269,12 +400,12 @@ if __name__ == "__main__":
     base_res = "checkpoints.patients_like_me_scores"
     dir = project_config.PROJECT_DIR / "results"
     file = dir / f"{base_res}_{agg_type}_primeKG_w_dis.csv"
-    print(f"Evalute: {file}")
-    evaluate_patients_like_me(file)
+    
+    # evaluate_patients_like_me(file)
 
     disease_char_file = (
-        dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
+        dir / "checkpoints.disease_characterization_scores.csv"
     )
-    # evaluate_disease_characterization(disease_char_file)
+    evaluate_disease_characterization(disease_char_file)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
 # %%

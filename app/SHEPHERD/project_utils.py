@@ -3,7 +3,8 @@ import jsonlines
             
 import sys
 import pickle
-import project_config
+from app.SHEPHERD import project_config
+from pronto import Ontology
 
 
 ##############################################
@@ -38,3 +39,31 @@ def read_dicts():
         orpha_mondo_map = pickle.load(handle)
 
     return hpo_to_idx_dict, ensembl_to_idx_dict, disease_to_idx_dict, orpha_mondo_map
+
+
+def get_mondo_to_doid_dict():
+    mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
+    mondo_to_doid_dict = {}
+    print('Creating mondo to DOID dict')
+    for term in mondo_ontology.terms():
+        if term.id.startswith("MONDO:"):
+            for xref in term.xrefs:
+                if xref.id.startswith("DOID:"):
+                    # Just store the first one and break
+                    mondo_to_doid_dict[term.id] = xref.id
+                    break
+
+    return mondo_to_doid_dict
+
+
+def get_mondo_to_ICD10_dict():
+    mondo_onotology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
+    mondo_to_ICD10_dict = {}
+    print('Creating mondo to ICD10 dict')
+    for term in mondo_onotology.terms():
+        if term.id.startswith("MONDO:"):
+            for xref in term.xrefs:
+                if xref.id.startswith("ICD10:"):
+                    mondo_to_ICD10_dict[term.id] = xref.id
+                    break
+    return mondo_to_ICD10_dict

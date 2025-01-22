@@ -26,7 +26,7 @@ sys.path.insert(0, '../../..') # add config to path
 
 import preprocess 
 import project_config
-from project_utils import read_patients, write_patients
+from project_utils import read_patients, write_patients, get_mondo_to_doid_dict
 pd.options.mode.chained_assignment = None
 
 # input locations
@@ -196,16 +196,8 @@ def create_gene_to_node_idx_dict(args, node_df):
 def create_mondo_to_node_idx_dict(node_df, ):
     '''create mondo disease to node_idx map'''
 
-    mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
-    mondo_to_doid_dict = {}
-    print('Creating mondo to DOID dict')
-    for term in mondo_ontology.terms():
-        if term.id.startswith("MONDO:"):
-            for xref in term.xrefs:
-                if xref.id.startswith("DOID:"):
-                    # Just store the first one and break
-                    mondo_to_doid_dict[term.id] = xref.id
-                    break
+    mondo_to_doid_dict = get_mondo_to_doid_dict()
+
     print(f'Number of mondo terms with DOID: {len(mondo_to_doid_dict)}')
     print("first 10 entries: ", list(mondo_to_doid_dict.items())[:10])
     mondo_to_name_dict = {}
