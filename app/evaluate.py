@@ -267,6 +267,7 @@ def map_disease_to_doid(df):
     
     orphanet_to_mondo_dict = project_utils.get_orphannet_to_mondo()
     print("First orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
+    print("First orphanet values: ", list(orphanet_to_mondo_dict.values())[:5])
 
     print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
     print("First monod values: ", list(mondo_to_doid_dict.values())[:5])
