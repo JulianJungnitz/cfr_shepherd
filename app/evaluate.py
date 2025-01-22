@@ -314,7 +314,7 @@ def evaluate_disease_characterization(file_name,):
 
     disease_patients_map = get_disease_patient_map(df)
     # group by patient_id
-    grouped = df.groupby("patient_id")
+    grouped = df.groupby("doid")
     
     disease_sim_map = {}
     max_k = 10  # or whatever top K range you want
@@ -348,7 +348,7 @@ def get_disease_similarity_scores(disease_id, group, disease_patients_map, k=5):
     group_sorted = group.sort_values(by="similarities", ascending=False)
     if len(group_sorted) < k:
         return 0, 0
-    candidate_disease_id = group_sorted.iloc[k - 1]["candidate_disease"]  
+    candidate_disease_id = group_sorted.iloc[k - 1]["doid"]  
     if candidate_disease_id not in disease_patients_map:
         return 0, 0
     overlap = disease_patients_map[disease_id].intersection(
