@@ -171,8 +171,10 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
     icd10_similarity_set = set(patient_disease["icd10_codes"]).intersection(
         set(candidate_patient_disease["icd10_codes"])
     )
-    icd10_first_4_similarity_set = set(patient_disease["icd10_codes"][:4]).intersection(
-        set(candidate_patient_disease["icd10_codes"][:4])
+    icd10_first_4_similarity_set = set(
+        code[:4] for code in patient_disease["icd10_codes"]
+    ).intersection(
+        set(code[:4] for code in candidate_patient_disease["icd10_codes"])
     )
 
     random_patient_disease = patients_disease_map[
@@ -185,8 +187,9 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
         set(random_patient_disease["icd10_codes"])
     )
     icd10_first_4_similarity_set_random = set(
-        patient_disease["icd10_codes"][:4]
-    ).intersection(set(random_patient_disease["icd10_codes"][:4]))
+        code[:4] for code in patient_disease["icd10_codes"]
+    ).intersection(
+        set(code[:4] for code in random_patient_disease["icd10_codes"]))
 
     # if len(id_similarity_set) > 0:
     #     print(f"Patient {patient_id} and Patient {candidate_patient_id} have similar diseases: {id_similarity_set}")
