@@ -172,9 +172,9 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
         set(candidate_patient_disease["icd10_codes"])
     )
     icd10_first_4_similarity_set = set(
-        code[:4] for code in patient_disease["icd10_codes"]
+        code[:9] for code in patient_disease["icd10_codes"]
     ).intersection(
-        set(code[:4] for code in candidate_patient_disease["icd10_codes"])
+        set(code[:9] for code in candidate_patient_disease["icd10_codes"])
     )
 
     random_patient_disease = patients_disease_map[
@@ -187,9 +187,9 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
         set(random_patient_disease["icd10_codes"])
     )
     icd10_first_4_similarity_set_random = set(
-        code[:4] for code in patient_disease["icd10_codes"]
+        code[:9] for code in patient_disease["icd10_codes"]
     ).intersection(
-        set(code[:4] for code in random_patient_disease["icd10_codes"]))
+        set(code[:9] for code in random_patient_disease["icd10_codes"]))
 
     # if len(id_similarity_set) > 0:
     #     print(f"Patient {patient_id} and Patient {candidate_patient_id} have similar diseases: {id_similarity_set}")
@@ -200,16 +200,16 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
     icd10_similar += len(icd10_similarity_set) > 0
     id_similar_random = len(id_similarity_set_random) > 0
     icd10_similar_random = len(icd10_similarity_set_random) > 0
-    icd10_first_4_similarity_set = len(icd10_first_4_similarity_set) > 0
-    icd10_first_4_similarity_set_random = len(icd10_first_4_similarity_set_random) > 0
+    icd10_first_4_similarity = len(icd10_first_4_similarity_set) > 0
+    icd10_first_4_similarity_random = len(icd10_first_4_similarity_set_random) > 0
 
     return (
         id_similar,
         icd10_similar,
         id_similar_random,
         icd10_similar_random,
-        icd10_first_4_similarity_set,
-        icd10_first_4_similarity_set_random
+        icd10_first_4_similarity,
+        icd10_first_4_similarity_random
     )
 
 
