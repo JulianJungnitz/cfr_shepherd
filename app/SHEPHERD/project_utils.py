@@ -42,7 +42,7 @@ def read_dicts():
 
 
 def get_mondo_to_doid_dict():
-    mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo', encoding='utf-8')
+    mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
     mondo_to_doid_dict = {}
     print('Creating mondo to DOID dict')
     for term in mondo_ontology.terms():
