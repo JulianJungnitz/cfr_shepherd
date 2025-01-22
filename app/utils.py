@@ -84,7 +84,7 @@ def connect_to_neo4j(use_shepherd_db=False):
     return driver
 
 def execute_query(driver, query, debug=True):
-    with driver.session(database=NEO4J_DB) as session:
+    with driver.session(database=NEO4J_DB, notifications_min_severity="OFF") as session:
         try:
             if(debug):
                 print(query)
