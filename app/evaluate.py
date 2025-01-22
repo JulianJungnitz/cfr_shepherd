@@ -70,15 +70,15 @@ def plot_patient_similarity_avg(patient_sim_map,k_max, score_file_path, number_o
             k_id_similar_total[k] += patient_sim_map[patient_id][k]["id_similar"]
             k_icd10_similar_total[k] += patient_sim_map[patient_id][k]["icd10_similar"]
     
-    k_id_similar_avg = {k: k_id_similar_total[k]/k for k in k_values}
-    k_icd10_similar_avg = {k: k_icd10_similar_total[k]/k for k in k_values}
+    k_id_similar_avg = {k: k_id_similar_total[k]/number_of_patients for k in k_values}
+    k_icd10_similar_avg = {k: k_icd10_similar_total[k]/number_of_patients for k in k_values}
 
     fig, ax = plt.subplots()
     ax.plot(k_values, list(k_id_similar_avg.values()), label="ID Similar")
     ax.plot(k_values, list(k_icd10_similar_avg.values()), label="ICD10 Similar")
     ax.set_xlabel("K")
     ax.set_ylabel("Similarity")
-    ax.set_title("Patient Similarity Average of patient at rank k.\n At least one similar disease \n File: " + str(score_file_path))
+    ax.set_title("Patient Similarity Average of patient at rank k.\n At least one similar disease or icd10 code")
     ax.legend()
     file = project_config.PROJECT_DIR / "plots" / f"patient_similarity_scores.png"
     print(f"Saving plot to {file}")
