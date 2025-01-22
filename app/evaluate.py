@@ -263,7 +263,7 @@ def map_disease_to_doid(df):
     mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
     print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
     
-    mondo_to_doid_dict = {k[6:].lstrip("0"): v for k, v in mondo_to_doid_dict.items()}
+    mondo_to_doid_dict = {k.replace("MONDO:", "").lstrip("0"): v for k, v in mondo_to_doid_dict.items()}
 
     print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
     print("First monod values: ", list(mondo_to_doid_dict.values())[:5])
