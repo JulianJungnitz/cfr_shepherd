@@ -82,14 +82,15 @@ def connect_to_neo4j(use_shepherd_db=False):
     print("Connected to Neo4j")
     
     return driver
-
-def execute_query(driver, query, debug=True):
+def execute_query(driver, query, params=None, debug=True):
     with driver.session(database=NEO4J_DB, notifications_min_severity="OFF") as session:
         try:
-            if(debug):
+            if debug:
                 print(query)
-            res = session.run(query).data()
-            if(debug):
+                if params:
+                    print(params)
+            res = session.run(query, parameters=params).data()
+            if debug:
                 print(f"Query returned {len(res)} records")
             return res
         except Exception as e:
