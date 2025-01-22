@@ -6,6 +6,7 @@ import pickle
 from app.SHEPHERD import project_config
 from app import utils
 from pronto import Ontology
+import pandas as pd
 
 
 ##############################################
@@ -62,3 +63,12 @@ def get_orphannet_to_mondo():
     orpha_mondo_map = pickle.load(open(file, 'rb'))
     
     return orpha_mondo_map
+
+def get_orphannet_names_to_Id():
+    file = utils.SHEPHERD_DIR + '/data_prep/orphanet_to_omim_mapping_df.csv'
+    orpha_data = pd.read_csv(file, header=0)
+    key_id = "Disorder_Name"
+    val_id = "OrphaNumber"
+
+    orpha_names_id_map  = dict(zip(orpha_data[key_id], orpha_data[val_id]))
+    return orpha_names_id_map
