@@ -432,7 +432,7 @@ def create_names_to_doid_map(df):
     # group by patient_id and sort by similarities
 
     grouped = df.groupby("patient_id")
-    k=10
+    k=1
     top_k_unique_diseases = []
     for patient_id, group in grouped:
         group = group.sort_values(by="similarities", ascending=False)
