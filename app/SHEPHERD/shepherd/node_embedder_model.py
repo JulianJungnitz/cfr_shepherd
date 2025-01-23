@@ -97,7 +97,7 @@ class NodeEmbeder(pl.LightningModule):
 
         # Normalization (applied after a single conv layer)
 
-        fix_layer_size = True # If True, the layer size is fixed to 1
+        fix_layer_size = False # If True, the layer size is fixed to 1
         print("Sizes: ", self.nhid1*self.n_heads, self.nhid2*self.n_heads, "Fix Layer Size: ", fix_layer_size)
 
         if self.norm_method == "batch":
