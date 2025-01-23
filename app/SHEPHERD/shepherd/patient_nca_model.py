@@ -170,7 +170,7 @@ class CombinedPatientNCA(pl.LightningModule):
                 'train/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
                 'train/patient.disease_embed': cand_disease_embeddings.detach().cpu()
             })
-            
+        self.log('train_results', batch_results,)
         return batch_results
 
     def validation_step(self, batch, batch_idx):
@@ -202,6 +202,7 @@ class CombinedPatientNCA(pl.LightningModule):
                                   'val/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
                                   'val/patient.disease_embed': cand_disease_embeddings.detach().cpu()
                                 })
+        self.log('val_results', batch_results, )
         return batch_results 
 
     def write_results_to_file(self, batch, softmax, correct_ranks, labels, phenotype_mask, disease_mask, attn_weights,  gat_attn, node_embeddings, phenotype_embeddings, disease_embeddings, save=True, loop_type='predict'):
@@ -465,13 +466,16 @@ class CombinedPatientNCA(pl.LightningModule):
         self.log(f'{loop_type}/top10_acc', top_10_acc, prog_bar=False)
         self.log(f'{loop_type}/mrr', mrr, prog_bar=False)
 
-    def train_epoch_end(self, outputs ):
+    def train_epoch_end(self,  ):
+        outputs = self.trainer.callback_metrics['train_results']
         self._epoch_end(outputs, 'train')
 
-    def validation_epoch_end(self, outputs):
+    def validation_epoch_end(self, ):
+        outputs = self.trainer.callback_metrics['val_results']
         self._epoch_end(outputs, 'val')
 
-    def test_epoch_end(self,outputs):
+    def test_epoch_end(self, ):
+        outputs = self.trainer.callback_metrics['test_results']
         self._epoch_end(outputs, 'test')
 
     def configure_optimizers(self):
