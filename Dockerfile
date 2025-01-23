@@ -77,11 +77,11 @@ RUN pip install --no-cache-dir -r /app/pip_shepherd.txt
 COPY cfr_requirements.txt requirements.txt
 RUN pip install --no-deps --no-cache-dir -r requirements.txt
 
-# COPY ./app/SHEPHERD/data/checkpoints /app/SHEPHERD/data/checkpoints
-# COPY ./app/SHEPHERD/data/knowledge_graph /app/SHEPHERD/data/knowledge_graph
+COPY ./app/SHEPHERD/data/checkpoints /app/SHEPHERD/data/checkpoints
+COPY ./app/SHEPHERD/data/knowledge_graph /app/SHEPHERD/data/knowledge_graph
 
-COPY ../cfr_shepherd_data/checkpoints /app/SHEPHERD/data/checkpoints
-COPY ../cfr_shepherd_data/knowledge_graph /app/SHEPHERD/data/knowledge_graph
+# COPY ../cfr_shepherd_data/checkpoints /app/SHEPHERD/data/checkpoints
+# COPY ../cfr_shepherd_data/knowledge_graph /app/SHEPHERD/data/knowledge_graph
 
 
 COPY ./app/server_config/supervisord.conf /supervisord.conf
@@ -92,15 +92,15 @@ COPY ./start_app.sh /start_app.sh
 RUN chmod +x /entrypoint.sh /start_app.sh
 
 
-# RUN --mount=type=bind,source=./app,target=/src_app \
-#     rsync -a --exclude='SHEPHERD/data/checkpoints' \
-#               --exclude='SHEPHERD/data/knowledge_graph' \
-#               /src_app/ /app/
-
-RUN --mount=type=bind,source=../cfr_shepherd_data,target=/src_app \
-    rsync -a --exclude='../cfr_shepherd_data/checkpoints' \
-              --exclude='../cfr_shepherd_data/knowledge_graph' \
+RUN --mount=type=bind,source=./app,target=/src_app \
+    rsync -a --exclude='SHEPHERD/data/checkpoints' \
+              --exclude='SHEPHERD/data/knowledge_graph' \
               /src_app/ /app/
+
+# RUN --mount=type=bind,source=../cfr_shepherd_data,target=/src_app \
+#     rsync -a --exclude='../cfr_shepherd_data/checkpoints' \
+#               --exclude='../cfr_shepherd_data/knowledge_graph' \
+#               /src_app/ /app/
 
 
 COPY ./frontend/build/web /frontend/build/web
