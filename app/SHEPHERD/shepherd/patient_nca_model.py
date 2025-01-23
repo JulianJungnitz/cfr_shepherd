@@ -465,13 +465,16 @@ class CombinedPatientNCA(pl.LightningModule):
         self.log(f'{loop_type}/top10_acc', top_10_acc, prog_bar=False)
         self.log(f'{loop_type}/mrr', mrr, prog_bar=False)
 
-    def on_train_epoch_end(self, outputs ):
+    def on_train_epoch_end(self,  ):
+        outputs = self.trainer.callback_metrics['train_results']
         self._epoch_end(outputs, 'train')
 
-    def on_validation_epoch_end(self, outputs):
+    def on_validation_epoch_end(self, ):
+        outputs = self.trainer.callback_metrics['val_results']
         self._epoch_end(outputs, 'val')
 
-    def on_test_epoch_end(self, outputs):
+    def on_test_epoch_end(self, ):
+        outputs = self.trainer.callback_metrics['test_results']
         self._epoch_end(outputs, 'test')
 
     def configure_optimizers(self):
