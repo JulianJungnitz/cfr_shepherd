@@ -164,13 +164,13 @@ class CombinedPatientNCA(pl.LightningModule):
         if self.hparams.hparams['loss'] == 'patient_disease_NCA':
             batch_sz, n_diseases, embed_dim = disease_embeddings.shape
             batch_disease_nid_reshaped = batch.batch_disease_nid.view(-1)
-            # batch_results.update({
-                # 'train/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
-                # 'train/cand_disease_names': batch.cand_disease_names,
-                # 'train/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
-                # 'train/patient.disease_embed': cand_disease_embeddings.detach().cpu()
-            # })
-        self.log('train_results', batch_results,)
+            batch_results.update({
+                'train/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
+                'train/cand_disease_names': batch.cand_disease_names,
+                'train/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
+                'train/patient.disease_embed': cand_disease_embeddings.detach().cpu()
+            })
+        # self.log('train_results', batch_results,)
         return batch_results
 
     def validation_step(self, batch, batch_idx):
@@ -197,12 +197,12 @@ class CombinedPatientNCA(pl.LightningModule):
         if self.hparams.hparams['loss'] == 'patient_disease_NCA':
             batch_sz, n_diseases, embed_dim = disease_embeddings.shape
             batch_disease_nid_reshaped = batch.batch_disease_nid.view(-1)
-            # batch_results.update({'val/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
-                                #   'val/cand_disease_names': batch.cand_disease_names,
-                                #   'val/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
-                                #   'val/patient.disease_embed': cand_disease_embeddings.detach().cpu()
-                                # })
-        self.log('val_results', batch_results, )
+            batch_results.update({'val/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
+                                  'val/cand_disease_names': batch.cand_disease_names,
+                                  'val/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
+                                  'val/patient.disease_embed': cand_disease_embeddings.detach().cpu()
+                                })
+        # self.log('val_results', batch_results, )
         return batch_results 
 
     def write_results_to_file(self, batch, softmax, correct_ranks, labels, phenotype_mask, disease_mask, attn_weights,  gat_attn, node_embeddings, phenotype_embeddings, disease_embeddings, save=True, loop_type='predict'):
@@ -302,12 +302,12 @@ class CombinedPatientNCA(pl.LightningModule):
         if self.hparams.hparams['loss'] == 'patient_disease_NCA':
             batch_sz, n_diseases, embed_dim = disease_embeddings.shape
             batch_disease_nid_reshaped = batch.batch_disease_nid.view(-1)
-            # batch_results.update({
-                # 'test/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
-                # 'test/cand_disease_names': batch.cand_disease_names,
-                # 'test/batch_cand_disease_nid': cand_disease_idx,
-                # 'test/patient.disease_embed': cand_disease_embeddings
-            # })
+            batch_results.update({
+                'test/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
+                'test/cand_disease_names': batch.cand_disease_names,
+                'test/batch_cand_disease_nid': cand_disease_idx,
+                'test/patient.disease_embed': cand_disease_embeddings
+            })
         else:
             batch_results.update({
                 'test/patient.disease_embed': None, 
@@ -467,16 +467,16 @@ class CombinedPatientNCA(pl.LightningModule):
         self.log(f'{loop_type}/mrr', mrr, prog_bar=False)
 
     def on_train_epoch_end(self,  ):
-        outputs = self.trainer.callback_metrics['train_results']
-        self._epoch_end(outputs, 'train')
+        # self._epoch_end(outputs, 'train')
+        pass
 
     def on_validation_epoch_end(self, ):
-        outputs = self.trainer.callback_metrics['val_results']
-        self._epoch_end(outputs, 'val')
+        # self._epoch_end(outputs, 'val')
+        pass
 
     def on_test_epoch_end(self, ):
-        outputs = self.trainer.callback_metrics['test_results']
-        self._epoch_end(outputs, 'test')
+        # self._epoch_end(outputs, 'test')
+        pass
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.hparams.hparams['lr'])
