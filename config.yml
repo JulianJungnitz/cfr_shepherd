@@ -16,7 +16,7 @@ shepherd:
   ONLY_PATIENTS_WITH_PHENOTYPES: True 
   ONLY_PATIENTS_WITH_GENES: True
 
-  CREATE_SPL_MATRIX: False # This is necessary if the algo is run on new data
+  CREATE_SPL_MATRIX: True # This is necessary if the algo is run on new data
 
   # this runs the predictions
   RUN_PATIENTS_LIKE_ME: False
