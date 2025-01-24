@@ -166,7 +166,7 @@ class CombinedPatientNCA(pl.LightningModule):
             batch_disease_nid_reshaped = batch.batch_disease_nid.view(-1)
             batch_results.update({
                 'train/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
-                'train/cand_disease_names': batch.cand_disease_names,
+                # 'train/cand_disease_names': batch.cand_disease_names,
                 'train/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
                 'train/patient.disease_embed': cand_disease_embeddings.detach().cpu()
             })
@@ -198,7 +198,7 @@ class CombinedPatientNCA(pl.LightningModule):
             batch_sz, n_diseases, embed_dim = disease_embeddings.shape
             batch_disease_nid_reshaped = batch.batch_disease_nid.view(-1)
             batch_results.update({'val/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
-                                  'val/cand_disease_names': batch.cand_disease_names,
+                                #   'val/cand_disease_names': batch.cand_disease_names,
                                   'val/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
                                   'val/patient.disease_embed': cand_disease_embeddings.detach().cpu()
                                 })
@@ -304,7 +304,7 @@ class CombinedPatientNCA(pl.LightningModule):
             batch_disease_nid_reshaped = batch.batch_disease_nid.view(-1)
             batch_results.update({
                 'test/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
-                'test/cand_disease_names': batch.cand_disease_names,
+                # 'test/cand_disease_names': batch.cand_disease_names,
                 'test/batch_cand_disease_nid': cand_disease_idx,
                 'test/patient.disease_embed': cand_disease_embeddings
             })
