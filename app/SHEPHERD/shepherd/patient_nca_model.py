@@ -164,12 +164,12 @@ class CombinedPatientNCA(pl.LightningModule):
         if self.hparams.hparams['loss'] == 'patient_disease_NCA':
             batch_sz, n_diseases, embed_dim = disease_embeddings.shape
             batch_disease_nid_reshaped = batch.batch_disease_nid.view(-1)
-            batch_results.update({
-                'train/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
+            # batch_results.update({
+                # 'train/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
                 # 'train/cand_disease_names': batch.cand_disease_names,
-                'train/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
-                'train/patient.disease_embed': cand_disease_embeddings.detach().cpu()
-            })
+                # 'train/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
+                # 'train/patient.disease_embed': cand_disease_embeddings.detach().cpu()
+            # })
         self.log('train_results', batch_results,)
         return batch_results
 
@@ -197,11 +197,11 @@ class CombinedPatientNCA(pl.LightningModule):
         if self.hparams.hparams['loss'] == 'patient_disease_NCA':
             batch_sz, n_diseases, embed_dim = disease_embeddings.shape
             batch_disease_nid_reshaped = batch.batch_disease_nid.view(-1)
-            batch_results.update({'val/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
+            # batch_results.update({'val/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
                                 #   'val/cand_disease_names': batch.cand_disease_names,
-                                  'val/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
-                                  'val/patient.disease_embed': cand_disease_embeddings.detach().cpu()
-                                })
+                                #   'val/batch_cand_disease_nid': cand_disease_idx.detach().cpu(),
+                                #   'val/patient.disease_embed': cand_disease_embeddings.detach().cpu()
+                                # })
         self.log('val_results', batch_results, )
         return batch_results 
 
@@ -302,12 +302,12 @@ class CombinedPatientNCA(pl.LightningModule):
         if self.hparams.hparams['loss'] == 'patient_disease_NCA':
             batch_sz, n_diseases, embed_dim = disease_embeddings.shape
             batch_disease_nid_reshaped = batch.batch_disease_nid.view(-1)
-            batch_results.update({
-                'test/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
+            # batch_results.update({
+                # 'test/batch_disease_nid': batch_disease_nid_reshaped.detach().cpu(),
                 # 'test/cand_disease_names': batch.cand_disease_names,
-                'test/batch_cand_disease_nid': cand_disease_idx,
-                'test/patient.disease_embed': cand_disease_embeddings
-            })
+                # 'test/batch_cand_disease_nid': cand_disease_idx,
+                # 'test/patient.disease_embed': cand_disease_embeddings
+            # })
         else:
             batch_results.update({
                 'test/patient.disease_embed': None, 
