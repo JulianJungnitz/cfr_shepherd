@@ -1,4 +1,5 @@
 # Bash script to train SHEPHERD for patients-like-me
+cd app/SHEPHERD/shepherd
 patient_aggr_nodes=$1
 patient_data=$2
 checkpoint=$3
