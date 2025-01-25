@@ -253,7 +253,8 @@ class NCALoss(BaseMetricLossFunction):
                 labels = labels.squeeze(-1)
             exp = torch.sum(softmax * labels, dim=1) 
             non_zero = exp != 0
-            loss = -torch.log(exp[non_zero])
+            epsilon = 1e-9
+            loss = -torch.log(exp[non_zero] + epsilon)
             indices =  c_f.torch_arange_from_size(query)[non_zero]
             loss_dict = {
                 "loss": {
