@@ -204,7 +204,7 @@ def main():
 
     RUN_TRAINING_PATIENTS_LIKE_ME = config["shepherd"]["RUN_TRAINING_PATIENTS_LIKE_ME"]
     if RUN_TRAINING_PATIENTS_LIKE_ME:
-        run_training_patients_like_me()
+        run_training_patients_like_me(config, PATIENTS_AGGR_NODES)
 
     RUN_PATIENTS_LIKE_ME = config["shepherd"]["RUN_PATIENTS_LIKE_ME"]
     if RUN_PATIENTS_LIKE_ME:
