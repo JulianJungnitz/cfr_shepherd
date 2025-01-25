@@ -28,7 +28,7 @@ shepherd:
   MOVE_RESULTS_TO_OUTPUT_DIR: False # This moves the results to the output directory after every prediction
 
   RUN_PREPROCESSING: False # This runs the preprocessing for training the model
-  RUN_TRAINING_DISEASE_CHARACTERIZATION: True 
+  RUN_TRAINING_DISEASE_CHARACTERIZATION: False 
   RUN_TRAINING_PATIENTS_LIKE_ME: True
 
   
