@@ -144,6 +144,29 @@ def run_pretraining(config):
     ]
     utils.run_subprocess(command)
 
+def run_training_patients_like_me(config, PATIENTS_AGGR_NODES=None):
+    print("Training disease characterization")
+    data_type = "my_data"
+    USE_SIMULATED_DATA = config["shepherd"]["USE_SIMULATED_PATIENTS"]
+    if USE_SIMULATED_DATA:
+        data_type = "disease_simulated"
+
+    USE_HAUNER_GRAPH = config["shepherd"]["USE_HAUNER_GRAPH"]
+    checkpoint = "checkpoints/pretrain.ckpt"
+    if USE_HAUNER_GRAPH:
+        checkpoint = "checkpoints/pretrain_hauner.ckpt"
+
+    graph_shema = "hauner" if USE_HAUNER_GRAPH else "primeKG"
+    command = [
+        "bash",
+        utils.SHEPHERD_DIR + "/shepherd/train_patients_like_me.sh",
+        PATIENTS_AGGR_NODES,
+        data_type,
+        checkpoint,
+        graph_shema,
+    ]
+    utils.run_subprocess(command)
+
 
 def main():
     global driver
@@ -178,6 +201,10 @@ def main():
     ]
     if RUN_TRAINING_DISEASE_CHARACTERIZATION:
         run_training_disease_characterization(config, PATIENTS_AGGR_NODES)
+
+    RUN_TRAINING_PATIENTS_LIKE_ME = config["shepherd"]["RUN_TRAINING_PATIENTS_LIKE_ME"]
+    if RUN_TRAINING_PATIENTS_LIKE_ME:
+        run_training_patients_like_me()
 
     RUN_PATIENTS_LIKE_ME = config["shepherd"]["RUN_PATIENTS_LIKE_ME"]
     if RUN_PATIENTS_LIKE_ME:
