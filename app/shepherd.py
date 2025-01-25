@@ -145,7 +145,7 @@ def run_pretraining(config):
     utils.run_subprocess(command)
 
 def run_training_patients_like_me(config, PATIENTS_AGGR_NODES=None):
-    print("Training disease characterization")
+    print("Training patients like me")
     data_type = "my_data"
     USE_SIMULATED_DATA = config["shepherd"]["USE_SIMULATED_PATIENTS"]
     if USE_SIMULATED_DATA:
