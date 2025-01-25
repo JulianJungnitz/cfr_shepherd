@@ -444,6 +444,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
 
         # Get candidate genes to phenotypes SPL
         if not self.gp_spl is None:
+            pass
             if not self.spl_indexing_dict is None:
                 patient_ids = np.vectorize(self.spl_indexing_dict.get)(patient_ids).astype(int)
             gene_to_phenotypes_spl = -torch.Tensor(self.gp_spl[patient_ids,:])
