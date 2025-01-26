@@ -31,12 +31,15 @@ class PatientDataset(Dataset):
         print("Number of patients: ", len(self.patients))
 
         # add placeholder for true genes/diseases if they don't exist
+        print_count = 3
         for patient in self.patients:
             if "true_genes" not in patient:
                 patient["true_genes"] = []
             if "true_diseases" not in patient:
                 patient["true_diseases"] = []
-                print("true_diseases not in patient")
+                if(print_count > 0):
+                    print("true_diseases not in patient")
+                    print_count -= 1
 
         self.raw_data = raw_data
         self.needs_disease_mapping = needs_disease_mapping
