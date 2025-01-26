@@ -234,7 +234,7 @@ def create_mondo_to_node_idx_dict(node_df, ):
         pickle.dump(mondo_to_name_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
     with open(MONDO_TO_IDX_DICT_FILE, 'wb') as handle:
         pickle.dump(mondo_to_idx_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    
+    print("First 5 of mondo_to_idx_dict ", {k: v for k, v in list(mondo_to_idx_dict.items())[:5]})
     return mondo_to_idx_dict
 
 def map_diseases_to_orphanet(node_df, mondo_orphanet_map):
