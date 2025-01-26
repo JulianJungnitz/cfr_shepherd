@@ -52,6 +52,7 @@ class PatientDataset(Dataset):
             "rb",
         ) as handle:
             self.hpo_to_idx_dict = pickle.load(handle)
+            print("first 5 HPO to idx dict: ", {k: self.hpo_to_idx_dict[k] for k in list(self.hpo_to_idx_dict)[:5]})
         with open(
             project_config.KG_DIR / f"hpo_to_name_dict_{project_config.CURR_KG}.pkl",
             "rb",

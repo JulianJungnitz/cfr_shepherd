@@ -135,13 +135,13 @@ def create_networkx_graph(edges):
 def create_hpo_to_node_idx_dict(node_df, hp_old_new_map):
     # get HPO nodes
     hpo_nodes = node_df.loc[node_df['node_type'] == 'Phenotype']
-    hpo_nodes['node_id'] = hpo_nodes['node_id'].astype(str) 
+    hpo_nodes['node_name'] = hpo_nodes['node_name'].astype(str) 
 
     # convert HPO id to string version (e.g. 1 -> HP:0000001)
     HPO_LEN = 7
-    padding_needed = HPO_LEN - hpo_nodes['node_id'].str.len()
+    padding_needed = HPO_LEN - hpo_nodes['node_name'].str.len()
     padded_hpo = padding_needed.apply(lambda x: 'HP:' + '0' * x)
-    hpo_nodes['hpo_string'] = padded_hpo + hpo_nodes['node_id'] 
+    hpo_nodes['hpo_string'] = padded_hpo + hpo_nodes['node_name'] 
 
     # create dict from HPO ID to node index in graph
     hpo_to_idx_dict = {hpo:idx for hpo, idx in zip(hpo_nodes['hpo_string'].tolist(), hpo_nodes['node_idx'].tolist())}

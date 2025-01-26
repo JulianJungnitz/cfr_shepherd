@@ -102,6 +102,7 @@ def read_pkl_file(file_name: str):
         data = pickle.load(f)
         data_str = str(data)
         print(data_str[:1000])
+        return data
 
 
 def test_hpo_dict(file_name):
@@ -275,7 +276,7 @@ def test_mapping():
 if __name__ == "__main__":
     # save_mondo_to_diod()
     # test_mapping()
-    transform_sim_patients("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl")
+    # transform_sim_patients("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl")
     # create_hpo_to_idx_dict()
     # create_ensembl_to_idx_dict()
     # test_hpo_dict(
@@ -284,10 +285,21 @@ if __name__ == "__main__":
 
     # file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced.pkl"
     # new_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced_new.pkl"
-    
-    # read_pkl_file(
-    #     new_file
-    # )
+    pkl_file ="/home/julian/Downloads/hpo_to_idx_dict_hauner_graph_reduced.pkl"
+    hpo_dict = read_pkl_file(
+        pkl_file
+    )
+    hpo_list= ['HP:0062653','HP:0002448', 'HP:0002497', 'HP:0001249', 'HP:0001263', 'HP:0001290', 'HP:0003698', 'HP:0009027', 'HP:0003202', 'HP:0000648', 'HP:0012747', 'HP:0000726', 'HP:0002376', 'HP:0020102', 'HP:0003298', 'HP:0008940', 'HP:0008843', 'HP:0001959']
+    print("HPO terms:", len(hpo_dict))
+    sorted_hpo_dict_keys = sorted(hpo_dict.keys())
+    print("First HPO term:", sorted_hpo_dict_keys[:1])
+    print("Last HPO term:", sorted_hpo_dict_keys[-1:])
+
+    # find a key that contains 2497
+    for k in sorted_hpo_dict_keys:
+        if "2497" in k:
+            print(k)
+            break
     # read_pkl_file(
     # "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/mondo_to_idx_dict_8.9.21_kg.pkl"
     #     )
