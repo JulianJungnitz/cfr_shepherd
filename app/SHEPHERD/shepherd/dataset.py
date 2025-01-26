@@ -36,6 +36,7 @@ class PatientDataset(Dataset):
                 patient["true_genes"] = []
             if "true_diseases" not in patient:
                 patient["true_diseases"] = []
+                print("true_diseases not in patient")
 
         self.raw_data = raw_data
         self.needs_disease_mapping = needs_disease_mapping
@@ -157,6 +158,8 @@ class PatientDataset(Dataset):
         t0 = time.time()
         patient = self.patients[idx]
 
+        print("patients length getItem: ", len(self.patients), " idx: ", idx)
+
         additional_labels_dict = {}
         if "additional_labels" in patient:
             for label, values in patient["additional_labels"].items():
@@ -218,7 +221,7 @@ class PatientDataset(Dataset):
             else:
                 mondo_diseases = [str(d) for d in patient["true_diseases"]]
 
-            print("monod_diseases: ", mondo_diseases)
+            print("mondo_diseases: ", mondo_diseases)
             disease_node_idx = [
                 self.disease_to_idx_dict[d]
                 for d in mondo_diseases
