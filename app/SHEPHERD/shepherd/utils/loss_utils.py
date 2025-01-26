@@ -190,6 +190,7 @@ class NCALoss(BaseMetricLossFunction):
         )
 
     def forward(self, phenotype_embedding, disease_embedding, batch_disease_nid, batch_cand_disease_nid=None, disease_mask=None, one_hot_labels=None, indices_tuple=None, use_candidate_list=False):
+        print("Forward batch_disease_nid: ", batch_disease_nid)
         """
         Args:
             embeddings: tensor of size (batch_size, embedding_size)
