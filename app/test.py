@@ -207,16 +207,17 @@ def transform_sim_patients(file):
     for patient in tqdm(data, desc="transforming patients"):
         disease_id = patient.get('disease_id')
         patient['true_diseases'] = [disease_id] if disease_id else []
+        patient['positive_phenotypes'] = list(patient.get('positive_phenotypes', {}).keys())
         diseases.add(disease_id)
     new_file = file.rsplit(".", 1)[0] + "_new.jsonl"
     disease_file = file.rsplit(".", 1)[0] + "_diseases.txt"
-    # with open(  new_file, 'w') as f:
-    #     for patient in data:
-    #         json.dump(patient, f)
-    #         f.write('\n')
-    with open(disease_file, 'w') as f:
-        for disease in diseases:
-            f.write(disease + "\n")
+    with open(  new_file, 'w') as f:
+        for patient in data:
+            json.dump(patient, f)
+            f.write('\n')
+    # with open(disease_file, 'w') as f:
+    #     for disease in diseases:
+    #         f.write(disease + "\n")
 
 
 def get_doid_to_mondo():
@@ -274,19 +275,19 @@ def test_mapping():
 if __name__ == "__main__":
     # save_mondo_to_diod()
     # test_mapping()
-    # transform_sim_patients("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl")
+    transform_sim_patients("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl")
     # create_hpo_to_idx_dict()
     # create_ensembl_to_idx_dict()
     # test_hpo_dict(
     #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/hpo_to_idx_dict_hauner_graph_reduced_new.pkl"
     # )#
 
-    file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced.pkl"
-    new_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced_new.pkl"
+    # file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced.pkl"
+    # new_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced_new.pkl"
     
-    read_pkl_file(
-        new_file
-    )
+    # read_pkl_file(
+    #     new_file
+    # )
     # read_pkl_file(
     # "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/mondo_to_idx_dict_8.9.21_kg.pkl"
     #     )
