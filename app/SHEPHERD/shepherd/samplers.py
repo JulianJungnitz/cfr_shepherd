@@ -618,7 +618,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
     def collate(self, batch):
         t00 = time.time()
         phenotype_node_idx, candidate_gene_node_idx, correct_genes_node_idx, disease_node_idx, labels, additional_labels, patient_ids = zip(*batch)
-
+        print("collate disease_node_idx", disease_node_idx)
         first_cand_gene = candidate_gene_node_idx[0]
         # print("collate first_cand_gene", first_cand_gene)
         # print("collate first_cand_gene type", type(first_cand_gene))
@@ -671,7 +671,9 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         
         # Add candidate diseases to batch
         if self.hparams['add_cand_diseases']:
+            print("add_cand_diseases: disease_node_idx", disease_node_idx)
             candidate_disease_node_idx, disease_labels = self.get_candidate_diseases(disease_node_idx, candidate_gene_node_idx)
+            print("after add_cand_diseases: disease_node_idx", disease_node_idx)
         else: 
             candidate_disease_node_idx = disease_node_idx
             disease_labels = torch.tensor([1] * len(candidate_disease_node_idx))

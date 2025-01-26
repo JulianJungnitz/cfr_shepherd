@@ -82,11 +82,14 @@ class PatientDataset(Dataset):
         ) as handle:
             self.orpha_mondo_map = pickle.load(handle)
 
+        print("First 5 orpha_mondo_map: ", {k: self.orpha_mondo_map[k] for k in list(self.orpha_mondo_map)[:5]})
+
         with open(
             project_config.KG_DIR / f"mondo_to_idx_dict_{project_config.CURR_KG}.pkl",
             "rb",
         ) as handle:
             self.disease_to_idx_dict = pickle.load(handle)
+        print("First 5 disease_to_idx_dict: ", {k: self.disease_to_idx_dict[k] for k in list(self.disease_to_idx_dict)[:5]})
         with open(
             project_config.KG_DIR / f"mondo_to_name_dict_{project_config.CURR_KG}.pkl",
             "rb",
@@ -213,11 +216,14 @@ class PatientDataset(Dataset):
                 ]
             else:
                 mondo_diseases = [str(d) for d in patient["true_diseases"]]
+
+            print("monod_diseases: ", mondo_diseases)
             disease_node_idx = [
                 self.disease_to_idx_dict[d]
                 for d in mondo_diseases
                 if d in self.disease_to_idx_dict
             ]
+            print("disease_node_idx for patient: ", disease_node_idx)
         else:
             disease_node_idx = None
 
