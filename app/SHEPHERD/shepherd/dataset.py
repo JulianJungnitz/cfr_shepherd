@@ -183,13 +183,13 @@ class PatientDataset(Dataset):
             if "max_phen_overlap_train" not in patient["additional_labels"]:
                 additional_labels_dict["max_phen_overlap_train"] = [[-1]]
 
-        print("Patients phenotypes: ", patient["positive_phenotypes"])
+        # print("Patients phenotypes: ", patient["positive_phenotypes"])
         phenotype_node_idx = [
             self.hpo_to_idx_dict[p]
             for p in patient["positive_phenotypes"]
             if p in self.hpo_to_idx_dict
         ]
-        print("phenotype_node_idx: ", phenotype_node_idx)
+        # print("phenotype_node_idx: ", phenotype_node_idx)
         correct_genes_node_idx = [
             self.ensembl_to_idx_dict[g]
             for g in patient["true_genes"]
@@ -211,7 +211,7 @@ class PatientDataset(Dataset):
 
 
         if "true_diseases" in patient:
-            print("Needs disease mapping: ", self.needs_disease_mapping)
+            # print("Needs disease mapping: ", self.needs_disease_mapping)
             if self.needs_disease_mapping:
                 orpha_diseases = [
                     int(d) if len(re.match("^[0-9]*", d)[0]) > 0 else d
@@ -227,13 +227,13 @@ class PatientDataset(Dataset):
             else:
                 mondo_diseases = [str(d) for d in patient["true_diseases"]]
 
-            print("mondo_diseases: ", mondo_diseases)
+            # print("mondo_diseases: ", mondo_diseases)
             disease_node_idx = [
                 self.disease_to_idx_dict[d]
                 for d in mondo_diseases
                 if d in self.disease_to_idx_dict
             ]
-            print("disease_node_idx for patient: ", disease_node_idx)
+            # print("disease_node_idx for patient: ", disease_node_idx)
         else:
             disease_node_idx = None
 
