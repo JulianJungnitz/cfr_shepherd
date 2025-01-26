@@ -198,6 +198,7 @@ class NCALoss(BaseMetricLossFunction):
         """
         self.reset_stats()
         loss_dict, disease_softmax, one_hot_labels, candidate_disease_idx, candidate_disease_embeddings = self.compute_loss(phenotype_embedding, disease_embedding, batch_disease_nid, batch_cand_disease_nid, disease_mask, one_hot_labels, indices_tuple, use_candidate_list)
+        print("loss dict, forward: ", loss_dict)
         self.add_embedding_regularization_to_loss_dict(loss_dict, phenotype_embedding)
         if loss_dict is None: reduction = None
         else: reduction = self.reducer(loss_dict, None, None)
@@ -227,7 +228,7 @@ class NCALoss(BaseMetricLossFunction):
             loss_dict, disease_softmax, labels = self.nca_computation(
                 phenotype_embedding, candidate_disease_embeddings, labels, indices_tuple, use_one_hot_labels=True
             )
-
+        print("compute loss: ", loss_dict)
         return loss_dict, disease_softmax, labels, candidate_disease_idx, candidate_disease_embeddings
 
     def nca_computation(
