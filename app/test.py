@@ -2,6 +2,8 @@
 
 
 import pandas as pd
+import json
+from SHEPHERD import project_utils  
 
 
 def get_relations_of_node(file_path: str):
@@ -194,9 +196,24 @@ def create_ensembl_to_idx_dict():
         pickle.dump(ensembl_to_idx_dict, f)
 
 
+
+def translate_mondo_to_doid_sim_patients(file):
+
+
+    with open(file, "r") as f:
+        patients = f.readlines()
+        for patient in patients:
+            patient_dict = json.loads(patient)
+            for i, disease in enumerate(patient_dict["diseases"]):
+                continue
+            print(json.dumps(patient_dict))
+
+
+
 if __name__ == "__main__":
+    translate_mondo_to_doid_sim_patients("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl")
     # create_hpo_to_idx_dict()
-    create_ensembl_to_idx_dict()
+    # create_ensembl_to_idx_dict()
     # test_hpo_dict(
     #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/hpo_to_idx_dict_hauner_graph_reduced_new.pkl"
     # )

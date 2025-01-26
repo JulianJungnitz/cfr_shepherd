@@ -74,6 +74,7 @@ class PatientNCA(pl.LightningModule):
 
     def calc_loss(self, batch, phenotype_embedding, disease_embeddings, disease_mask, labels, use_candidate_list):
         if self.hyperparameters['loss'] == 'patient_disease_NCA':
+            print("calc_loss batch_disease_nid: ", batch.batch_disease_nid)
             loss, softmax, labels, candidate_disease_idx, candidate_disease_embeddings = self.loss(phenotype_embedding, disease_embeddings, batch.batch_disease_nid, batch.batch_cand_disease_nid, disease_mask, labels, use_candidate_list=use_candidate_list)
             print("disease NCA loss: ", loss)
         elif self.hyperparameters['loss'] == 'patient_patient_NCA':
