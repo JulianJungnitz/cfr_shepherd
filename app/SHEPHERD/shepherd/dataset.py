@@ -162,7 +162,7 @@ class PatientDataset(Dataset):
         t0 = time.time()
         patient = self.patients[idx]
 
-        print("patients length getItem: ", len(self.patients), " idx: ", idx)
+        # print("patients length getItem: ", len(self.patients), " idx: ", idx)
 
         additional_labels_dict = {}
         if "additional_labels" in patient:
