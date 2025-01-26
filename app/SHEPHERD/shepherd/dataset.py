@@ -202,6 +202,7 @@ class PatientDataset(Dataset):
 
 
         if "true_diseases" in patient:
+            print("Needs disease mapping: ", self.needs_disease_mapping)
             if self.needs_disease_mapping:
                 orpha_diseases = [
                     int(d) if len(re.match("^[0-9]*", d)[0]) > 0 else d

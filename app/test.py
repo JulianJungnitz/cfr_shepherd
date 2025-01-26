@@ -3,7 +3,10 @@
 
 import pandas as pd
 import json
-from SHEPHERD import project_utils  
+from tqdm import tqdm
+from pronto import Ontology
+from app.SHEPHERD import project_config
+import pickle
 
 
 def get_relations_of_node(file_path: str):
@@ -97,7 +100,8 @@ def read_pkl_file(file_name: str):
 
     with open(file_name, "rb") as f:
         data = pickle.load(f)
-        print(data)
+        data_str = str(data)
+        print(data_str[:1000])
 
 
 def test_hpo_dict(file_name):
@@ -196,34 +200,111 @@ def create_ensembl_to_idx_dict():
         pickle.dump(ensembl_to_idx_dict, f)
 
 
+def transform_sim_patients(file):
+    with open(file, 'r') as f:
+        data = [json.loads(line) for line in f]
+    diseases = set()
+    for patient in tqdm(data, desc="transforming patients"):
+        disease_id = patient.get('disease_id')
+        patient['true_diseases'] = [disease_id] if disease_id else []
+        diseases.add(disease_id)
+    new_file = file.rsplit(".", 1)[0] + "_new.jsonl"
+    disease_file = file.rsplit(".", 1)[0] + "_diseases.txt"
+    # with open(  new_file, 'w') as f:
+    #     for patient in data:
+    #         json.dump(patient, f)
+    #         f.write('\n')
+    with open(disease_file, 'w') as f:
+        for disease in diseases:
+            f.write(disease + "\n")
 
-def translate_mondo_to_doid_sim_patients(file):
 
+def get_doid_to_mondo():
+    mondo = Ontology(project_config.PROJECT_DIR / "mondo.obo")
+    doid_to_mondo = {}
+    for term in mondo.terms():
+        for xref in term.xrefs:
+            if xref.id.startswith("DOID:"):
+                doid_to_mondo[xref.id] = term.id
+    return doid_to_mondo
 
+def get_mondo_to_doid():
+    mondo = Ontology(project_config.PROJECT_DIR / "mondo.obo")
+    mondo_to_doid = {}
+    for term in mondo.terms():
+        for xref in term.xrefs:
+            if xref.id.startswith("DOID:"):
+                mondo_id = term.id
+                mondo_id = mondo_id.replace("MONDO:", "")
+                mondo_id = str(int(mondo_id))
+                mondo_to_doid[mondo_id] = xref.id
+    return mondo_to_doid
+
+def save_mondo_to_diod():
+    mondo_to_doid = get_mondo_to_doid()
+    with open(project_config.PROJECT_DIR / "mondo_to_doid.pkl", "wb") as f:
+        pickle.dump(mondo_to_doid, f)
+
+def load_mondo_to_doid():
+    with open(project_config.PROJECT_DIR / "mondo_to_doid.pkl", "rb") as f:
+        mondo_to_doid = pickle.load(f)
+    return mondo_to_doid
+
+def test_mapping():
+    mondo_to_doid_dict = load_mondo_to_doid()
+    diseases = []
+    file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted_diseases.txt"
     with open(file, "r") as f:
-        patients = f.readlines()
-        for patient in patients:
-            patient_dict = json.loads(patient)
-            for i, disease in enumerate(patient_dict["diseases"]):
-                continue
-            print(json.dumps(patient_dict))
-
-
+        diseases = [line.strip() for line in f]
+    found = 0
+    not_found = []
+    print_n = 5
+    for disease in diseases:
+        if(print_n > 0):
+            print(disease)
+            print_n -= 1
+        if disease in mondo_to_doid_dict:
+            found += 1
+        else:
+            not_found.append(disease)
+    print("first 5 dict entries: ", list(mondo_to_doid_dict.items())[:5])
+    print("Found: ", found)
+    print("Not found: ", len(not_found))
 
 if __name__ == "__main__":
-    translate_mondo_to_doid_sim_patients("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl")
+    # save_mondo_to_diod()
+    # test_mapping()
+    # transform_sim_patients("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl")
     # create_hpo_to_idx_dict()
     # create_ensembl_to_idx_dict()
     # test_hpo_dict(
     #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/hpo_to_idx_dict_hauner_graph_reduced_new.pkl"
-    # )
-    # read_pkl_file(
-    # "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/ensembl_to_idx_dict_8.9.21_kg.pkl"
-    # )
+    # )#
 
+    new_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced_new.pkl"
+    
+    read_pkl_file(
+        new_file
+    )
+    # read_pkl_file(
+    # "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/mondo_to_idx_dict_8.9.21_kg.pkl"
+    #     )
     # add_reverse_edges("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
     # list_all_relationship_types("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
 
     # add_headers("/work/scratch/jj56rivo/cfr_shepherd_data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask.txt")
     # convert_types("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/KG_edgelist_mask_rev.txt")
     # get_relations_of_node("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/KG_edgelist_mask.txt")
+
+    # file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced.pkl"
+    # with open(file, "rb") as f:
+    #     data = pickle.load(f)
+        
+    # # remove MONDO: prefix
+    # new_data = {}
+    # for k, v in data.items():
+    #     new_data[k.replace("MONDO:", "")] = v
+    
+    
+    # with open(new_file, "wb") as f:
+    #     pickle.dump(new_data, f)
