@@ -224,6 +224,7 @@ def create_mondo_to_node_idx_dict(node_df, ):
         doid = row["node_name"]
         if doid in doid_to_mondo_dict:
             mondo_id = doid_to_mondo_dict[doid]
+            mondo_id = re.sub('MONDO:0*', '', mondo_id)
             mondo_to_idx_dict[mondo_id] = row["node_idx"]
             mondo_to_name_dict[mondo_id] = doid
     
