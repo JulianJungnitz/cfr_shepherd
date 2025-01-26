@@ -281,6 +281,7 @@ if __name__ == "__main__":
     #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/hpo_to_idx_dict_hauner_graph_reduced_new.pkl"
     # )#
 
+    file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced.pkl"
     new_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced_new.pkl"
     
     read_pkl_file(
@@ -303,7 +304,7 @@ if __name__ == "__main__":
     # # remove MONDO: prefix
     # new_data = {}
     # for k, v in data.items():
-    #     new_data[k.replace("MONDO:", "")] = v
+    #     new_data[str(int(k.replace("MONDO:", "")))] = v
     
     
     # with open(new_file, "wb") as f:

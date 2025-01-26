@@ -182,11 +182,13 @@ class PatientDataset(Dataset):
             if "max_phen_overlap_train" not in patient["additional_labels"]:
                 additional_labels_dict["max_phen_overlap_train"] = [[-1]]
 
+        print("Patients phenotypes: ", patient["positive_phenotypes"])
         phenotype_node_idx = [
             self.hpo_to_idx_dict[p]
             for p in patient["positive_phenotypes"]
             if p in self.hpo_to_idx_dict
         ]
+        print("phenotype_node_idx: ", phenotype_node_idx)
         correct_genes_node_idx = [
             self.ensembl_to_idx_dict[g]
             for g in patient["true_genes"]
