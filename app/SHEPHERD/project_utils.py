@@ -14,6 +14,8 @@ def read_patients(filename):
     with jsonlines.open(filename) as reader:
         for patient in reader:
             patients.append(patient)
+
+    print("First 3 patients: ", patients[:3])
     return patients
 
 
