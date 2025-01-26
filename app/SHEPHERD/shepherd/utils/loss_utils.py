@@ -171,9 +171,12 @@ def construct_batch_labels(candidate_embeddings, candidate_node_idx, correct_nod
     candidate_embeddings_flattened_unique = candidate_embeddings_flattened[candidate_node_idx_flattened.squeeze() != 0,:]
 
     # create a one hot encoding of correct gene/disease in the list of all in the batch
+    print("candidate node idx: ", candidate_node_idx_flattened_unique)
+    print("correct node idx: ", correct_node_idx)
     label_idx = torch.where(candidate_node_idx_flattened_unique.unsqueeze(1) == correct_node_idx.unsqueeze(0), 1, 0)
     label_idx = label_idx.sum(dim=-1).T
-    
+    print("labels idx: ", label_idx)
+
     return candidate_node_idx_flattened_unique, candidate_embeddings_flattened_unique, label_idx 
 
 
@@ -248,8 +251,8 @@ class NCALoss(BaseMetricLossFunction):
             loss_dict = None
         else:
             print("use one hot labels: ", use_one_hot_labels)
+            print("labels prior : ", labels)
             if not use_one_hot_labels:
-            
                 labels = c_f.to_dtype(
                     labels.unsqueeze(1) == labels.unsqueeze(0), dtype=dtype
                 )
