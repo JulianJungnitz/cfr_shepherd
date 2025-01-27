@@ -202,7 +202,7 @@ def create_ensembl_to_idx_dict():
 
 
 def transform_sim_patients(file):
-    mondo_dict = load_mondo_to_doid()
+    mondo_to_doid_dict = load_mondo_to_doid()
     orphanet_to_mondo = read_pkl_file(
         "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/preprocess/orphanet/orphanet_to_mondo_dict.pkl"
     )
@@ -211,7 +211,7 @@ def transform_sim_patients(file):
         {k: v for k, v in list(orphanet_to_mondo.items())[:5]},
     )
     print(
-        "First 5 dict entries M-doid: ", {k: v for k, v in list(mondo_dict.items())[:5]}
+        "First 5 dict entries M-doid: ", {k: v for k, v in list(mondo_to_doid_dict.items())[:5]}
     )
 
     with open(file, "r") as f:
@@ -219,7 +219,6 @@ def transform_sim_patients(file):
     diseases = set()
     for patient in tqdm(data, desc="transforming patients"):
         disease_id = patient.get("disease_id")
-        patient["true_diseases"] = [disease_id] if disease_id else []
         patient["positive_phenotypes"] = list(
             patient.get("positive_phenotypes", {}).keys()
         )
@@ -238,9 +237,12 @@ def transform_sim_patients(file):
                 found_mondo += 1
                 mondo = orphanet_to_mondo[disease][0]
                 # print("Mondo: ", mondo)
-                if mondo in mondo_dict:
+                if mondo in mondo_to_doid_dict:
                     json.dump(patient, f)
                     f.write("\n")
+                    disease_id = mondo_to_doid_dict[mondo]
+                    patient["disease_id"] = disease_id
+                    patient["true_diseases"] = [disease_id] if disease_id else []
                     new_data.append(patient)
                 else:
                     if print_n > 0:
@@ -327,17 +329,17 @@ def test_mapping():
 if __name__ == "__main__":
     # save_mondo_to_diod()
     # test_mapping()
-    # transform_sim_patients(
-    #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl"
-    # )
+    transform_sim_patients(
+        "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl"
+    )
     # create_hpo_to_idx_dict()
     # create_ensembl_to_idx_dict()
     # test_hpo_dict(
     #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/hpo_to_idx_dict_hauner_graph_reduced_new.pkl"
     # )#
 
-    file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced.pkl"
-    read_pkl_file(file)
+    # file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced.pkl"
+    # read_pkl_file(file)
 
     # new_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced_new.pkl"
     # pkl_file ="/home/julian/Downloads/hpo_to_idx_dict_hauner_graph_reduced.pkl"

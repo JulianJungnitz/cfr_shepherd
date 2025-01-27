@@ -197,22 +197,22 @@ def create_mondo_to_node_idx_dict(node_df, ):
     '''create mondo disease to node_idx map'''
 
     mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
-    mondo_to_doid_dict = {}
-    print('Creating mondo to DOID dict')
-    for term in mondo_ontology.terms():
-        if term.id.startswith("MONDO:"):
-            for xref in term.xrefs:
-                if xref.id.startswith("DOID:"):
-                    # Just store the first one and break
-                    mondo_to_doid_dict[term.id] = xref.id
-                    break
-    print(f'Number of mondo terms with DOID: {len(mondo_to_doid_dict)}')
-    print("first 10 entries: ", list(mondo_to_doid_dict.items())[:10])
+    # mondo_to_doid_dict = {}
+    # print('Creating mondo to DOID dict')
+    # for term in mondo_ontology.terms():
+    #     if term.id.startswith("MONDO:"):
+    #         for xref in term.xrefs:
+    #             if xref.id.startswith("DOID:"):
+    #                 # Just store the first one and break
+    #                 mondo_to_doid_dict[term.id] = xref.id
+    #                 break
+    # print(f'Number of mondo terms with DOID: {len(mondo_to_doid_dict)}')
+    # print("first 10 entries: ", list(mondo_to_doid_dict.items())[:10])
     mondo_to_name_dict = {}
     mondo_to_idx_dict = {}
     print('Creating mondo to idx dict')
     # get disease nodes
-    doid_to_mondo_dict = {v: k for k, v in mondo_to_doid_dict.items()}
+    # doid_to_mondo_dict = {v: k for k, v in mondo_to_doid_dict.items()}
 
     mondo_to_name_dict = {}
     mondo_to_idx_dict = {}
@@ -222,11 +222,9 @@ def create_mondo_to_node_idx_dict(node_df, ):
 
     for _, row in disease_nodes.iterrows():
         doid = row["node_name"]
-        if doid in doid_to_mondo_dict:
-            mondo_id = doid_to_mondo_dict[doid]
-            mondo_id = re.sub('MONDO:0*', '', mondo_id)
-            mondo_to_idx_dict[mondo_id] = row["node_idx"]
-            mondo_to_name_dict[mondo_id] = doid
+        mondo_id = doid
+        mondo_to_idx_dict[mondo_id] = row["node_idx"]
+        mondo_to_name_dict[mondo_id] = doid
     
 
     # save to file
