@@ -206,8 +206,13 @@ def transform_sim_patients(file):
     orphanet_to_mondo = read_pkl_file(
         "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/preprocess/orphanet/orphanet_to_mondo_dict.pkl"
     )
-    print("First 5 dict entries O-mondo: ", {k: v for k, v in list(orphanet_to_mondo.items())[:5]})
-    print("First 5 dict entries M-doid: ",  {k: v for k, v in list(mondo_dict.items())[:5]})
+    print(
+        "First 5 dict entries O-mondo: ",
+        {k: v for k, v in list(orphanet_to_mondo.items())[:5]},
+    )
+    print(
+        "First 5 dict entries M-doid: ", {k: v for k, v in list(mondo_dict.items())[:5]}
+    )
 
     with open(file, "r") as f:
         data = [json.loads(line) for line in f]
@@ -221,8 +226,8 @@ def transform_sim_patients(file):
         diseases.add(disease_id)
     new_file = file.rsplit(".", 1)[0] + "_new.jsonl"
     disease_file = file.rsplit(".", 1)[0] + "_diseases.txt"
-    
-    new_data =[]
+
+    new_data = []
     not_found = 0
     found_mondo = 0
     print_n = 5
@@ -238,12 +243,12 @@ def transform_sim_patients(file):
                     f.write("\n")
                     new_data.append(patient)
                 else:
-                    if(print_n > 0):
+                    if print_n > 0:
                         print("Mondo not found: ", mondo)
                         print_n -= 1
                     not_found += 1
             else:
-                if(print_n > 0):
+                if print_n > 0:
                     print("Disease not found: ", disease)
                     print_n -= 1
                 not_found += 1
@@ -253,11 +258,6 @@ def transform_sim_patients(file):
     # with open(disease_file, 'w') as f:
     #     for disease in diseases:
     #         f.write(disease + "\n")
-
-    with open(new_file, "w") as f:
-        for patient in data:
-            json.dump(patient, f)
-            f.write("\n")
 
 
 def get_doid_to_mondo():
@@ -297,7 +297,6 @@ def load_mondo_to_doid():
 
 def test_mapping():
     mondo_to_doid_dict = load_mondo_to_doid()
-    
 
     diseases = []
     file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted_diseases.txt"
@@ -316,7 +315,7 @@ def test_mapping():
             mondo = orphanet_to_mondo[disease]
             if mondo in mondo_to_doid_dict:
                 found += 1
-                
+
         else:
             not_found.append(disease)
     print("first 5 dict entries: ", list(mondo_to_doid_dict.items())[:5])
@@ -328,16 +327,18 @@ def test_mapping():
 if __name__ == "__main__":
     # save_mondo_to_diod()
     # test_mapping()
-    transform_sim_patients(
-        "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl"
-    )
+    # transform_sim_patients(
+    #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl"
+    # )
     # create_hpo_to_idx_dict()
     # create_ensembl_to_idx_dict()
     # test_hpo_dict(
     #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/hpo_to_idx_dict_hauner_graph_reduced_new.pkl"
     # )#
 
-    # file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced.pkl"
+    file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced.pkl"
+    read_pkl_file(file)
+
     # new_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced_new.pkl"
     # pkl_file ="/home/julian/Downloads/hpo_to_idx_dict_hauner_graph_reduced.pkl"
     # hpo_dict = read_pkl_file(

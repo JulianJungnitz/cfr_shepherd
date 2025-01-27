@@ -23,7 +23,7 @@ class PatientDataset(Dataset):
         mondo_map_file=str(project_config.PROJECT_DIR / "mondo_references.csv"),
         needs_disease_mapping=False,
         time=False,
-        patient_aggr_nodes = None,
+        patient_aggr_nodes=None,
     ):
         self.filepath = filepath
         self.patients = read_patients(filepath)
@@ -37,7 +37,7 @@ class PatientDataset(Dataset):
                 patient["true_genes"] = []
             if "true_diseases" not in patient:
                 patient["true_diseases"] = []
-                if(print_count > 0):
+                if print_count > 0:
                     print("true_diseases not in patient")
                     print_count -= 1
 
@@ -52,7 +52,10 @@ class PatientDataset(Dataset):
             "rb",
         ) as handle:
             self.hpo_to_idx_dict = pickle.load(handle)
-            print("first 5 HPO to idx dict: ", {k: self.hpo_to_idx_dict[k] for k in list(self.hpo_to_idx_dict)[:5]})
+            print(
+                "first 5 HPO to idx dict: ",
+                {k: self.hpo_to_idx_dict[k] for k in list(self.hpo_to_idx_dict)[:5]},
+            )
         with open(
             project_config.KG_DIR / f"hpo_to_name_dict_{project_config.CURR_KG}.pkl",
             "rb",
@@ -87,14 +90,23 @@ class PatientDataset(Dataset):
         ) as handle:
             self.orpha_mondo_map = pickle.load(handle)
 
-        print("First 5 orpha_mondo_map: ", {k: self.orpha_mondo_map[k] for k in list(self.orpha_mondo_map)[:5]})
+        print(
+            "First 5 orpha_mondo_map: ",
+            {k: self.orpha_mondo_map[k] for k in list(self.orpha_mondo_map)[:5]},
+        )
 
         with open(
             project_config.KG_DIR / f"mondo_to_idx_dict_{project_config.CURR_KG}.pkl",
             "rb",
         ) as handle:
             self.disease_to_idx_dict = pickle.load(handle)
-        print("First 5 disease_to_idx_dict: ", {k: self.disease_to_idx_dict[k] for k in list(self.disease_to_idx_dict)[:5]})
+        print(
+            "First 5 disease_to_idx_dict: ",
+            {
+                k: self.disease_to_idx_dict[k]
+                for k in list(self.disease_to_idx_dict)[:5]
+            },
+        )
         with open(
             project_config.KG_DIR / f"mondo_to_name_dict_{project_config.CURR_KG}.pkl",
             "rb",
@@ -208,8 +220,6 @@ class PatientDataset(Dataset):
             # print("all_candidate_genes not in patient")
             candidate_gene_node_idx = []
 
-
-
         if "true_diseases" in patient:
             # print("Needs disease mapping: ", self.needs_disease_mapping)
             if self.needs_disease_mapping:
@@ -228,21 +238,25 @@ class PatientDataset(Dataset):
                 mondo_diseases = [str(d) for d in patient["true_diseases"]]
 
             print("mondo_diseases: ", mondo_diseases)
+            mondo_from_orpha = [
+                self.orpha_mondo_map[d]
+                for d in mondo_diseases
+                if d in self.orpha_mondo_map
+            ]
+            print("mondo_from_orpha: ", mondo_from_orpha)
             disease_node_idx = [
                 self.disease_to_idx_dict[d]
-                for d in mondo_diseases
+                for d in mondo_from_orpha
                 if d in self.disease_to_idx_dict
             ]
             print("disease_node_idx for patient: ", disease_node_idx)
         else:
             disease_node_idx = None
 
-
         if self.patient_aggr_nodes == "phenotypes_and_genes":
             node_idx_to_aggregate = phenotype_node_idx + candidate_gene_node_idx
         else:
             node_idx_to_aggregate = phenotype_node_idx
-
 
         if not self.raw_data:
             node_idx_to_aggregate = torch.LongTensor(node_idx_to_aggregate)
@@ -279,10 +293,6 @@ class PatientDataset(Dataset):
         if self.time:
             t1 = time.time()
             print(f"It takes {t1-t0:0.4f}s to get an item from the dataset")
-
-
-        
-           
 
         return (
             node_idx_to_aggregate,
