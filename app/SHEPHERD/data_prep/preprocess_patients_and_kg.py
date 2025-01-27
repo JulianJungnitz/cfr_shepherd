@@ -196,7 +196,7 @@ def create_gene_to_node_idx_dict(args, node_df):
 def create_mondo_to_node_idx_dict(node_df, ):
     '''create mondo disease to node_idx map'''
 
-    mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
+    # mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
     # mondo_to_doid_dict = {}
     # print('Creating mondo to DOID dict')
     # for term in mondo_ontology.terms():
