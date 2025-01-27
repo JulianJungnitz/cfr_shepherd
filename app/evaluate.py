@@ -65,7 +65,7 @@ def filter_df_for_min_disease_count(df, min_disease_count=3):
     driver = utils.connect_to_neo4j()
     res = utils.execute_query(driver, query, debug=False)
     patient_ids = [record["sample_id"] for record in res]
-    print("Number of patients with at least 3 diseases: ", len(patient_ids))
+    print(f"Number of patients with at least {min_disease_count} diseases: ", len(patient_ids))
 
     print("Original DF: ", len(df))
     df = df[df["patient_id"].isin(patient_ids)]
