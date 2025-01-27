@@ -13,6 +13,9 @@ def evaluate_patients_like_me(score_file_path):
     print(f"Evalute Patients Like me: {file}")
     df = pd.read_csv(score_file_path)
 
+    min_dis_count = 3
+    df = filter_df_for_min_disease_count(df, min_disease_count=min_dis_count)
+
     patients_disease_map = get_all_patients_diseases(df)
 
     # print(f"Patients with diseases: {len(patients_with_disease)}")
@@ -49,8 +52,29 @@ def evaluate_patients_like_me(score_file_path):
 
     number_of_patients = len(patient_sim_map)
     plot_patient_similarity_avg(
-        patient_sim_map, max_k, score_file_path, number_of_patients=number_of_patients
+        patient_sim_map, max_k, score_file_path, number_of_patients=number_of_patients, min_dis_count=min_dis_count
     )
+
+def filter_df_for_min_disease_count(df, min_disease_count=3):
+    query = f"""
+    MATCH (n:Biological_sample)-[:HAS_DISEASE]->(d:Disease)
+        WITH d, collect(n) AS samples
+        WHERE size(samples) >= {min_disease_count}
+        UNWIND samples AS sample
+        RETURN id(sample) as sample_id"""
+    
+    driver = utils.connect_to_neo4j()
+    res = utils.execute_query(driver, query, debug=False)
+    patient_ids = [record["sample_id"] for record in res]
+    print("Number of patients with at least 3 diseases: ", len(patient_ids))
+
+    print("Original DF: ", len(df))
+    df = df[df["patient_id"].isin(patient_ids)]
+    print("Filtered DF: ", len(df))
+    df = df[df["candidate_patients"].isin(patient_ids)]
+    print("Filtered DF: ", len(df))
+
+    return df
 
 
 # def plot_patient_similarity(patient_sim_map,k_max):
@@ -81,7 +105,7 @@ def evaluate_patients_like_me(score_file_path):
 
 
 def plot_patient_similarity_avg(
-    patient_sim_map, k_max, score_file_path, number_of_patients
+    patient_sim_map, k_max, score_file_path, number_of_patients, min_dis_count
 ):
     patient_ids = list(patient_sim_map.keys())
     k_values = range(1, k_max + 1)
@@ -133,7 +157,7 @@ def plot_patient_similarity_avg(
     ax.plot(k_values, list(k_icd10_first_4_similar_random_avg.values()), label="ICD10 First 5 Similar Random", color='red', linestyle='--')
     ax.set_xlabel("K")
     ax.set_ylabel("Similarity")
-    ax.set_title("Patient Similarity Average of patient at rank k.\n At least one similar disease or icd10 code")
+    ax.set_title(f"Patient Similarity Average of patient at rank k.\n At least one similar disease or icd10 code (min_dis_count: {min_dis_count})")
     handles, labels = ax.get_legend_handles_labels()
     sorted_handles_labels = sorted(zip(handles, labels), key=lambda x: 'Random' in x[1])
     sorted_handles, sorted_labels = zip(*sorted_handles_labels)
@@ -476,11 +500,11 @@ if __name__ == "__main__":
     dir = project_config.PROJECT_DIR / "results"
     file = dir / f"{base_res}_{agg_type}_primeKG_w_dis.csv"
     
-    # evaluate_patients_like_me(file)
+    evaluate_patients_like_me(file)
 
     disease_char_file = (
         dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
     )
-    evaluate_disease_characterization(disease_char_file,)
+    # evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
 # %%

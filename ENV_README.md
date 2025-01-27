@@ -10,9 +10,13 @@ python ./app/test_shepherd.py
 
 
 to have the app module available add the project_dir to the python path
-local:
+local (linux):
 export PYTHONPATH="/home/julian/Documents/cfr_shepherd:$PYTHONPATH"
+local (mac):
+export PYTHONPATH="/Users/julia/Library/Mobile Documents/com~apple~CloudDocs/Uni/Bachelorarbeit/code/cfr_shepherd:$PYTHONPATH"
+
 on lichtenberg:
 export PYTHONPATH="/home/jj56rivo/cfr_shepherd:$PYTHONPATH"
 on CCRC
 export PYTHONPATH="/dev/Julian/cfr_shepherd:$PYTHONPATH"
+
