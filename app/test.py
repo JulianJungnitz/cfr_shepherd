@@ -238,12 +238,13 @@ def transform_sim_patients(file):
                 mondo = orphanet_to_mondo[disease][0]
                 # print("Mondo: ", mondo)
                 if mondo in mondo_to_doid_dict:
-                    json.dump(patient, f)
-                    f.write("\n")
+                    
                     disease_id = mondo_to_doid_dict[mondo]
                     patient["disease_id"] = disease_id
                     patient["true_diseases"] = [disease_id] if disease_id else []
                     new_data.append(patient)
+                    json.dump(patient, f)
+                    f.write("\n")
                 else:
                     if print_n > 0:
                         print("Mondo not found: ", mondo)
