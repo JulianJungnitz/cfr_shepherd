@@ -175,14 +175,15 @@ def create_ensembl_to_idx_dict():
     )
     gene_df = df[df["node_type"] == "Gene"]
     print(gene_df.head())
-    gen_id_to_ens = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/gene_id_to_ens.csv"
+    gen_id_to_ens = (
+        "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/gene_id_to_ens.csv"
+    )
     gene_id_to_ens_df = pd.read_csv(gen_id_to_ens, sep=",")
     print(gene_id_to_ens_df.head())
     node_to_ensembl = {}
     for i, row in gene_id_to_ens_df.iterrows():
         node_to_ensembl[row["ens_id"]] = row["gene_id"]
 
-        
     not_found = []
 
     for ens_id, gene_id in tqdm(node_to_ensembl.items()):
@@ -195,30 +196,68 @@ def create_ensembl_to_idx_dict():
     print("Number of not found genes: ", len(not_found))
     print("Number of found genes: ", len(ensembl_to_idx_dict))
 
-    
     save_file_ensembl_to_idx_dict = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/ensembl_to_idx_dict_hauner_graph_reduced_new.pkl"
     with open(save_file_ensembl_to_idx_dict, "wb") as f:
         pickle.dump(ensembl_to_idx_dict, f)
 
 
 def transform_sim_patients(file):
-    with open(file, 'r') as f:
+    mondo_dict = load_mondo_to_doid()
+    orphanet_to_mondo = read_pkl_file(
+        "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/preprocess/orphanet/orphanet_to_mondo_dict.pkl"
+    )
+    print("First 5 dict entries O-mondo: ", {k: v for k, v in list(orphanet_to_mondo.items())[:5]})
+    print("First 5 dict entries M-doid: ",  {k: v for k, v in list(mondo_dict.items())[:5]})
+
+    with open(file, "r") as f:
         data = [json.loads(line) for line in f]
     diseases = set()
     for patient in tqdm(data, desc="transforming patients"):
-        disease_id = patient.get('disease_id')
-        patient['true_diseases'] = [disease_id] if disease_id else []
-        patient['positive_phenotypes'] = list(patient.get('positive_phenotypes', {}).keys())
+        disease_id = patient.get("disease_id")
+        patient["true_diseases"] = [disease_id] if disease_id else []
+        patient["positive_phenotypes"] = list(
+            patient.get("positive_phenotypes", {}).keys()
+        )
         diseases.add(disease_id)
     new_file = file.rsplit(".", 1)[0] + "_new.jsonl"
     disease_file = file.rsplit(".", 1)[0] + "_diseases.txt"
-    with open(  new_file, 'w') as f:
+    
+    new_data =[]
+    not_found = 0
+    found_mondo = 0
+    print_n = 5
+    with open(new_file, "w") as f:
         for patient in data:
-            json.dump(patient, f)
-            f.write('\n')
+            disease = int(patient.get("disease_id"))
+            if disease in orphanet_to_mondo:
+                found_mondo += 1
+                mondo = orphanet_to_mondo[disease][0]
+                # print("Mondo: ", mondo)
+                if mondo in mondo_dict:
+                    json.dump(patient, f)
+                    f.write("\n")
+                    new_data.append(patient)
+                else:
+                    if(print_n > 0):
+                        print("Mondo not found: ", mondo)
+                        print_n -= 1
+                    not_found += 1
+            else:
+                if(print_n > 0):
+                    print("Disease not found: ", disease)
+                    print_n -= 1
+                not_found += 1
+    print("New data length: ", len(new_data))
+    print("Not found: ", not_found)
+    print("Found mondo: ", found_mondo)
     # with open(disease_file, 'w') as f:
     #     for disease in diseases:
     #         f.write(disease + "\n")
+
+    with open(new_file, "w") as f:
+        for patient in data:
+            json.dump(patient, f)
+            f.write("\n")
 
 
 def get_doid_to_mondo():
@@ -229,6 +268,7 @@ def get_doid_to_mondo():
             if xref.id.startswith("DOID:"):
                 doid_to_mondo[xref.id] = term.id
     return doid_to_mondo
+
 
 def get_mondo_to_doid():
     mondo = Ontology(project_config.PROJECT_DIR / "mondo.obo")
@@ -242,41 +282,55 @@ def get_mondo_to_doid():
                 mondo_to_doid[mondo_id] = xref.id
     return mondo_to_doid
 
+
 def save_mondo_to_diod():
     mondo_to_doid = get_mondo_to_doid()
     with open(project_config.PROJECT_DIR / "mondo_to_doid.pkl", "wb") as f:
         pickle.dump(mondo_to_doid, f)
+
 
 def load_mondo_to_doid():
     with open(project_config.PROJECT_DIR / "mondo_to_doid.pkl", "rb") as f:
         mondo_to_doid = pickle.load(f)
     return mondo_to_doid
 
+
 def test_mapping():
     mondo_to_doid_dict = load_mondo_to_doid()
+    
+
     diseases = []
     file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted_diseases.txt"
     with open(file, "r") as f:
         diseases = [line.strip() for line in f]
     found = 0
+    found_mondo = 0
     not_found = []
     print_n = 5
     for disease in diseases:
-        if(print_n > 0):
+        if print_n > 0:
             print(disease)
             print_n -= 1
-        if disease in mondo_to_doid_dict:
-            found += 1
+        if disease in orphanet_to_mondo:
+            found_mondo += 1
+            mondo = orphanet_to_mondo[disease]
+            if mondo in mondo_to_doid_dict:
+                found += 1
+                
         else:
             not_found.append(disease)
     print("first 5 dict entries: ", list(mondo_to_doid_dict.items())[:5])
     print("Found: ", found)
+    print("Found mondo: ", found_mondo)
     print("Not found: ", len(not_found))
+
 
 if __name__ == "__main__":
     # save_mondo_to_diod()
     # test_mapping()
-    # transform_sim_patients("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl")
+    transform_sim_patients(
+        "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl"
+    )
     # create_hpo_to_idx_dict()
     # create_ensembl_to_idx_dict()
     # test_hpo_dict(
@@ -285,21 +339,21 @@ if __name__ == "__main__":
 
     # file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced.pkl"
     # new_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced_new.pkl"
-    pkl_file ="/home/julian/Downloads/hpo_to_idx_dict_hauner_graph_reduced.pkl"
-    hpo_dict = read_pkl_file(
-        pkl_file
-    )
-    hpo_list= ['HP:0062653','HP:0002448', 'HP:0002497', 'HP:0001249', 'HP:0001263', 'HP:0001290', 'HP:0003698', 'HP:0009027', 'HP:0003202', 'HP:0000648', 'HP:0012747', 'HP:0000726', 'HP:0002376', 'HP:0020102', 'HP:0003298', 'HP:0008940', 'HP:0008843', 'HP:0001959']
-    print("HPO terms:", len(hpo_dict))
-    sorted_hpo_dict_keys = sorted(hpo_dict.keys())
-    print("First HPO term:", sorted_hpo_dict_keys[:1])
-    print("Last HPO term:", sorted_hpo_dict_keys[-1:])
+    # pkl_file ="/home/julian/Downloads/hpo_to_idx_dict_hauner_graph_reduced.pkl"
+    # hpo_dict = read_pkl_file(
+    #     pkl_file
+    # )
+    # hpo_list= ['HP:0062653','HP:0002448', 'HP:0002497', 'HP:0001249', 'HP:0001263', 'HP:0001290', 'HP:0003698', 'HP:0009027', 'HP:0003202', 'HP:0000648', 'HP:0012747', 'HP:0000726', 'HP:0002376', 'HP:0020102', 'HP:0003298', 'HP:0008940', 'HP:0008843', 'HP:0001959']
+    # print("HPO terms:", len(hpo_dict))
+    # sorted_hpo_dict_keys = sorted(hpo_dict.keys())
+    # print("First HPO term:", sorted_hpo_dict_keys[:1])
+    # print("Last HPO term:", sorted_hpo_dict_keys[-1:])
 
-    # find a key that contains 2497
-    for k in sorted_hpo_dict_keys:
-        if "2497" in k:
-            print(k)
-            break
+    # # find a key that contains 2497
+    # for k in sorted_hpo_dict_keys:
+    #     if "2497" in k:
+    #         print(k)
+    #         break
     # read_pkl_file(
     # "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/8.9.21_kg/mondo_to_idx_dict_8.9.21_kg.pkl"
     #     )
@@ -313,12 +367,11 @@ if __name__ == "__main__":
     # file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/mondo_to_idx_dict_hauner_graph_reduced.pkl"
     # with open(file, "rb") as f:
     #     data = pickle.load(f)
-        
+
     # # remove MONDO: prefix
     # new_data = {}
     # for k, v in data.items():
     #     new_data[str(int(k.replace("MONDO:", "")))] = v
-    
-    
+
     # with open(new_file, "wb") as f:
     #     pickle.dump(new_data, f)
