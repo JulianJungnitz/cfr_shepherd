@@ -147,7 +147,7 @@ def plot_patient_similarity_avg(
         k: k_icd10_first_4_similar_random_total[k] / number_of_patients for k in k_values
     }
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 6), dpi=300)
     ax.plot(k_values, list(k_id_similar_avg.values()), label="ID Similar", color='blue')
     ax.plot(k_values, list(k_id_similar_random_avg.values()), label="ID Similar Random", color='blue', linestyle='--')
     ax.plot(k_values, list(k_icd10_similar_avg.values()), label="ICD10 Similar", color='green')
@@ -163,7 +163,7 @@ def plot_patient_similarity_avg(
     ax.legend(sorted_handles, sorted_labels)
     file = project_config.PROJECT_DIR / "plots" / f"patient_similarity_scores_min_d_{min_dis_count}.png"
     print(f"Saving plot to {file}")
-    plt.savefig(file)
+    plt.savefig(file, dpi=300)
 
 
 def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
