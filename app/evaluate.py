@@ -9,11 +9,10 @@ import sys
 
 from app.SHEPHERD import project_utils
 
-def evaluate_patients_like_me(score_file_path):
+def evaluate_patients_like_me(score_file_path, min_dis_count=3):
     print(f"Evalute Patients Like me: {file}")
     df = pd.read_csv(score_file_path)
 
-    min_dis_count = 3
     df = filter_df_for_min_disease_count(df, min_disease_count=min_dis_count)
 
     patients_disease_map = get_all_patients_diseases(df)
@@ -162,7 +161,7 @@ def plot_patient_similarity_avg(
     sorted_handles_labels = sorted(zip(handles, labels), key=lambda x: 'Random' in x[1])
     sorted_handles, sorted_labels = zip(*sorted_handles_labels)
     ax.legend(sorted_handles, sorted_labels)
-    file = project_config.PROJECT_DIR / "plots" / f"patient_similarity_scores.png"
+    file = project_config.PROJECT_DIR / "plots" / f"patient_similarity_scores_min_d_{min_dis_count}.png"
     print(f"Saving plot to {file}")
     plt.savefig(file)
 
@@ -500,7 +499,9 @@ if __name__ == "__main__":
     dir = project_config.PROJECT_DIR / "results"
     file = dir / f"{base_res}_{agg_type}_primeKG_w_dis.csv"
     
-    evaluate_patients_like_me(file)
+    evaluate_patients_like_me(file, min_dis_count=1)
+    evaluate_patients_like_me(file, min_dis_count=3)
+    evaluate_patients_like_me(file, min_dis_count=5)
 
     disease_char_file = (
         dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
