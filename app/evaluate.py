@@ -536,10 +536,10 @@ if __name__ == "__main__":
     # evaluate_patients_like_me(file, min_dis_count=3)
     # evaluate_patients_like_me(file, min_dis_count=5)
 
-    # disease_char_file = (
-    #     dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
-    # )
+    disease_char_file = (
+        dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
+    )
     # evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
-    test_disease_mappings(file)
+    test_disease_mappings(disease_char_file)
 # %%
