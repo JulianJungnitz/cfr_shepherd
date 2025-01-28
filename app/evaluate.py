@@ -268,9 +268,7 @@ def get_all_patients_diseases(df):
 ## DISEASE CHARACTERIZATION --------------------------------------------
 
 def map_disease_to_doid(df):
-    mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
-    print("First mondo keys: ", list(mondo_to_doid_dict.keys())[:5])
-    print("First mondo values: ", list(mondo_to_doid_dict.values())[:5])
+    
 
     # mondo_to_name_dict_file = utils.SHEPHERD_DIR + f"/data_prep/mondo_to_name_dict_8.9.21_kg.pkl"
     # mondo_to_name_dict = pickle.load(open(mondo_to_name_dict_file, "rb"))
@@ -443,24 +441,10 @@ def plot_disease_similarity_avg(patient_sim_map, k_max, score_file_path, number_
     plt.close()
 
 
-def create_names_to_doid_map(df):
-    print(df.head())
-     #    patient_id                                      diseases  similarities         
-    # 0    15013028                           depressive disorder      0.000054       
-    # 1    15013028                  benign blood vessel neoplasm      0.000012      
-    # 2    15013028  autosomal recessive nonsyndromic deafness 53      0.000054    
+def create_names_to_doid_map(disease_names):
     
-    # group by patient_id and sort by similarities
-
-    grouped = df.groupby("patient_id")
-    k=1
-    top_k_unique_diseases = []
-    for patient_id, group in grouped:
-        group = group.sort_values(by="similarities", ascending=False)
-        top_k_unique_diseases.extend(group["diseases"].head(k).unique())
-    top_k_unique_diseases = list(set(top_k_unique_diseases))
         
-    print("Top K Unique Diseases: ", len(top_k_unique_diseases))
+    print("Top K Unique Diseases: ", len(disease_names))
 
     driver = utils.connect_to_neo4j()
     base_query = """
@@ -472,7 +456,7 @@ def create_names_to_doid_map(df):
     LIMIT 1
     """
     name_id_map = {}
-    for disease in top_k_unique_diseases:
+    for disease in disease_names:
         clean_name = disease.replace("'", "").replace('"', "")
         params = {"clean_name": clean_name}
         res = utils.execute_query(driver, base_query, params, debug=False)
@@ -484,12 +468,61 @@ def create_names_to_doid_map(df):
             print(f"No result for {clean_name}")
     
     print("Name to DOID Map: ", len(name_id_map))
-    # Save to file
-    out_file = utils.SHEPHERD_DIR + "/data_prep/name_to_doid_map.pkl"
-    with open(out_file, "wb") as handle:
-        pickle.dump(name_id_map, handle)
-    print(f"Saved name to DOID map to {out_file}")
+    return name_id_map
 
+def create_diseases_names_file(score_file_path,save_file):
+    df = pd.read_csv(score_file_path)
+    disease_names = df["diseases"].unique()
+    print("Unique Diseases: ", len(disease_names))
+    df.to_csv(save_file, index=False)
+    print(f"Saved disease names to {save_file}")
+    return df
+
+def test_disease_mappings(score_file_path):
+    diseases_mapping_dir = project_config.PROJECT_DIR / "disease_mappings"
+    diseases_file = diseases_mapping_dir / "disease_names.csv"
+    if(not diseases_file.exists()):
+        df = create_diseases_names_file(score_file_path, save_file=diseases_file)
+    else:
+        df = pd.read_csv(diseases_file)
+    
+    mondo_to_doid_dict = get_mondo_to_doid_dict()
+    print("First mondo: ", {k: v for k, v in list(mondo_to_doid_dict.items())[:5]})
+
+    db_name_to_doid_dict = create_names_to_doid_map(df["diseases"])
+    print("First db name: ", {k: v for k, v in list(db_name_to_doid_dict.items())[:5]})
+
+    total_diseases = len(df)
+    total_diseases_in_mondo = len(df[df["diseases"].isin(mondo_to_doid_dict.keys())])
+    total_diseases_in_db = len(df[df["diseases"].isin(db_name_to_doid_dict.keys())])
+    print(f"Total Diseases: {total_diseases}, Total Diseases in Mondo: {total_diseases_in_mondo}, Total Diseases in DB: {total_diseases_in_db}")
+
+    # check overlap
+    overlap_mondo_db = len(set(mondo_to_doid_dict.keys()).intersection(set(db_name_to_doid_dict.keys())))
+    print(f"Overlap Mondo and DB: {overlap_mondo_db}")
+
+
+def get_mondo_to_doid_dict():
+    file_name = project_config.PROJECT_DIR / "mondo_to_doid_dict.pkl"
+    if(file_name.exists()):
+        with open(file_name, "rb") as handle:
+            mondo_to_doid_dict = pickle.load(handle)
+    else:
+        mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
+        with open(file_name, "wb") as handle:
+            pickle.dump(mondo_to_doid_dict, handle)
+    return mondo_to_doid_dict
+
+def get_db_names_to_doid_dict(disease_names):
+    file_name = project_config.PROJECT_DIR / "db_name_to_doid_dict.pkl"
+    if(file_name.exists()):
+        with open(file_name, "rb") as handle:
+            db_name_to_doid_dict = pickle.load(handle)
+    else:
+        db_name_to_doid_dict = create_names_to_doid_map(disease_names)
+        with open(file_name, "wb") as handle:
+            pickle.dump(db_name_to_doid_dict, handle)
+    
 
 
 if __name__ == "__main__":
@@ -499,13 +532,14 @@ if __name__ == "__main__":
     dir = project_config.PROJECT_DIR / "results"
     file = dir / f"{base_res}_{agg_type}_primeKG_w_dis.csv"
     
-    evaluate_patients_like_me(file, min_dis_count=1)
-    evaluate_patients_like_me(file, min_dis_count=3)
-    evaluate_patients_like_me(file, min_dis_count=5)
+    # evaluate_patients_like_me(file, min_dis_count=1)
+    # evaluate_patients_like_me(file, min_dis_count=3)
+    # evaluate_patients_like_me(file, min_dis_count=5)
 
-    disease_char_file = (
-        dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
-    )
+    # disease_char_file = (
+    #     dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
+    # )
     # evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
+    test_disease_mappings(score_file_path)
 # %%
