@@ -91,6 +91,7 @@ class CombinedPatientNCA(pl.LightningModule):
         return correct_disease_ranks
 
     def rank_patients(self, patient_softmax, labels):
+        print("labels shape: ", labels.shape)
         labels = labels * ~torch.eye(labels.shape[0], dtype=torch.bool).to(labels.device) # don't consider label positive for patients with themselves
         patient_ranks = torch.tensor(np.apply_along_axis(lambda row: rankdata(row * -1, method='average'), axis=1, arr=patient_softmax.detach().cpu().numpy()))
         if labels is None:

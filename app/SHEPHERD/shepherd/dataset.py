@@ -183,18 +183,20 @@ class PatientDataset(Dataset):
             if "max_phen_overlap_train" not in patient["additional_labels"]:
                 additional_labels_dict["max_phen_overlap_train"] = [[-1]]
 
-        # print("Patients phenotypes: ", patient["positive_phenotypes"])
+        print("Patients phenotypes: ", patient["positive_phenotypes"])
         phenotype_node_idx = [
             self.hpo_to_idx_dict[p]
             for p in patient["positive_phenotypes"]
             if p in self.hpo_to_idx_dict
         ]
-        # print("phenotype_node_idx: ", phenotype_node_idx)
+        print("phenotype_node_idx: ", phenotype_node_idx)
+        print("patient true genes: ", patient["true_genes"])
         correct_genes_node_idx = [
             self.ensembl_to_idx_dict[g]
             for g in patient["true_genes"]
             if g in self.ensembl_to_idx_dict
         ]
+        print("correct_genes_node_idx: ", correct_genes_node_idx)
         if "all_candidate_genes" in patient:
             # print("all_candidate_genes in patient")
             candidate_gene_node_idx = [
@@ -227,13 +229,13 @@ class PatientDataset(Dataset):
             else:
                 mondo_diseases = [str(d) for d in patient["true_diseases"]]
 
-            # print("mondo_diseases (in reality doid): ", mondo_diseases)
+            print("mondo_diseases (in reality doid): ", mondo_diseases)
             disease_node_idx = [
                 self.disease_to_idx_dict[d]
                 for d in mondo_diseases
                 if d in self.disease_to_idx_dict
             ]
-            # print("disease_node_idx for patient: ", disease_node_idx)
+            print("disease_node_idx for patient: ", disease_node_idx)
         else:
             disease_node_idx = None
 
