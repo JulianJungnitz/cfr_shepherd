@@ -15,7 +15,7 @@ def read_patients(filename):
         for patient in reader:
             patients.append(patient)
 
-    print("First 3 patients: ", patients[:3])
+    print("First patient: ", patients[0])
     return patients
 
 
