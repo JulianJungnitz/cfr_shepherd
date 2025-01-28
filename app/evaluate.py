@@ -312,9 +312,9 @@ def map_disease_to_doid(df):
     # print("First empty MONDO: ", df[df["mondo"].isnull()].head())
     
     print("Total DF: ", len(df))
-    df["doid"] = df["diseases"].map(mondo_to_doid_dict)
-    print("Empty DOID: ", df["doid"].isnull().sum())
-    print("First empty DOID: ", df[df["doid"].isnull()].head())
+    # df["doid"] = df["diseases"].map(mondo_to_doid_dict)
+    # print("Empty DOID: ", df["doid"].isnull().sum())
+    # print("First empty DOID: ", df[df["doid"].isnull()].head())
     return df
 
 
@@ -541,5 +541,5 @@ if __name__ == "__main__":
     # )
     # evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
-    test_disease_mappings(score_file_path)
+    test_disease_mappings(file)
 # %%
