@@ -8,6 +8,7 @@ import pickle
 import sys
 
 from app.SHEPHERD import project_utils
+from tqdm import tqdm
 
 
 def evaluate_patients_like_me(score_file_path, min_dis_count=3):
@@ -499,7 +500,7 @@ def create_names_to_doid_map(disease_names):
     LIMIT 1
     """
     name_id_map = {}
-    for disease in disease_names:
+    for disease in tqdm(disease_names):
         clean_name = disease.replace("'", "").replace('"', "")
         params = {"clean_name": clean_name}
         res = utils.execute_query(driver, base_query, params, debug=False)
@@ -523,14 +524,13 @@ def create_syn_names_to_doid_map(disease_names):
     RETURN d.id
     """
     syn_name_id_map = {}
-    for disease in disease_names:
+    for disease in tqdm(disease_names):
         clean_name = disease.replace("'", "").replace('"', "")
         params = {"clean_name": clean_name}
         res = utils.execute_query(driver, base_query, params, debug=False)
         if len(res) > 0:
             syn_name_id_map[clean_name] = res[0]["d.id"]
-        # else:
-        # print(f"No result for {clean_name}")
+        
     print("Synonym Name to DOID Map: ", len(syn_name_id_map))
     return syn_name_id_map
 
