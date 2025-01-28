@@ -6,6 +6,7 @@ import json
 from tqdm import tqdm
 from pronto import Ontology
 from app.SHEPHERD import project_config
+from app import utils
 import pickle
 
 
@@ -203,6 +204,7 @@ def create_ensembl_to_idx_dict():
 
 def transform_sim_patients(file):
     mondo_to_doid_dict = load_mondo_to_doid()
+    ens_dict = load_ens_to_id_dict()
     orphanet_to_mondo = read_pkl_file(
         "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/preprocess/orphanet/orphanet_to_mondo_dict.pkl"
     )
@@ -213,6 +215,8 @@ def transform_sim_patients(file):
     print(
         "First 5 dict entries M-doid: ", {k: v for k, v in list(mondo_to_doid_dict.items())[:5]}
     )
+    print("First 5 dict entries E-id: ", {k: v for k, v in list(ens_dict.items())[:5]})
+
 
     with open(file, "r") as f:
         data = [json.loads(line) for line in f]
@@ -230,37 +234,64 @@ def transform_sim_patients(file):
     not_found = 0
     found_mondo = 0
     print_n = 5
-    with open(new_file, "w") as f:
-        for patient in data:
-            disease = int(patient.get("disease_id"))
-            if disease in orphanet_to_mondo:
-                found_mondo += 1
-                mondo = orphanet_to_mondo[disease][0]
-                # print("Mondo: ", mondo)
-                if mondo in mondo_to_doid_dict:
-                    
-                    disease_id = mondo_to_doid_dict[mondo]
-                    patient["disease_id"] = disease_id
-                    patient["true_diseases"] = [disease_id] if disease_id else []
-                    new_data.append(patient)
-                    json.dump(patient, f)
-                    f.write("\n")
-                else:
-                    if print_n > 0:
-                        print("Mondo not found: ", mondo)
-                        print_n -= 1
-                    not_found += 1
+    
+    for patient in data:
+        disease = int(patient.get("disease_id"))
+        if disease in orphanet_to_mondo:
+            found_mondo += 1
+            mondo = orphanet_to_mondo[disease][0]
+            # print("Mondo: ", mondo)
+            if mondo in mondo_to_doid_dict:
+                
+                disease_id = mondo_to_doid_dict[mondo]
+                patient["disease_id"] = disease_id
+                patient["true_diseases"] = [disease_id] if disease_id else []
+                new_data.append(patient)
             else:
                 if print_n > 0:
-                    print("Disease not found: ", disease)
+                    print("Mondo not found: ", mondo)
                     print_n -= 1
                 not_found += 1
+        else:
+            if print_n > 0:
+                print("Disease not found: ", disease)
+                print_n -= 1
+            not_found += 1
+
+    patients_withoute_true_genes = 0
+    patients_without_candidate_genes = 0
+    print_n = 5
+    final_data = []
+    for patient in new_data:
+        true_genes = patient.get("true_genes", [])
+        candidate_genes = patient.get("all_candidate_genes", [])
+        patient["true_genes"] = [ens_dict[g] for g in true_genes if g in ens_dict]
+        patient["all_candidate_genes"] = [ens_dict[g] for g in candidate_genes if g in ens_dict]
+        if len(patient["true_genes"]) == 0:
+            patients_withoute_true_genes += 1
+            if(print_n > 0):
+                print("True genes not found: ", true_genes)
+                print_n -= 1
+        else:
+            final_data.append(patient)
+        if len(patient["all_candidate_genes"]) == 0:
+            patients_without_candidate_genes += 1
+
+
+    print("Patients without true genes: ", patients_withoute_true_genes)
+    print("Patients without candidate genes: ", patients_without_candidate_genes)
     print("New data length: ", len(new_data))
     print("Not found: ", not_found)
     print("Found mondo: ", found_mondo)
+    print("final data length: ", len(final_data))
     # with open(disease_file, 'w') as f:
     #     for disease in diseases:
     #         f.write(disease + "\n")
+
+    with open(new_file, "w") as f:
+        for patient in final_data:
+            json.dump(patient, f)
+            f.write("\n")
 
 
 def get_doid_to_mondo():
@@ -284,6 +315,26 @@ def get_mondo_to_doid():
                 mondo_id = str(int(mondo_id))
                 mondo_to_doid[mondo_id] = xref.id
     return mondo_to_doid
+
+def get_ens_to_id_dict():
+    driver = utils.connect_to_neo4j()
+    query = 'Match (g:Gene) where not g.synonyms[1]="" return g.id as gene_id, g.synonyms[1] as ensembl_id'
+    result = utils.execute_query(driver, query)
+    ens_to_id_dict = {}
+    print("Number of records: ", len(result))
+    for record in result:
+        ens_to_id_dict[record["ensembl_id"]] = record["gene_id"]
+    return ens_to_id_dict
+
+def save_ens_to_id_dict():
+    ens_to_id_dict = get_ens_to_id_dict()
+    with open(project_config.PROJECT_DIR / "ens_to_id_dict.pkl", "wb") as f:
+        pickle.dump(ens_to_id_dict, f)
+
+def load_ens_to_id_dict():
+    with open(project_config.PROJECT_DIR / "ens_to_id_dict.pkl", "rb") as f:
+        ens_to_id_dict = pickle.load(f)
+    return ens_to_id_dict
 
 
 def save_mondo_to_diod():
@@ -330,6 +381,8 @@ def test_mapping():
 if __name__ == "__main__":
     # save_mondo_to_diod()
     # test_mapping()
+    # save_ens_to_id_dict()
+    
     transform_sim_patients(
         "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl"
     )
