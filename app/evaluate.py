@@ -9,6 +9,7 @@ import sys
 
 from app.SHEPHERD import project_utils
 
+
 def evaluate_patients_like_me(score_file_path, min_dis_count=3):
     print(f"Evalute Patients Like me: {file}")
     df = pd.read_csv(score_file_path)
@@ -51,8 +52,13 @@ def evaluate_patients_like_me(score_file_path, min_dis_count=3):
 
     number_of_patients = len(patient_sim_map)
     plot_patient_similarity_avg(
-        patient_sim_map, max_k, score_file_path, number_of_patients=number_of_patients, min_dis_count=min_dis_count
+        patient_sim_map,
+        max_k,
+        score_file_path,
+        number_of_patients=number_of_patients,
+        min_dis_count=min_dis_count,
     )
+
 
 def filter_df_for_min_disease_count(df, min_disease_count=3):
     query = f"""
@@ -61,11 +67,14 @@ def filter_df_for_min_disease_count(df, min_disease_count=3):
         WHERE size(samples) >= {min_disease_count}
         UNWIND samples AS sample
         RETURN id(sample) as sample_id"""
-    
+
     driver = utils.connect_to_neo4j()
     res = utils.execute_query(driver, query, debug=False)
     patient_ids = [record["sample_id"] for record in res]
-    print(f"Number of patients with at least {min_disease_count} diseases: ", len(patient_ids))
+    print(
+        f"Number of patients with at least {min_disease_count} diseases: ",
+        len(patient_ids),
+    )
 
     print("Original DF: ", len(df))
     df = df[df["patient_id"].isin(patient_ids)]
@@ -127,8 +136,12 @@ def plot_patient_similarity_avg(
             k_icd10_similar_random_total[k] += patient_sim_map[patient_id][k][
                 "icd10_similar_random"
             ]
-            k_icd10_first_4_similar_total[k] += patient_sim_map[patient_id][k]["icd10_first_4_similarity_set"]
-            k_icd10_first_4_similar_random_total[k] += patient_sim_map[patient_id][k]["icd10_first_4_similarity_set_random"]
+            k_icd10_first_4_similar_total[k] += patient_sim_map[patient_id][k][
+                "icd10_first_4_similarity_set"
+            ]
+            k_icd10_first_4_similar_random_total[k] += patient_sim_map[patient_id][k][
+                "icd10_first_4_similarity_set_random"
+            ]
 
     k_id_similar_avg = {k: k_id_similar_total[k] / number_of_patients for k in k_values}
     k_icd10_similar_avg = {
@@ -144,26 +157,63 @@ def plot_patient_similarity_avg(
         k: k_icd10_first_4_similar_total[k] / number_of_patients for k in k_values
     }
     k_icd10_first_4_similar_random_avg = {
-        k: k_icd10_first_4_similar_random_total[k] / number_of_patients for k in k_values
+        k: k_icd10_first_4_similar_random_total[k] / number_of_patients
+        for k in k_values
     }
 
-    fig, ax = plt.subplots(figsize=(10, 6),)
-    ax.plot(k_values, list(k_id_similar_avg.values()), label="ID Similar", color='blue')
-    ax.plot(k_values, list(k_id_similar_random_avg.values()), label="ID Similar Random", color='blue', linestyle='--')
-    ax.plot(k_values, list(k_icd10_similar_avg.values()), label="ICD10 Similar", color='green')
-    ax.plot(k_values, list(k_icd10_similar_random_avg.values()), label="ICD10 Similar Random", color='green', linestyle='--')
-    ax.plot(k_values, list(k_icd10_first_4_similar_avg.values()), label="ICD10 First 5 Similar", color='red')
-    ax.plot(k_values, list(k_icd10_first_4_similar_random_avg.values()), label="ICD10 First 5 Similar Random", color='red', linestyle='--')
+    fig, ax = plt.subplots(
+        figsize=(10, 6),
+    )
+    ax.plot(k_values, list(k_id_similar_avg.values()), label="ID Similar", color="blue")
+    ax.plot(
+        k_values,
+        list(k_id_similar_random_avg.values()),
+        label="ID Similar Random",
+        color="blue",
+        linestyle="--",
+    )
+    ax.plot(
+        k_values,
+        list(k_icd10_similar_avg.values()),
+        label="ICD10 Similar",
+        color="green",
+    )
+    ax.plot(
+        k_values,
+        list(k_icd10_similar_random_avg.values()),
+        label="ICD10 Similar Random",
+        color="green",
+        linestyle="--",
+    )
+    ax.plot(
+        k_values,
+        list(k_icd10_first_4_similar_avg.values()),
+        label="ICD10 First 5 Similar",
+        color="red",
+    )
+    ax.plot(
+        k_values,
+        list(k_icd10_first_4_similar_random_avg.values()),
+        label="ICD10 First 5 Similar Random",
+        color="red",
+        linestyle="--",
+    )
     ax.set_xlabel("K")
     ax.set_ylabel("Similarity")
-    ax.set_title(f"Patient Similarity Average of patient at rank k.\n At least one similar disease or icd10 code (min_dis_count: {min_dis_count})")
+    ax.set_title(
+        f"Patient Similarity Average of patient at rank k.\n At least one similar disease or icd10 code (min_dis_count: {min_dis_count})"
+    )
     handles, labels = ax.get_legend_handles_labels()
-    sorted_handles_labels = sorted(zip(handles, labels), key=lambda x: 'Random' in x[1])
+    sorted_handles_labels = sorted(zip(handles, labels), key=lambda x: "Random" in x[1])
     sorted_handles, sorted_labels = zip(*sorted_handles_labels)
     ax.legend(sorted_handles, sorted_labels)
-    file = project_config.PROJECT_DIR / "plots" / f"patient_similarity_scores_min_d_{min_dis_count}.eps"
+    file = (
+        project_config.PROJECT_DIR
+        / "plots"
+        / f"patient_similarity_scores_min_d_{min_dis_count}.eps"
+    )
     print(f"Saving plot to {file}")
-    plt.savefig(file, format='eps')
+    plt.savefig(file, format="eps")
 
 
 def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
@@ -189,9 +239,7 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
     )
     icd10_first_4_similarity_set = set(
         code[:10] for code in patient_disease["icd10_codes"]
-    ).intersection(
-        set(code[:10] for code in candidate_patient_disease["icd10_codes"])
-    )
+    ).intersection(set(code[:10] for code in candidate_patient_disease["icd10_codes"]))
 
     random_patient_disease = patients_disease_map[
         random.choice(list(patients_disease_map.keys()))
@@ -204,8 +252,7 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
     )
     icd10_first_4_similarity_set_random = set(
         code[:10] for code in patient_disease["icd10_codes"]
-    ).intersection(
-        set(code[:10] for code in random_patient_disease["icd10_codes"]))
+    ).intersection(set(code[:10] for code in random_patient_disease["icd10_codes"]))
 
     # if len(id_similarity_set) > 0:
     #     print(f"Patient {patient_id} and Patient {candidate_patient_id} have similar diseases: {id_similarity_set}")
@@ -225,7 +272,7 @@ def get_patient_similarity_scores(patient_id, group, patients_disease_map, k=5):
         id_similar_random,
         icd10_similar_random,
         icd10_first_4_similarity,
-        icd10_first_4_similarity_random
+        icd10_first_4_similarity_random,
     )
 
 
@@ -265,10 +312,11 @@ def get_all_patients_diseases(df):
 
     return patient_disease_map
 
+
 ## DISEASE CHARACTERIZATION --------------------------------------------
 
+
 def map_disease_to_doid(df):
-    
 
     # mondo_to_name_dict_file = utils.SHEPHERD_DIR + f"/data_prep/mondo_to_name_dict_8.9.21_kg.pkl"
     # mondo_to_name_dict = pickle.load(open(mondo_to_name_dict_file, "rb"))
@@ -278,8 +326,6 @@ def map_disease_to_doid(df):
     # print("First Orphanet keys: ", list(orphanet_names_id_dict.keys())[:5])
     # print("First Orphanet values: ", list(orphanet_names_id_dict.values())[:5])
 
-
-    
     # orphanet_to_mondo_dict = project_utils.get_orphannet_to_mondo()
     # print("First orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
     # print("First orphanet values: ", list(orphanet_to_mondo_dict.values())[:5])
@@ -290,7 +336,7 @@ def map_disease_to_doid(df):
 
     # mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
     # print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
-    
+
     # mondo_to_doid_dict = {int(k.replace("MONDO:", "").lstrip("0")): v for k, v in mondo_to_doid_dict.items()}
 
     # print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
@@ -302,7 +348,6 @@ def map_disease_to_doid(df):
     # print("Min Mondo: ", min_mondo)
     # print("Max Mondo: ", max_mondo)
 
-
     # df["orphanet"] = df["diseases"].map(orphanet_names_id_dict)
     # print("Empty Orphanet Names: ", df["orphanet"].isnull().sum())
     # print("First empty Orphanet Names: ", df[df["orphanet"].isnull()].head())
@@ -310,7 +355,7 @@ def map_disease_to_doid(df):
     # df["mondo"] = df["orphanet"].map(orphanet_to_mondo_dict)
     # print("Empty MONDO: ", df["mondo"].isnull().sum())
     # print("First empty MONDO: ", df[df["mondo"].isnull()].head())
-    
+
     print("Total DF: ", len(df))
     # df["doid"] = df["diseases"].map(mondo_to_doid_dict)
     # print("Empty DOID: ", df["doid"].isnull().sum())
@@ -342,12 +387,13 @@ def get_disease_patient_map(df):
     return disease_patient_map
 
 
-
-def evaluate_disease_characterization(file_name,):
+def evaluate_disease_characterization(
+    file_name,
+):
     df = pd.read_csv(file_name)
 
     # return
-    
+
     df = map_disease_to_doid(df)
 
     print("different diseases: " + str(df["diseases"].nunique()))
@@ -359,15 +405,14 @@ def evaluate_disease_characterization(file_name,):
     # 1    15013028                  benign blood vessel neoplasm      0.000012  24286    DOID:60006
     # 2    15013028  autosomal recessive nonsyndromic deafness 53      0.000054  12333  DOID:0110509
 
-
     disease_patients_map = get_disease_patient_map(df)
     print("Disease Patients Map: ", len(disease_patients_map))
 
     # group by patient_id
     grouped = df.groupby("patient_id")
-    
+
     patient_sim_map = {}
-    max_k = 10  
+    max_k = 10
     for patient_id, group in grouped:
         for k in range(1, max_k + 1):
             overlap_score, overlap_score_random = get_disease_similarity_scores(
@@ -379,16 +424,11 @@ def evaluate_disease_characterization(file_name,):
                 "overlap_score": overlap_score,
                 "overlap_score_random": overlap_score_random,
             }
-            
-            
-    
-    number_of_patients = len(patient_sim_map)
-    
-    # Plot the average overlap vs K
-    plot_disease_similarity_avg(
-        patient_sim_map, max_k, file_name, number_of_patients
-    )
 
+    number_of_patients = len(patient_sim_map)
+
+    # Plot the average overlap vs K
+    plot_disease_similarity_avg(patient_sim_map, max_k, file_name, number_of_patients)
 
     return
 
@@ -396,56 +436,59 @@ def evaluate_disease_characterization(file_name,):
 def get_disease_similarity_scores(patient_id, group, disease_patients_map, k=5):
     index = k - 1
     group_sorted = group.sort_values(by="similarities", ascending=False)
-    candidate_disease_id = group_sorted.iloc[index]["doid"]  
+    candidate_disease_id = group_sorted.iloc[index]["doid"]
     if len(group_sorted) < k:
         return 0, 0
     if candidate_disease_id not in disease_patients_map:
         return 0, 0
-    
+
     overlap_score = 1 if patient_id in disease_patients_map[candidate_disease_id] else 0
-    
-    random_dec = random.randint(0, len(disease_patients_map) - 1) 
-    overlap_score_random = 1 if random_dec==1 else 0
-    
+
+    random_dec = random.randint(0, len(disease_patients_map) - 1)
+    overlap_score_random = 1 if random_dec == 1 else 0
+
     return overlap_score, overlap_score_random
 
 
-
-def plot_disease_similarity_avg(patient_sim_map, k_max, score_file_path, number_of_patient):
+def plot_disease_similarity_avg(
+    patient_sim_map, k_max, score_file_path, number_of_patient
+):
     k_values = range(1, k_max + 1)
-    
+
     k_overlap_total = {k: 0 for k in k_values}
     k_overlap_random_total = {k: 0 for k in k_values}
-    
+
     for patient_id in patient_sim_map:
         for k in k_values:
             k_overlap_total[k] += patient_sim_map[patient_id][k]["overlap_score"]
-            k_overlap_random_total[k] += patient_sim_map[patient_id][k]["overlap_score_random"]
-    
+            k_overlap_random_total[k] += patient_sim_map[patient_id][k][
+                "overlap_score_random"
+            ]
+
     k_overlap_avg = [k_overlap_total[k] / number_of_patient for k in k_values]
-    k_overlap_random_avg = [k_overlap_random_total[k] / number_of_patient for k in k_values]
-    
+    k_overlap_random_avg = [
+        k_overlap_random_total[k] / number_of_patient for k in k_values
+    ]
+
     plt.figure(figsize=(8, 6))
     plt.plot(k_values, k_overlap_avg, label="Patients has disease")
     plt.plot(k_values, k_overlap_random_avg, label="Random Baseline")
-    
+
     plt.xlabel("Top-K Similar Diseases")
     plt.ylabel("Has disease avgerage")
     plt.title("Disease Characterization: Patient has disease at position k")
     plt.legend()
     plt.grid(axis="y", linestyle="--", alpha=0.7)
-    
-    out_file = project_config.PROJECT_DIR / "plots" / "disease_characterization_scores.png"
+
+    out_file = (
+        project_config.PROJECT_DIR / "plots" / "disease_characterization_scores.png"
+    )
     print(f"Saving plot to {out_file}")
     plt.savefig(out_file)
     plt.close()
 
 
 def create_names_to_doid_map(disease_names):
-    
-        
-    print("Top K Unique Diseases: ", len(disease_names))
-
     driver = utils.connect_to_neo4j()
     base_query = """
     WITH $clean_name AS input
@@ -460,17 +503,39 @@ def create_names_to_doid_map(disease_names):
         clean_name = disease.replace("'", "").replace('"', "")
         params = {"clean_name": clean_name}
         res = utils.execute_query(driver, base_query, params, debug=False)
-        print(f"Disease: {clean_name}, Result: {res}")
-        print(f"Result: {res}")
+        # print(f"Disease: {clean_name}, Result: {res}")
+        # print(f"Result: {res}")
         if len(res) > 0:
             name_id_map[clean_name] = res[0]["d.id"]
-        else:
-            print(f"No result for {clean_name}")
-    
+        # else:
+        # print(f"No result for {clean_name}")
+
     print("Name to DOID Map: ", len(name_id_map))
     return name_id_map
 
-def create_diseases_names_file(score_file_path,save_file):
+
+def create_syn_names_to_doid_map(disease_names):
+    driver = utils.connect_to_neo4j()
+    base_query = """
+    WITH $clean_name AS input
+    MATCH (d:Disease)
+    WHERE any(syn IN d.synonyms WHERE apoc.text.levenshteinDistance(input, syn) < 10)
+    RETURN d.id
+    """
+    syn_name_id_map = {}
+    for disease in disease_names:
+        clean_name = disease.replace("'", "").replace('"', "")
+        params = {"clean_name": clean_name}
+        res = utils.execute_query(driver, base_query, params, debug=False)
+        if len(res) > 0:
+            syn_name_id_map[clean_name] = res[0]["d.id"]
+        # else:
+        # print(f"No result for {clean_name}")
+    print("Synonym Name to DOID Map: ", len(syn_name_id_map))
+    return syn_name_id_map
+
+
+def create_diseases_names_file(score_file_path, save_file):
     df = pd.read_csv(score_file_path)
     disease_names = df["diseases"].unique()
     print("Unique Diseases: ", len(disease_names))
@@ -478,33 +543,59 @@ def create_diseases_names_file(score_file_path,save_file):
     print(f"Saved disease names to {save_file}")
     return df
 
+
 def test_disease_mappings(score_file_path):
     diseases_mapping_dir = project_config.PROJECT_DIR / "disease_mappings"
     diseases_file = diseases_mapping_dir / "disease_names.csv"
-    if(not diseases_file.exists()):
+    if not diseases_file.exists():
         df = create_diseases_names_file(score_file_path, save_file=diseases_file)
     else:
         df = pd.read_csv(diseases_file)
-    
+
     mondo_to_doid_dict = get_mondo_to_doid_dict()
     print("First mondo: ", {k: v for k, v in list(mondo_to_doid_dict.items())[:5]})
 
-    db_name_to_doid_dict = create_names_to_doid_map(df["diseases"])
+    db_name_to_doid_dict = get_db_names_to_doid_dict(df["diseases"])
     print("First db name: ", {k: v for k, v in list(db_name_to_doid_dict.items())[:5]})
+
+    db_syn_names_to_doid_dict = get_db_syn_names_to_doid_dict(df["diseases"])
+    print(
+        "First db syn name: ",
+        {k: v for k, v in list(db_syn_names_to_doid_dict.items())[:5]},
+    )
 
     total_diseases = len(df)
     total_diseases_in_mondo = len(df[df["diseases"].isin(mondo_to_doid_dict.keys())])
     total_diseases_in_db = len(df[df["diseases"].isin(db_name_to_doid_dict.keys())])
-    print(f"Total Diseases: {total_diseases}, Total Diseases in Mondo: {total_diseases_in_mondo}, Total Diseases in DB: {total_diseases_in_db}")
+    total_diseases_in_db_syn = len(
+        df[df["diseases"].isin(db_syn_names_to_doid_dict.keys())]
+    )
+    print(
+        f"Total Diseases: {total_diseases}, Total Diseases in Mondo: {total_diseases_in_mondo}, Total Diseases in DB: {total_diseases_in_db}, Total Diseases in DB Syn: {total_diseases_in_db_syn}"
+    )
 
     # check overlap
-    overlap_mondo_db = len(set(mondo_to_doid_dict.keys()).intersection(set(db_name_to_doid_dict.keys())))
-    print(f"Overlap Mondo and DB: {overlap_mondo_db}")
+    overlap_mondo_db = len(
+        set(mondo_to_doid_dict.keys()).intersection(set(db_name_to_doid_dict.keys()))
+    )
+    overlap_mondo_db_syn = len(
+        set(mondo_to_doid_dict.keys()).intersection(
+            set(db_syn_names_to_doid_dict.keys())
+        )
+    )
+    overlap_db_db_syn = len(
+        set(db_name_to_doid_dict.keys()).intersection(
+            set(db_syn_names_to_doid_dict.keys())
+        )
+    )
+    print(
+        f"Overlap Mondo and DB: {overlap_mondo_db}, Overlap Mondo and DB Syn: {overlap_mondo_db_syn}, Overlap DB and DB Syn: {overlap_db_db_syn}"
+    )
 
 
 def get_mondo_to_doid_dict():
     file_name = project_config.PROJECT_DIR / "mondo_to_doid_dict.pkl"
-    if(file_name.exists()):
+    if file_name.exists():
         with open(file_name, "rb") as handle:
             mondo_to_doid_dict = pickle.load(handle)
     else:
@@ -513,16 +604,27 @@ def get_mondo_to_doid_dict():
             pickle.dump(mondo_to_doid_dict, handle)
     return mondo_to_doid_dict
 
+
 def get_db_names_to_doid_dict(disease_names):
     file_name = project_config.PROJECT_DIR / "db_name_to_doid_dict.pkl"
-    if(file_name.exists()):
+    if file_name.exists():
         with open(file_name, "rb") as handle:
             db_name_to_doid_dict = pickle.load(handle)
     else:
         db_name_to_doid_dict = create_names_to_doid_map(disease_names)
         with open(file_name, "wb") as handle:
             pickle.dump(db_name_to_doid_dict, handle)
-    
+
+
+def get_db_syn_names_to_doid_dict(disease_names):
+    file_name = project_config.PROJECT_DIR / "db_syn_name_to_doid_dict.pkl"
+    if file_name.exists():
+        with open(file_name, "rb") as handle:
+            db_syn_name_to_doid_dict = pickle.load(handle)
+    else:
+        db_syn_name_to_doid_dict = create_syn_names_to_doid_map(disease_names)
+        with open(file_name, "wb") as handle:
+            pickle.dump(db_syn_name_to_doid_dict, handle)
 
 
 if __name__ == "__main__":
@@ -531,7 +633,7 @@ if __name__ == "__main__":
     base_res = "checkpoints.patients_like_me_scores"
     dir = project_config.PROJECT_DIR / "results"
     file = dir / f"{base_res}_{agg_type}_primeKG_w_dis.csv"
-    
+
     # evaluate_patients_like_me(file, min_dis_count=1)
     # evaluate_patients_like_me(file, min_dis_count=3)
     # evaluate_patients_like_me(file, min_dis_count=5)
