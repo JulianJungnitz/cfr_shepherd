@@ -567,11 +567,10 @@ def test_disease_mappings(score_file_path):
     )
 
     total_diseases = len(disease_names)
-    total_diseases_in_mondo = len(df[df["diseases"].isin(mondo_to_doid_dict.keys())].unique())
-    total_diseases_in_db = len(df[df["diseases"].isin(db_name_to_doid_dict.keys())].unique())
-    total_diseases_in_db_syn = len(
-        df[df["diseases"].isin(db_syn_names_to_doid_dict.keys())].unique()
-    )
+    total_diseases_in_mondo = df[df["diseases"].isin(mondo_to_doid_dict.keys())].nunique()
+    total_diseases_in_db = df[df["diseases"].isin(db_name_to_doid_dict.keys())].nunique()
+    total_diseases_in_db_syn =         df[df["diseases"].isin(db_syn_names_to_doid_dict.keys())].nunique()
+    
     print(
         f"Total Diseases: {total_diseases}, Total Diseases in Mondo: {total_diseases_in_mondo}, Total Diseases in DB: {total_diseases_in_db}, Total Diseases in DB Syn: {total_diseases_in_db_syn}"
     )
