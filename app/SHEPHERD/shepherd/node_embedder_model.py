@@ -397,8 +397,12 @@ class NodeEmbeder(pl.LightningModule):
         self._logger({'node_curr_epoch': self.current_epoch})
 
     
-    def predict(self, data):
+    def predict(self, data, batch):
+
+        print("DATA: ", data)
+        print("BATCH: ", batch)
         n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
+        batch_n_id = n_id[batch]
 
         x = self.node_emb(n_id)
 
@@ -407,14 +411,10 @@ class NodeEmbeder(pl.LightningModule):
             
             # Update node embeddings
             print("Move to GPU: predict - update node embeddings")
-            x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) #
+            x = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=False) #
             print("Moved: predict - update node embeddings")
 
-            edge_i = edge_i.detach().cpu()
-            alpha = alpha.detach().cpu()
-            edge_i[0,:] = n_id[edge_i[0,:]]
-            edge_i[1,:] = n_id[edge_i[1,:]]
-            gat_attn.append((edge_i, alpha))
+            
             
             # Normalize
             if i != self.n_layers - 1:
