@@ -89,3 +89,5 @@ class PatientNCA(pl.LightningModule):
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.hyperparameters['lr'])
         return optimizer
+    
+
