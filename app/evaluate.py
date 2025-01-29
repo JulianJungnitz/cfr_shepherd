@@ -377,12 +377,13 @@ def evaluate_disease_characterization(
 
     disease_patients_map = get_disease_patient_map(df)
     print("Disease Patients Map: ", len(disease_patients_map))
+    print("First Disease Patients Map: ", {k: v for k, v in list(disease_patients_map.items())[:5]})
 
     # group by patient_id
     grouped = df.groupby("patient_id")
 
     patient_sim_map = {}
-    max_k = 10
+    max_k = 50
     for patient_id, group in grouped:
         for k in range(1, max_k + 1):
             overlap_score, overlap_score_random = get_disease_similarity_scores(
