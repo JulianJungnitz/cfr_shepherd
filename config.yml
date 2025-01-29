@@ -7,7 +7,7 @@ neo4j_credentials:
 shepherd:
   RUN_PRETRAINING: False
   USE_HAUNER_GRAPH: True
-  USE_SIMULATED_PATIENTS: False
+  USE_SIMULATED_PATIENTS: True
 
   OVERWRITE_PREPROCESSED_DATA: False # If True, the patients data will be pulled from the neo4j database
   LIMIT_SAMPLE_SIZE: False 
@@ -21,7 +21,7 @@ shepherd:
   # this runs the predictions
   RUN_PATIENTS_LIKE_ME: False
   RUN_CAUSAL_GENE_DISCOVERY: False
-  RUN_DISEASE_CATEGORIZATION: True
+  RUN_DISEASE_CATEGORIZATION: False
 
   PATIENTS_AGGR_NODES: phenotypes # Options: phenotypes, phenotypes_and_genes - for patients like me and disease categorization the aggregation for the patient embedding can be changed
 
@@ -29,6 +29,6 @@ shepherd:
 
   RUN_PREPROCESSING: False # This runs the preprocessing for training the model
   RUN_TRAINING_DISEASE_CHARACTERIZATION: False 
-  RUN_TRAINING_PATIENTS_LIKE_ME: False
+  RUN_TRAINING_PATIENTS_LIKE_ME: True
 
   
