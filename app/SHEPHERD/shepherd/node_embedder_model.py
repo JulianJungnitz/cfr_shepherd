@@ -470,10 +470,10 @@ class NodeEmbeder(pl.LightningModule):
 
     # @torch.no_grad()  # Disable gradient tracking for inference
     # def predict(self, data):
-    #     # batch:  Data(adjs=[3], batch_size=23734, patient_ids=[10], n_id=[232076], 
-    #     # disease_one_hot_labels=[10, 1169], phenotype_names=[10], cand_gene_names=[10], 
-    #     # corr_gene_names=[10], disease_names=[10], cand_disease_names=[10], batch_pheno_nid=[10, 25], 
-    #     # batch_corr_gene_nid=[10, 0], batch_disease_nid=[10, 1], batch_cand_disease_nid=[10, 1169])
+        # batch:  Data(adjs=[3], batch_size=23734, patient_ids=[10], n_id=[232076], 
+        # disease_one_hot_labels=[10, 1169], phenotype_names=[10], cand_gene_names=[10], 
+        # corr_gene_names=[10], disease_names=[10], cand_disease_names=[10], batch_pheno_nid=[10, 25], 
+        # batch_corr_gene_nid=[10, 0], batch_disease_nid=[10, 1], batch_cand_disease_nid=[10, 1169])
 
 
     #     # return self.predict_in_batches(data, batch_size=1024, num_neighbors=[15, 10, 5])

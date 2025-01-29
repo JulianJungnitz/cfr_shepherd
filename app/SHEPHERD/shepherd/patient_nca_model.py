@@ -324,6 +324,26 @@ class CombinedPatientNCA(pl.LightningModule):
         
         return batch_results
 
+    def get_subset_edge_index(self, unique_node_ids):
+        """
+        Filters the global edge_index to include only edges where both source and target nodes are in unique_node_ids.
+
+        Args:
+            unique_node_ids (torch.Tensor): Tensor of unique node IDs in the batch.
+
+        Returns:
+            torch.Tensor: Filtered edge_index tensor of shape [2, E_subset].
+        """
+        print("All data: ", self.all_data)
+        print("All data edge index: ", self.all_data.edge_index)
+
+
+        mask_src = torch.isin(self.all_data.edge_index[0], unique_node_ids)
+        mask_dst = torch.isin(self.all_data.edge_index[1], unique_node_ids)
+        mask = mask_src & mask_dst
+
+        subset_edge_index = self.all_data.edge_index[:, mask]
+        return subset_edge_index
     
     def inference(self, batch, batch_idx):
         print("Inference: Patient NCA")
@@ -337,12 +357,8 @@ class CombinedPatientNCA(pl.LightningModule):
 
         print(f"Unique Node IDs: {unique_node_ids}")
 
-        # Step 2: Prepare subset edge_index for the unique nodes
-        # Assuming batch has edge_index reflecting connections within the subset
-        # If not, you need to construct it based on the global edge_index
-        # For example, if batch has a global edge_index, map it to subset
-        # Here, we'll assume batch.edge_index is already subset-specific
-        subset_edge_index = batch.edge_index  # Modify as per your data structure
+        
+        subset_edge_index = self.get_subset_edge_index(unique_node_ids)
 
         # Step 3: Predict embeddings for the subset
         outputs_subset, gat_attn = self.node_model.predict_subset(unique_node_ids, subset_edge_index)
