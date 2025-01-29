@@ -134,7 +134,7 @@ def predict(args):
     # Get patient model 
     model = get_model(args, hparams, None, all_data, edge_attr_dict,  n_nodes,load_from_checkpoint=True)
 
-    trainer = pl.Trainer(gpus=hparams['n_gpus'])
+    trainer = pl.Trainer() # gpus=hparams['n_gpus'], 
     
     t1 = time.time()
     results = trainer.predict(model, dataloaders=dataloader)
