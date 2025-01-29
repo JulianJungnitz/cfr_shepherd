@@ -333,14 +333,15 @@ class CombinedPatientNCA(pl.LightningModule):
         Returns:
             torch.Tensor: Filtered edge_index tensor of shape [2, E_subset].
         """
+        
         if unique_node_ids.numel() == 0:
-            return torch.empty((2, 0), dtype=torch.long, device=self.global_edge_index.device)
+            return torch.empty((2, 0), dtype=torch.long, device=self.all_data.edge_index.device)
 
-        mask_src = torch.isin(self.global_edge_index[0], unique_node_ids)
-        mask_dst = torch.isin(self.global_edge_index[1], unique_node_ids)
+        mask_src = torch.isin(self.all_data.edge_index[0], unique_node_ids)
+        mask_dst = torch.isin(self.all_data.edge_index[1], unique_node_ids)
         mask = mask_src & mask_dst
 
-        subset_edge_index = self.global_edge_index[:, mask]
+        subset_edge_index = self.all_data.edge_index[:, mask]
         return subset_edge_index
 
     def map_ids_vectorized(self, unique_node_ids, global_ids):
