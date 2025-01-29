@@ -616,6 +616,7 @@ def get_db_names_to_doid_dict(disease_names):
         db_name_to_doid_dict = create_names_to_doid_map(disease_names)
         with open(file_name, "wb") as handle:
             pickle.dump(db_name_to_doid_dict, handle)
+    return db_name_to_doid_dict
 
 
 def get_db_syn_names_to_doid_dict(disease_names):
@@ -627,6 +628,7 @@ def get_db_syn_names_to_doid_dict(disease_names):
         db_syn_name_to_doid_dict = create_syn_names_to_doid_map(disease_names)
         with open(file_name, "wb") as handle:
             pickle.dump(db_syn_name_to_doid_dict, handle)
+    return db_syn_name_to_doid_dict
 
 
 if __name__ == "__main__":
