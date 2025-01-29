@@ -193,6 +193,7 @@ def get_dataloaders(
     if not hparams["sample_from_gpd"]:
         gene_phen_dis_node_idx = None
     batch_sz = hparams["inference_batch_size"] if inference else hparams["batch_size"]
+    print("Dataloader batch size: ", batch_sz)
     sparse_sample = 1 if inference else hparams["sparse_sample"]
 
     # get phenotypes & genes found in train patients
