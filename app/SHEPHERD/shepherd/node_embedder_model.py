@@ -405,9 +405,9 @@ class NodeEmbeder(pl.LightningModule):
     def predict(self, data):
         # return self.predict_in_batches(data, batch_size=1024, num_neighbors=[15, 10, 5])
         n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
-
+        print("Number of Nodes: ", n_id)
         x = self.node_emb(n_id)
-
+        print("Node Embeddings: ", len(x))
         gat_attn = []
         for i in range(len(self.convs)):
             

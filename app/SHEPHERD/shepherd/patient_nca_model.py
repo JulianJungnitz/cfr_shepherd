@@ -326,6 +326,7 @@ class CombinedPatientNCA(pl.LightningModule):
 
     
     def inference(self, batch, batch_idx):
+        print("inference patient_nca")
         outputs, gat_attn = self.node_model.predict(self.all_data)
 
         pad_outputs = torch.cat([torch.zeros(1, outputs.size(1), device=outputs.device), outputs]) 
@@ -349,6 +350,7 @@ class CombinedPatientNCA(pl.LightningModule):
 
 
     def predict_step(self, batch, batch_idx):
+        print("predict_step")
         node_embeddings, gat_attn, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights = self.inference(batch, batch_idx)
 
         # calculate patient embedding loss
