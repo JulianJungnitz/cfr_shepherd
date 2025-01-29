@@ -439,6 +439,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
             data['disease_one_hot_labels'] = disease_labels 
 
         if self.hparams['loss'] == 'patient_patient_NCA':
+            print("patient_labels", patient_labels)
             if patient_labels is None: data['patient_labels'] = None
             else: data['patient_labels'] = torch.stack(patient_labels)
 

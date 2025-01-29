@@ -262,6 +262,12 @@ def transform_sim_patients(file):
     patients_without_candidate_genes = 0
     print_n = 5
     final_data = []
+    kg_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/KG_node_map.txt"
+    df = pd.read_csv(
+        kg_file,
+        sep="\t",
+    )
+    kg_genes = set(df[df["node_type"] == "Gene"]["node_name"])
     for patient in new_data:
         true_genes = patient.get("true_genes", [])
         candidate_genes = patient.get("all_candidate_genes", [])
@@ -273,7 +279,13 @@ def transform_sim_patients(file):
                 print("True genes not found: ", true_genes)
                 print_n -= 1
         else:
-            final_data.append(patient)
+            add_paitent = True
+            for gene in patient["true_genes"]:
+                if gene not in kg_genes:
+                    add_paitent = False
+                    print("Gene not in KG: ", gene)
+            if add_paitent:
+                final_data.append(patient)  
         if len(patient["all_candidate_genes"]) == 0:
             patients_without_candidate_genes += 1
 
@@ -378,11 +390,32 @@ def test_mapping():
     print("Not found: ", len(not_found))
 
 
+def check_patients_data():
+    file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted_new.jsonl"
+    with open(file, "r") as f:
+        data = [json.loads(line) for line in f]
+        
+    
+    # check if all patients have true genes
+    patients_withoute_true_genes = 0
+    patients_without_candidate_genes = 0
+    for patient in data:
+        true_genes = patient.get("true_genes", [])
+        candidate_genes = patient.get("all_candidate_genes", [])
+        if len(true_genes) == 0:
+            patients_withoute_true_genes += 1
+        if len(candidate_genes) == 0:
+            patients_without_candidate_genes += 1
+    
+    print("Patients without true genes: ", patients_withoute_true_genes)
+    print("Patients without candidate genes: ", patients_without_candidate_genes)
+
+
 if __name__ == "__main__":
     # save_mondo_to_diod()
     # test_mapping()
     # save_ens_to_id_dict()
-    
+    # check_patients_data()
     transform_sim_patients(
         "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl"
     )

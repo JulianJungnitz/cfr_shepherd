@@ -35,6 +35,9 @@ class PatientDataset(Dataset):
         for patient in self.patients:
             if "true_genes" not in patient:
                 patient["true_genes"] = []
+                # remove patinet from dataset if they don't have true genes
+                # print("true_genes not in patient")
+                # self.patients.remove(patient)
             if "true_diseases" not in patient:
                 patient["true_diseases"] = []
                 if(print_count > 0):
@@ -127,6 +130,7 @@ class PatientDataset(Dataset):
                     self.patients_with_same_gene[p].extend(
                         [pat for pat in patients if pat != p]
                     )
+        
 
         # get patients with similar diseases
         if all(
