@@ -596,7 +596,7 @@ def test_disease_mappings(score_file_path):
     ].nunique()
 
     print(
-        """Total Diseases: {total_diseases}, Total Diseases in Mondo: {total_diseases_in_mondo}, 
+        f"""Total Diseases: {total_diseases}, Total Diseases in Mondo: {total_diseases_in_mondo}, 
         Total Diseases in DB: {total_diseases_in_db}, Total Diseases in DB Syn: {total_diseases_in_db_syn}, 
         Total Diseases in HPO: {total_diseases_in_hpo}, Total Diseases in Mondo Name: {total_diseases_in_mondo_name}"""
     )
