@@ -9,6 +9,7 @@ import sys
 
 from app.SHEPHERD import project_utils
 from tqdm import tqdm
+from pronto import Ontology
 
 
 def evaluate_patients_like_me(score_file_path, min_dis_count=3):
@@ -578,6 +579,12 @@ def test_disease_mappings(score_file_path):
         {k: v for k, v in list(name_to_mondo_dict.items())[:5]},
     )
 
+    mondo_id_to_doid_dict = get_mondo_id_to_doid_dict()
+    print(
+        "First mondo_id_to_doid_dict: ",
+        {k: v for k, v in list(mondo_id_to_doid_dict.items())[:5]},
+    )
+
     total_diseases = len(disease_names)
     total_diseases_in_mondo = df[df["diseases"].isin(mondo_to_doid_dict.keys())][
         "diseases"
@@ -595,10 +602,17 @@ def test_disease_mappings(score_file_path):
         "diseases"
     ].nunique()
 
+    # first map using the mondo to name dict then from mondo to doid
+    df["mondo_id"] = df["diseases"].map(name_to_mondo_dict)
+    df["doid"] = df["mondo_id"].map(mondo_id_to_doid_dict)
+    total_diseases_mondo_name_mondo_id_doid = df[df["doid"].notnull()]["diseases"].nunique()
+
     print(
         f"""Total Diseases: {total_diseases}, Total Diseases in Mondo: {total_diseases_in_mondo}, 
         Total Diseases in DB: {total_diseases_in_db}, Total Diseases in DB Syn: {total_diseases_in_db_syn}, 
-        Total Diseases in HPO: {total_diseases_in_hpo}, Total Diseases in Mondo Name: {total_diseases_in_mondo_name}"""
+        Total Diseases in HPO: {total_diseases_in_hpo}, Total Diseases in Mondo Name: {total_diseases_in_mondo_name}
+        Total Diseases in Mondo Name to Mondo ID to DOID: {total_diseases_mondo_name_mondo_id_doid}
+"""
     )
 
     # check overlap
@@ -669,6 +683,41 @@ def get_name_to_mondo_dict():
     name_to_mondo = {v: k for k, v in mondo_to_name_dict.items()}
     return name_to_mondo
 
+def get_mondo_id_to_doid_dict():
+    file = project_config.PROJECT_DIR / "mondo_id_to_doid_dict.pkl"
+    if file.exists():
+        with open(file, "rb") as handle:
+            mondo_id_to_doid_dict = pickle.load(handle)
+    else:
+        mondo_id_to_doid_dict = create_mondo_id_to_doid_map()
+        with open(file, "wb") as handle:
+            pickle.dump(mondo_id_to_doid_dict, handle) 
+
+def create_mondo_id_to_doid_map():
+    mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
+    mondo_rare_ontology = Ontology(project_config.PROJECT_DIR / 'mondo-rare.obo')
+    mondo_to_doid_dict = {}
+    print('Creating mondo to DOID dict')
+    for term in mondo_ontology.terms():
+        if term.id.startswith("MONDO:"):
+            for xref in term.xrefs:
+                if xref.id.startswith("DOID:"):
+                    mondo_to_doid_dict[term.id] = xref.id
+                    break
+
+    print("len mondo_to_doid_dict: ", len(mondo_to_doid_dict))
+
+    for term in mondo_rare_ontology.terms():
+        if term.id.startswith("MONDO:"):
+            for xref in term.xrefs:
+                if xref.id.startswith("DOID:"):
+                    mondo_to_doid_dict[term.id] = xref.id
+                    break
+
+    print("len after rare dis: ", len(mondo_to_doid_dict))
+
+
+    return mondo_to_doid_dict
 
 def get_db_syn_names_to_doid_dict(disease_names):
     file_name = project_config.PROJECT_DIR / "db_syn_name_to_doid_dict.pkl"
