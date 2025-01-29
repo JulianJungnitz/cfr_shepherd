@@ -54,10 +54,10 @@ def predict_causal_gene_discovery():
     utils.run_subprocess(command)
 
 
-def predict_disease_categorization(PATIENTS_AGGR_NODES=None):
+def predict_disease_categorization(PATIENTS_AGGR_NODES=None, checkpoint_appendix=""):
     dir = utils.SHEPHERD_DIR
     print("Predicting disease categorization. Dir: " + dir)
-    command = ["bash", dir + "/predict_disease_categorization.sh", PATIENTS_AGGR_NODES]
+    command = ["bash", dir + "/predict_disease_categorization.sh", PATIENTS_AGGR_NODES, checkpoint_appendix]
     utils.run_subprocess(command)
 
 
@@ -180,6 +180,7 @@ def main():
     CREATE_SPL_MATRIX = config["shepherd"]["CREATE_SPL_MATRIX"]
     USE_SIMULATED_DATA = config["shepherd"]["USE_SIMULATED_PATIENTS"]
     USE_HAUNER_GRAPH = config["shepherd"]["USE_HAUNER_GRAPH"]
+    checkpoint_appendix = "_hauner" if USE_HAUNER_GRAPH else ""
     if CREATE_SPL_MATRIX:
         generate_spl_matrix(
             "shepherd" if USE_HAUNER_GRAPH else "primeKG",
@@ -219,7 +220,7 @@ def main():
     RUN_DISEASE_CATEGORIZATION = config["shepherd"]["RUN_DISEASE_CATEGORIZATION"]
     if RUN_DISEASE_CATEGORIZATION:
         predict_disease_categorization(
-            PATIENTS_AGGR_NODES,
+            PATIENTS_AGGR_NODES, checkpoint_appendix
         )
 
     MOVE_RESULTS_TO_OUTPUT_DIR = config["shepherd"]["MOVE_RESULTS_TO_OUTPUT_DIR"]
