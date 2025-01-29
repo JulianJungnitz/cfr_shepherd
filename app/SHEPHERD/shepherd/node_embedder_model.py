@@ -440,6 +440,7 @@ class NodeEmbeder(pl.LightningModule):
 
     @torch.no_grad()  # Disable gradient tracking for inference
     def predict(self, data):
+        return self.predict_with_mini_batches(data, batch_size=1024, num_neighbors=[15, 10, 5])
         print("[predict] Moving edge_index to GPU once...")
         edge_index = data.edge_index.to(self.device)
         print(f"[predict] edge_index shape: {edge_index.shape}, device: {edge_index.device}")
