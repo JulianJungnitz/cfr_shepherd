@@ -323,7 +323,6 @@ class CombinedPatientNCA(pl.LightningModule):
             })
         
         return batch_results
-
     def get_subset_edge_index(self, unique_node_ids):
         """
         Filters the global edge_index to include only edges where both source and target nodes are in unique_node_ids.
@@ -334,17 +333,43 @@ class CombinedPatientNCA(pl.LightningModule):
         Returns:
             torch.Tensor: Filtered edge_index tensor of shape [2, E_subset].
         """
-        print("All data: ", self.all_data)
-        print("All data edge index: ", self.all_data.edge_index)
+        if unique_node_ids.numel() == 0:
+            return torch.empty((2, 0), dtype=torch.long, device=self.global_edge_index.device)
 
-
-        mask_src = torch.isin(self.all_data.edge_index[0], unique_node_ids)
-        mask_dst = torch.isin(self.all_data.edge_index[1], unique_node_ids)
+        mask_src = torch.isin(self.global_edge_index[0], unique_node_ids)
+        mask_dst = torch.isin(self.global_edge_index[1], unique_node_ids)
         mask = mask_src & mask_dst
 
-        subset_edge_index = self.all_data.edge_index[:, mask]
+        subset_edge_index = self.global_edge_index[:, mask]
         return subset_edge_index
-    
+
+    def map_ids_vectorized(self, unique_node_ids, global_ids):
+        """
+        Maps global node IDs to local indices using vectorized operations.
+
+        Args:
+            unique_node_ids (torch.Tensor): Tensor of unique node IDs in the subset.
+            global_ids (torch.Tensor): Tensor containing global node IDs to be mapped.
+
+        Returns:
+            torch.Tensor: Tensor of mapped local node indices.
+        """
+        if unique_node_ids.numel() == 0:
+            return torch.zeros_like(global_ids)
+
+        # Create a mapping tensor where index represents the global node ID
+        max_id = unique_node_ids.max()
+        mapping_tensor = torch.zeros(max_id + 1, dtype=torch.long, device=unique_node_ids.device)
+        mapping_tensor[unique_node_ids] = torch.arange(1, unique_node_ids.size(0) + 1, device=unique_node_ids.device)  # +1 for padding
+
+        # Handle cases where global_ids might exceed the mapping_tensor size
+        if global_ids.max() >= mapping_tensor.size(0):
+            raise ValueError("Global IDs exceed the range of unique_node_ids.")
+
+        # Map global_ids to local indices, assign 0 if not found
+        mapped_ids = mapping_tensor[global_ids]
+        return mapped_ids
+
     def inference(self, batch, batch_idx):
         print("Inference: Patient NCA")
 
@@ -353,44 +378,57 @@ class CombinedPatientNCA(pl.LightningModule):
             batch.batch_pheno_nid.view(-1),
             batch.batch_cand_disease_nid.view(-1) if self.hparams.hparams['loss'] == 'patient_disease_NCA' else torch.tensor([], device=batch.batch_pheno_nid.device)
         ]))
-        unique_node_ids = unique_node_ids[unique_node_ids != 0]  # Exclude padding (if 0 is padding)
+        unique_node_ids = unique_node_ids[unique_node_ids != 0]  # Exclude padding (assuming 0 is padding)
 
         print(f"Unique Node IDs: {unique_node_ids}")
 
-        
+        # Step 2: Obtain subset_edge_index by filtering global_edge_index
         subset_edge_index = self.get_subset_edge_index(unique_node_ids)
+        print(f"Subset Edge Index shape: {subset_edge_index.shape}")
 
-        # Step 3: Predict embeddings for the subset
-        outputs_subset, gat_attn = self.node_model.predict_subset(unique_node_ids, subset_edge_index)
+        # Step 3: Remap the subset_edge_index to local node indices using vectorized mapping
+        if subset_edge_index.numel() > 0:
+            source_global = subset_edge_index[0]
+            target_global = subset_edge_index[1]
+            source_local = self.map_ids_vectorized(unique_node_ids, source_global)
+            target_local = self.map_ids_vectorized(unique_node_ids, target_global)
+            subset_edge_index_local = torch.stack([source_local, target_local], dim=0)
+        else:
+            # Handle cases with no edges
+            subset_edge_index_local = torch.empty((2, 0), dtype=torch.long, device=unique_node_ids.device)
 
-        # Step 4: Create padding (0) for index mapping
+        print(f"Subset Edge Index (local) shape: {subset_edge_index_local.shape}")
+
+        # Step 4: Predict embeddings for the subset
+        outputs_subset, gat_attn = self.node_model.predict_subset(unique_node_ids, subset_edge_index_local)
+
+        # Step 5: Create padding (0) for index mapping
         pad_outputs = torch.cat([torch.zeros(1, outputs_subset.size(1), device=outputs_subset.device), outputs_subset])  # Index 0 is padding
 
-        # Step 5: Create a mapping from global node IDs to local indices
-        id_map = {nid.item(): idx + 1 for idx, nid in enumerate(unique_node_ids)}  # +1 to reserve 0 for padding
-
-        # Function to map global IDs to local indices
-        def map_ids(global_ids):
-            return torch.tensor([id_map.get(nid.item(), 0) for nid in global_ids.view(-1)], device=pad_outputs.device)
-
         # Step 6: Apply mapping to phenotype and disease node IDs
-        phenotype_mapped = map_ids(batch.batch_pheno_nid)
-        phenotype_mask = (phenotype_mapped != 0)
+        device = pad_outputs.device
 
+        # Map phenotype node IDs
+        phen_global_ids = batch.batch_pheno_nid.view(-1)
+        phen_mapped = self.map_ids_vectorized(unique_node_ids, phen_global_ids)
+        phenotype_mask = (phen_mapped != 0)
+
+        # Map disease node IDs, if applicable
         if self.hparams.hparams['loss'] == 'patient_disease_NCA':
-            disease_mapped = map_ids(batch.batch_cand_disease_nid)
-            disease_mask = (disease_mapped != 0)
+            dx_global_ids = batch.batch_cand_disease_nid.view(-1)
+            dx_mapped = self.map_ids_vectorized(unique_node_ids, dx_global_ids)
+            disease_mask = (dx_mapped != 0)
         else:
-            disease_mapped = None
+            dx_mapped = None
             disease_mask = None
 
-        # Step 7: Reshape to [batch_size, max_num, embedding_dim]
+        # Step 7: Reshape embeddings
         batch_sz, max_n_phen = batch.batch_pheno_nid.shape
-        phenotype_embeddings = torch.index_select(pad_outputs, 0, phenotype_mapped).view(batch_sz, max_n_phen, -1)
+        phenotype_embeddings = torch.index_select(pad_outputs, 0, phen_mapped).view(batch_sz, max_n_phen, -1)
 
         if self.hparams.hparams['loss'] == 'patient_disease_NCA':
             batch_sz, max_n_dx = batch.batch_cand_disease_nid.shape
-            disease_embeddings = torch.index_select(pad_outputs, 0, disease_mapped).view(batch_sz, max_n_dx, -1)
+            disease_embeddings = torch.index_select(pad_outputs, 0, dx_mapped).view(batch_sz, max_n_dx, -1)
         else:
             disease_embeddings = None
 

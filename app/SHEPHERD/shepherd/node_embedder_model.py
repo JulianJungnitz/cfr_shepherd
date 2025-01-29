@@ -398,7 +398,7 @@ class NodeEmbeder(pl.LightningModule):
         self._logger({'node_curr_epoch': self.current_epoch})
 
     def forward(self, n_ids, adjs):
-        """Multi-layer neighbor GAT forward (used in training & inference)."""
+        """Existing forward method."""
         x = self.node_emb(n_ids)
         gat_attn = []
         for i, (edge_index, _, edge_type, size) in enumerate(adjs):
@@ -415,7 +415,7 @@ class NodeEmbeder(pl.LightningModule):
 
         Args:
             unique_node_ids (torch.Tensor): Tensor of unique node IDs in the batch.
-            edge_index (torch.Tensor): Edge indices corresponding to the subset.
+            edge_index (torch.Tensor): Edge indices corresponding to the subset (local indices).
 
         Returns:
             torch.Tensor: Node embeddings for the subset.
