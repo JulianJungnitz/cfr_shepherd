@@ -324,6 +324,7 @@ def map_disease_to_doid(df):
     print("First mondo_name_to_doid_dict: ", {k: v for k, v in list(mondo_name_to_doid_dict.items())[:5]})
     print("Len: ", len(mondo_name_to_doid_dict))
     df["doid"] = df["diseases"].map(mondo_name_to_doid_dict)
+    df["doid"] = df["doid"].apply(lambda x: str(int(x.split(":")[-1])) if x is not None else None)
 
     return df
 
