@@ -232,6 +232,7 @@ def get_predict_hparams(args):
                'log_gpu_memory': False,
                'debug': False,
                'alpha': 0, # set by Julian
+               "graph_shema": args.graph_shema,
 
                'augment_genes': False, # Set to false as there is no augmentation gene pred map during predictions.
                'n_sim_genes': 3,
