@@ -31,7 +31,7 @@ class CombinedPatientNCA(pl.LightningModule):
     def __init__(self, edge_attr_dict, all_data, n_nodes=None, node_ckpt=None, hparams=None):
         super().__init__()
         self.save_hyperparameters('hparams') 
-
+        print("Combinded Patient NCA all data length: ", len(all_data))
         self.all_data = all_data
 
         self.all_train_nodes = []
@@ -327,6 +327,8 @@ class CombinedPatientNCA(pl.LightningModule):
     
     def inference(self, batch, batch_idx):
         print("inference patient_nca")
+
+        print("batch: ",batch);
         outputs, gat_attn = self.node_model.predict(self.all_data)
 
         pad_outputs = torch.cat([torch.zeros(1, outputs.size(1), device=outputs.device), outputs]) 
