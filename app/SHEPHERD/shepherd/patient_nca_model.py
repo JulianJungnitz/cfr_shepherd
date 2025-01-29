@@ -335,7 +335,7 @@ class CombinedPatientNCA(pl.LightningModule):
         print("First 5 of batch.n_id: ", batch.n_id[:5])
         print("First 5 of batch.batch_pheno_nid: ", batch.batch_pheno_nid[0][:5], batch.batch_pheno_nid[1][:5],)
         print("First 5 of batch.batch_cand_disease_nid: ", batch.batch_cand_disease_nid[0][:5], batch.batch_cand_disease_nid[1][:5],)
-        unique_n_ids = torch.cat([ batch.batch_pheno_nid, batch.batch_cand_disease_nid]).tolist()
+        unique_n_ids = torch.cat([ batch.batch_pheno_nid,]).tolist()
 
         outputs, gat_attn = self.node_model.predict(self.all_data, batch, unique_n_ids)
 
