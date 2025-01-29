@@ -398,185 +398,50 @@ class NodeEmbeder(pl.LightningModule):
         self._logger({'node_curr_epoch': self.current_epoch})
 
     
-    # def predict(self, data):
-    #     n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
 
-    #     x = self.node_emb(n_id)
-
-    #     gat_attn = []
-    #     for i in range(len(self.convs)):
-            
-    #         # Update node embeddings
-    #         print("Move to GPU: predict - update node embeddings")
-    #         print("Data edge index length: ", data.edge_index.size())
-    #         for edge_index in data.edge_index:
-    #             print("Edge Index size: ", edge_index.size())
-    #         data.edge_index.to(self.device)
-    #         print("Moved edge_index to GPU")
-
-    #         x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) # 
-    #         print("Moved: predict - update node embeddings")
-
-    #         edge_i = edge_i.detach().cpu()
-    #         alpha = alpha.detach().cpu()
-    #         edge_i[0,:] = n_id[edge_i[0,:]]
-    #         edge_i[1,:] = n_id[edge_i[1,:]]
-    #         gat_attn.append((edge_i, alpha))
-            
-    #         # Normalize
-    #         if i != self.n_layers - 1:
-    #             if self.norm_method in ["batch", "layer"]:
-    #                 x = self.norms[i](x)
-    #             elif self.norm_method == "batch_layer":
-    #                 x = self.layer_norms[i](x)
-    #             x = F.leaky_relu(x)
-    #             if self.norm_method == "batch_layer":
-    #                 x = self.batch_norms[i](x)
-        
-    #     assert x.shape[0] == self.node_emb.weight.shape[0]
-
-    #     return x, gat_attn
 
 
     @torch.no_grad()  # Disable gradient tracking for inference
     def predict(self, data):
-        return self.predict_in_batches(data, batch_size=1024, num_neighbors=[15, 10, 5])
-        print("[predict] Moving edge_index to GPU once...")
-        edge_index = data.edge_index.to(self.device)
-        print(f"[predict] edge_index shape: {edge_index.shape}, device: {edge_index.device}")
-
-        # Create an index of all node IDs
+        # return self.predict_in_batches(data, batch_size=1024, num_neighbors=[15, 10, 5])
         n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
-        print(f"[predict] Created n_id of shape: {n_id.shape}")
 
-        # Initial node embeddings from your embedding layer
         x = self.node_emb(n_id)
-        print(f"[predict] Initial node embeddings x shape: {x.shape}, device: {x.device}")
 
         gat_attn = []
-        for i, conv in enumerate(self.convs):
-            print(f"\n[predict] ----- Convolution layer {i+1} / {len(self.convs)} -----")
+        for i in range(len(self.convs)):
             
-            # Forward pass with attention
-            out = conv(x, edge_index, return_attention_weights=False)
-            x, (edge_i, alpha) = out
-            del out  # Explicitly free the temporary tuple
+            # Update node embeddings
+            print("Move to GPU: predict - update node embeddings")
+            print("Data edge index length: ", data.edge_index.size())
+            for edge_index in data.edge_index:
+                print("Edge Index size: ", edge_index.size())
+            data.edge_index.to(self.device)
+            print("Moved edge_index to GPU")
 
-            print(f"[predict]   After conv {i+1}, x.shape: {x.shape}")
-            print(f"[predict]   edge_i.shape: {edge_i.shape}, alpha.shape: {alpha.shape}")
+            x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) # 
+            print("Moved: predict - update node embeddings")
 
-            # Detach and move attention weights to CPU to free GPU memory
             edge_i = edge_i.detach().cpu()
             alpha = alpha.detach().cpu()
-
-            # Remap local subgraph indices back to global n_id if necessary
-            edge_i[0, :] = n_id[edge_i[0, :]]
-            edge_i[1, :] = n_id[edge_i[1, :]]
+            edge_i[0,:] = n_id[edge_i[0,:]]
+            edge_i[1,:] = n_id[edge_i[1,:]]
             gat_attn.append((edge_i, alpha))
-
-            # Apply normalization and activation except on the last layer
+            
+            # Normalize
             if i != self.n_layers - 1:
                 if self.norm_method in ["batch", "layer"]:
                     x = self.norms[i](x)
-                    print(f"[predict]   Applied norm method: {self.norm_method}")
                 elif self.norm_method == "batch_layer":
                     x = self.layer_norms[i](x)
-                    print("[predict]   Applied layer_norms")
                 x = F.leaky_relu(x)
                 if self.norm_method == "batch_layer":
                     x = self.batch_norms[i](x)
-                    print("[predict]   Applied batch_norms")
+        
+        assert x.shape[0] == self.node_emb.weight.shape[0]
 
-        print(f"\n[predict] Final x shape: {x.shape}")
-        print(f"[predict] Expected number of nodes: {self.node_emb.weight.shape[0]}")
-        assert x.shape[0] == self.node_emb.weight.shape[0], \
-            "Output embedding size does not match the number of nodes."
-
-        print("[predict] Done with prediction.")
         return x, gat_attn
 
-
-    @torch.no_grad()
-    def predict_in_batches(self, data, batch_size=1024, num_neighbors=[15, 10, 5]):
-        """
-        Perform GNN inference via mini-batch neighbor sampling, using self.forward(n_ids, adjs).
-        
-        Args:
-            data (torch_geometric.data.Data): Full graph Data object.
-            batch_size (int): Number of seed (target) nodes per mini-batch.
-            num_neighbors (List[int]): Number of neighbors to sample at each hop.
-
-        Returns:
-            all_embeddings (torch.Tensor): Final node embeddings for all nodes in data (size [num_nodes, output_dim]).
-        """
-
-        self.eval()  # Put model in eval mode (no dropout, no grad)
-        device = self.device
-
-        # 1) We want embeddings for *all* nodes:
-        all_node_ids = torch.arange(data.num_nodes)
-
-        # 2) Create a NeighborLoader that yields (n_id, adjs) compatible with self.forward
-        loader = NeighborLoader(
-            data,
-            input_nodes=all_node_ids,   # or data.test_mask if you only need certain nodes
-            num_neighbors=num_neighbors,
-            batch_size=batch_size,
-            shuffle=False,
-            # directed=True or False, depending on your graph. Typically True for GAT.
-            # The important part is that PyG returns .n_id and .adjs for each batch
-        )
-
-        # 3) Prepare a storage tensor for all embeddings
-        #    In your code, final dimension = self.output * self.n_heads (or self.output if you combine heads)
-        #    But for the snippet below, let's do it generically:
-        final_dim = self.output * self.n_heads  # or however you set your final dimension
-        all_embeddings = torch.zeros(data.num_nodes, final_dim, device='cpu')
-
-        # 4) Loop over each subgraph mini-batch
-        print(f"[Inference] Starting neighbor-loader inference with batch_size={batch_size}")
-        for batch_idx, mini_batch in enumerate(loader):
-            # Each 'mini_batch' is a PyG Data-like object containing:
-            #  mini_batch.n_id (the global IDs of all nodes in this subgraph)
-            #  mini_batch.adjs (list of (edge_index, e_id, e_type, size), one per GNN layer)
-            #  mini_batch.batch_size (number of *seed* nodes) — note: In PyG >= 2.3 it may differ; check docs
-
-            # 4a) Move to device
-            mini_batch = mini_batch.to(device)
-            # n_id is shape [num_subgraph_nodes], adjs is a list of size self.n_layers
-            # For example, self.n_layers=3 → adjs has 3 tuples
-
-            # 4b) Forward pass
-            #     self.forward(...) returns final node embeddings (x) of shape [num_subgraph_nodes, final_dim]
-            #     but the first mini_batch.adjs[i].size[1] entries of x at each layer are the *target (seed) nodes*
-            #     The rest are the sampled neighborhood. After the last layer, we only want x[:size[1]].
-            x_batch, _ = self.forward(mini_batch.n_id, mini_batch.adjs)
-
-            # 4c) Typically, each adjacency in adjs has a .size = (num_src, num_dst).
-            #     The last adjacency -> size = (N_in, N_out). N_out = mini_batch.batch_size
-            #     We only store the final embeddings for the *seed* (target) nodes in this batch.
-            #     In your code, you do x_target = x[:size[1]] in each layer; so x at the end
-            #     might already only be the target portion. Double-check your code logic:
-            #     - If x is entire subgraph embeddings at the last layer, do this:
-            #         size_out = mini_batch.adjs[-1].size[1]  # number of seed nodes in this batch
-            #         x_seed = x_batch[:size_out]
-            #
-            #     - If your `forward` already ends with `x` = target-only embeddings, you can skip slicing.
-            #       We'll assume you need slicing:
-            size_out = mini_batch.adjs[-1].size[1]
-            x_seed = x_batch[:size_out]  # shape [batch_size, final_dim]
-
-            # 4d) Get the global IDs of the seed nodes (the first `size_out` of mini_batch.n_id)
-            #     In modern PyG, the seed nodes typically come first in mini_batch.n_id, so:
-            target_n_id = mini_batch.n_id[:size_out]
-
-            # 4e) Store the seed-node embeddings into all_embeddings
-            all_embeddings[target_n_id] = x_seed.detach().cpu()
-
-            print(f"  [Batch {batch_idx+1}] Stored embeddings for {size_out} seed nodes")
-
-        print("[Inference] Done. All node embeddings shape =", all_embeddings.shape)
-        return all_embeddings
 
 
 
@@ -612,3 +477,62 @@ class NodeEmbeder(pl.LightningModule):
 
         return norm_loss 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @torch.no_grad()
+    def predict_in_batches(self, data, batch_size=1024, sizes=[15, 10, 5]):
+        self.eval()
+        device = self.device
+
+        # Create the sampler:
+        sampler = NeighborSampler(
+            data.edge_index,        # adjacency
+            node_idx=torch.arange(data.num_nodes),  
+            sizes=sizes,
+            batch_size=batch_size,
+            shuffle=False
+        )
+
+        # Prepare final embeddings
+        # final_dim = self.output * self.n_heads (depending on your architecture)
+        final_dim = self.output 
+        all_embeddings = torch.zeros(data.num_nodes, final_dim, device='cpu')
+
+        for batch_i, (batch_size, n_id, adjs) in enumerate(sampler):
+            # Move to device
+            adjs = [adj.to(device) for adj in adjs]
+            n_id = n_id.to(device)
+
+            # forward returns final node embeddings for the *target nodes* 
+            # in this batch (in GNN code, often x[:size[1]] is for the seeds)
+            x_batch, _ = self.forward(n_id, adjs)
+
+            # The last adjacency gives us size[1] = number of seed nodes
+            size_out = adjs[-1].size[1]
+            x_seed = x_batch[:size_out]
+
+            # n_id[:size_out] are the actual seed nodes we want to store
+            seed_nid = n_id[:size_out]
+            all_embeddings[seed_nid] = x_seed.cpu()
+
+            print(f"Batch {batch_i+1} done. Stored embeddings for {size_out} nodes")
+
+        return all_embeddings
