@@ -407,14 +407,18 @@ class NodeEmbeder(pl.LightningModule):
             
             # Update node embeddings
             print("Move to GPU: predict - update node embeddings")
-            x = self.convs[i](x, data.edge_index.to(self.device), ) # return_attention_weights=True
+            print("Data edge index length: ", len(data.edge_index))
+            data.edge_index.to(self.device)
+            print("Moved edge_index to GPU")
+
+            x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) # 
             print("Moved: predict - update node embeddings")
 
             edge_i = edge_i.detach().cpu()
             alpha = alpha.detach().cpu()
             edge_i[0,:] = n_id[edge_i[0,:]]
             edge_i[1,:] = n_id[edge_i[1,:]]
-            # gat_attn.append((edge_i, alpha))
+            gat_attn.append((edge_i, alpha))
             
             # Normalize
             if i != self.n_layers - 1:
