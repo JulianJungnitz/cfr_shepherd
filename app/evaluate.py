@@ -390,7 +390,7 @@ def evaluate_disease_characterization(
     grouped = df.groupby("patient_id")
 
     patient_sim_map = {}
-    max_k = 10
+    max_k = 20
     for patient_id, group in grouped:
         for k in range(1, max_k + 1):
             overlap_score, overlap_score_random = get_disease_similarity_scores(
@@ -450,12 +450,25 @@ def plot_disease_similarity_avg(
         k_overlap_random_total[k] / number_of_patient for k in k_values
     ]
 
+    # Aggregated lines
+    k_overlap_cumsum = []
+    k_overlap_random_cumsum = []
+    cum_sum = 0
+    cum_sum_random = 0
+    for i in range(len(k_values)):
+        cum_sum += k_overlap_avg[i]
+        cum_sum_random += k_overlap_random_avg[i]
+        k_overlap_cumsum.append(cum_sum)
+        k_overlap_random_cumsum.append(cum_sum_random)
+
     plt.figure(figsize=(8, 6))
     plt.plot(k_values, k_overlap_avg, label="Patients has disease")
     plt.plot(k_values, k_overlap_random_avg, label="Random Baseline")
+    plt.plot(k_values, k_overlap_cumsum, label="Aggregated")
+    plt.plot(k_values, k_overlap_random_cumsum, label="Aggregated Random")
 
     plt.xlabel("Top-K Similar Diseases")
-    plt.ylabel("Has disease avgerage")
+    plt.ylabel("Has disease average")
     plt.title("Disease Characterization: Patient has disease at position k")
     plt.legend()
     plt.grid(axis="y", linestyle="--", alpha=0.7)
