@@ -4,6 +4,7 @@ import torch.nn as nn
 
 import torch.nn.functional as F
 from torch_geometric.nn import BatchNorm, LayerNorm, GATv2Conv
+from torch_geometric.loader.neighbor_loader import NeighborLoader
 
 # Pytorch Lightning
 import pytorch_lightning as pl
@@ -492,6 +493,122 @@ class NodeEmbeder(pl.LightningModule):
 
         print("[predict] Done with prediction.")
         return x, gat_attn
+
+
+    @torch.no_grad()  
+    def predict_with_mini_batches(self, data, batch_size=1024, num_neighbors=[15, 10, 5]):
+        """
+        Perform GNN inference via mini-batch neighbor sampling.
+        
+        Args:
+            data (torch_geometric.data.Data): The PyG Data object for your entire graph.
+            batch_size (int): Number of seed nodes per mini-batch.
+            num_neighbors (List[int]): Number of neighbors to sample at each GNN layer depth.
+
+        Returns:
+            all_embeddings (torch.Tensor): Node embeddings for all nodes in `data.x`.
+            all_attention (dict, optional): (edge_index, alpha) for each sub-graph, or None if disabled.
+        """
+
+        device = self.device  # Or torch.device('cuda') as needed
+        self.eval()           # Put the model in eval mode
+
+        # 1) Identify the target nodes to predict. For node-level tasks, we often want *all* nodes:
+        all_node_ids = torch.arange(data.num_nodes)
+
+        # 2) Create a NeighborLoader for inference
+        #    This will sample up to num_neighbors[0] neighbors at the first hop,
+        #    num_neighbors[1] at the second hop, etc.
+        inf_loader = NeighborLoader(
+            data, 
+            input_nodes=all_node_ids, 
+            num_neighbors=num_neighbors, 
+            batch_size=batch_size,
+            shuffle=False   # Inference typically doesn't need shuffling
+        )
+
+        # 3) Prepare a tensor to hold the final embeddings for ALL nodes
+        #    Suppose your model outputs 'hidden_dim' embeddings in the last layer:
+        hidden_dim = self.convs[-1].out_channels  # Or however you define your output dim
+        all_embeddings = torch.zeros((data.num_nodes, hidden_dim), dtype=torch.float32)
+
+        # (Optional) If you need to store attention for all sub-graphs, define a structure:
+        # But storing all edges' attention can be huge for 70M edges.  
+        # This snippet shows how you *could* do it, but consider memory constraints!
+        all_attention = {}  # {batch_idx: (edge_index_cpu, alpha_cpu)}
+
+        print(f"[Mini-Batch] Starting inference with batch_size={batch_size} ...")
+
+        # 4) Loop over the sub-graphs. 
+        #    Each subgraph_data has .n_id for mapping subgraph node IDs -> global IDs.
+        for batch_idx, subgraph_data in enumerate(inf_loader):
+            print(f"[Mini-Batch] Processing batch {batch_idx+1} with {subgraph_data.num_nodes} nodes ...")
+
+            # Move the sub-graph to GPU if available
+            subgraph_data = subgraph_data.to(device)
+
+            # 4a) Forward pass: If your model has a 'forward' that can optionally return attention:
+            #     Make sure you set 'return_attention_weights=False' if you don't need them for memory reasons.
+            x_local, attn_info = self.convs_forward_with_attention(subgraph_data.x, 
+                                                                subgraph_data.edge_index, 
+                                                                return_attention_weights=True)
+
+            # 4b) Store node embeddings in the correct indices
+            #     subgraph_data.n_id maps the subgraph's node indices -> original node IDs
+            #     x_local is [num_subgraph_nodes, hidden_dim]
+            global_n_id = subgraph_data.n_id
+            all_embeddings[global_n_id] = x_local.detach().cpu()
+
+            # (Optional) If storing attention:
+            #    Note that each layer can produce different attn_info. This snippet just shows
+            #    how to store them if you REALLY need them.
+            #    But storing attention for 70M edges is extremely large. Use with caution!
+            attn_cpu = []
+            for (edge_i, alpha) in attn_info:
+                # edge_i, alpha are on GPU -> move to CPU
+                ei_cpu = edge_i.detach().cpu()
+                alpha_cpu = alpha.detach().cpu()
+                attn_cpu.append((ei_cpu, alpha_cpu))
+            all_attention[batch_idx] = attn_cpu
+
+            print(f"[Mini-Batch] Done with batch {batch_idx+1}. Copied embeddings to CPU buffer.")
+
+        print("[Mini-Batch] All batches processed. Final embeddings shape:", all_embeddings.shape)
+        # Return embeddings; if storing full attention is too big, remove or limit the usage
+        return all_embeddings, all_attention
+
+
+    def convs_forward_with_attention(self, x, edge_index, return_attention_weights=False):
+        """
+        Helper method that replicates the forward pass of your GNN. 
+        This is just an example function to illustrate returning x, attn_info.
+        
+        If your original code uses a list of GATConv layers in `self.convs`,
+        adapt accordingly.
+        """
+        # We track attention for each layer if requested
+        attn_info = [] if return_attention_weights else None
+
+        for i, conv in enumerate(self.convs):
+            if return_attention_weights:
+                x, (edge_i, alpha) = conv(x, edge_index, return_attention_weights=True)
+                # Append for this layer
+                attn_info.append((edge_i, alpha))
+            else:
+                x = conv(x, edge_index)
+
+            # Apply activation except maybe on the last layer
+            if i != self.n_layers - 1:
+                if self.norm_method in ["batch", "layer"]:
+                    x = self.norms[i](x)
+                elif self.norm_method == "batch_layer":
+                    x = self.layer_norms[i](x)
+                x = F.leaky_relu(x)
+                if self.norm_method == "batch_layer":
+                    x = self.batch_norms[i](x)
+
+        return x, attn_info
+
 
     def predict_step(self, data, data_idx):
         x, gat_attn = self.predict(data)
