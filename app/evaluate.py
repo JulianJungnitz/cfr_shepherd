@@ -324,17 +324,9 @@ def map_disease_to_doid(df):
     print("First mondo_name_to_doid_dict: ", {k: v for k, v in list(mondo_name_to_doid_dict.items())[:5]})
     print("Len: ", len(mondo_name_to_doid_dict))
     df["doid"] = df["diseases"].map(mondo_name_to_doid_dict)
-    for idx, row in df.iterrows():
-        if row["doid"] is None:
-            continue
-        else:
-            doid = row["doid"]
-            if isinstance(doid, float):
-                print(f"Float: {doid}")
-                continue
-            stripped_disease = doid.split(":")[-1]
-            stripped_disease = str(int(stripped_disease))
-            df[idx, "doid"] =stripped_disease
+    df = df[df["doid"].notnull()]
+    
+    df["doid"] = df["doid"].apply(lambda x: str(int(x.split(":")[-1])))
 
     return df
 
