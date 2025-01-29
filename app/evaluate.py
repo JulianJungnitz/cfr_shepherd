@@ -332,7 +332,7 @@ def map_disease_to_doid(df):
             if(doid is float):
                 print(f"Float: {doid}")
                 continue
-            stripped_disease = row["doid"].split(":")[-1]
+            stripped_disease = doid.split(":")[-1]
             stripped_disease = str(int(stripped_disease))
             df[idx, "doid"] =stripped_disease
 
