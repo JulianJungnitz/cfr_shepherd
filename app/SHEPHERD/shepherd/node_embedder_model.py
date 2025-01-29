@@ -124,40 +124,40 @@ class NodeEmbeder(pl.LightningModule):
             conv.reset_parameters()
         nn.init.xavier_uniform_(self.relation_weights, gain = nn.init.calculate_gain('leaky_relu'))
 
-    def forward(self, n_ids, adjs): 
-        x = self.node_emb(n_ids)
+    # def forward(self, n_ids, adjs): 
+    #     x = self.node_emb(n_ids)
         
-        gat_attn = []
-        assert len(adjs) == self.n_layers
-        for i, (edge_index, _, edge_type, size) in enumerate(adjs):
+    #     gat_attn = []
+    #     assert len(adjs) == self.n_layers
+    #     for i, (edge_index, _, edge_type, size) in enumerate(adjs):
             
-            # Update node embeddings
-            x_target = x[:size[1]]  # Target nodes are always placed first. 
+    #         # Update node embeddings
+    #         x_target = x[:size[1]]  # Target nodes are always placed first. 
             
-            # print("Type: ", type(edge_index))
-            # print("Edge Index size: ", edge_index.size)
-            # print("Edge Index (E_i) size: ", edge_index.edge_index.size())
+    #         # print("Type: ", type(edge_index))
+    #         # print("Edge Index size: ", edge_index.size)
+    #         # print("Edge Index (E_i) size: ", edge_index.edge_index.size())
 
-            x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index, return_attention_weights=True)
+    #         x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index, return_attention_weights=True)
 
-            edge_i = edge_i.detach().cpu()
-            alpha = alpha.detach().cpu()
-            edge_i[0,:] = n_ids[edge_i[0,:]]
-            edge_i[1,:] = n_ids[edge_i[1,:]]
-            gat_attn.append((edge_i, alpha))
+    #         edge_i = edge_i.detach().cpu()
+    #         alpha = alpha.detach().cpu()
+    #         edge_i[0,:] = n_ids[edge_i[0,:]]
+    #         edge_i[1,:] = n_ids[edge_i[1,:]]
+    #         gat_attn.append((edge_i, alpha))
 
-            # Normalize
-            if i != self.n_layers - 1:
-                if self.norm_method in ["batch", "layer"]:
-                    x = self.norms[i](x)
-                elif self.norm_method == "batch_layer":
-                    x = self.layer_norms[i](x)
-                x = F.leaky_relu(x)
-                if self.norm_method == "batch_layer":
-                    x = self.batch_norms[i](x)
-                x = F.dropout(x, p=self.dropout, training=self.training)
+    #         # Normalize
+    #         if i != self.n_layers - 1:
+    #             if self.norm_method in ["batch", "layer"]:
+    #                 x = self.norms[i](x)
+    #             elif self.norm_method == "batch_layer":
+    #                 x = self.layer_norms[i](x)
+    #             x = F.leaky_relu(x)
+    #             if self.norm_method == "batch_layer":
+    #                 x = self.batch_norms[i](x)
+    #             x = F.dropout(x, p=self.dropout, training=self.training)
 
-        return x, gat_attn
+        # return x, gat_attn
 
 
 
@@ -397,51 +397,78 @@ class NodeEmbeder(pl.LightningModule):
                       "test/node_total_f1": np.mean(f1)})
         self._logger({'node_curr_epoch': self.current_epoch})
 
-    
-
-
-
-    @torch.no_grad()  # Disable gradient tracking for inference
-    def predict(self, data):
-        # return self.predict_in_batches(data, batch_size=1024, num_neighbors=[15, 10, 5])
-        n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
-        print("Number of Nodes: ", n_id)
-        x = self.node_emb(n_id)
-        print("Node Embeddings: ", len(x))
-        print("Node Embeddings Shape: ", x.shape)
+    def forward(self, n_ids, adjs):
+        """Multi-layer neighbor GAT forward (used in training & inference)."""
+        x = self.node_emb(n_ids)
         gat_attn = []
-        for i in range(len(self.convs)):
-            
-            # Update node embeddings
-            print("Move to GPU: predict - update node embeddings")
-            print("Data edge index length: ", data.edge_index.size())
-            for edge_index in data.edge_index:
-                print("Edge Index size: ", edge_index.size())
-            data.edge_index.to(self.device)
-            print("Moved edge_index to GPU")
-
-            x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) # 
-            print("Moved: predict - update node embeddings")
-
-            edge_i = edge_i.detach().cpu()
-            alpha = alpha.detach().cpu()
-            edge_i[0,:] = n_id[edge_i[0,:]]
-            edge_i[1,:] = n_id[edge_i[1,:]]
+        for i, (edge_index, _, edge_type, size) in enumerate(adjs):
+            x_target = x[:size[1]]  # seed nodes
+            x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index, return_attention_weights=True)
+            # normalization, activation, dropout...
             gat_attn.append((edge_i, alpha))
-            
-            # Normalize
-            if i != self.n_layers - 1:
-                if self.norm_method in ["batch", "layer"]:
-                    x = self.norms[i](x)
-                elif self.norm_method == "batch_layer":
-                    x = self.layer_norms[i](x)
-                x = F.leaky_relu(x)
-                if self.norm_method == "batch_layer":
-                    x = self.batch_norms[i](x)
-        
-        assert x.shape[0] == self.node_emb.weight.shape[0]
-
         return x, gat_attn
+
+    @torch.no_grad()
+    def predict(self, batch):
+        """Inference on a subgraph batch. 
+           No full-graph usage => no memory blow-up on 70M edges."""
+        x, gat_attn = self.forward(batch.n_id, batch.adjs)
+        return x, gat_attn
+
+    def predict_step(self, batch, batch_idx):
+        """Lightning's hook for prediction. 
+           This gets mini-batches from your inference DataLoader."""
+        return self.predict(batch)
+
+
+
+    # @torch.no_grad()  # Disable gradient tracking for inference
+    # def predict(self, data):
+    #     # batch:  Data(adjs=[3], batch_size=23734, patient_ids=[10], n_id=[232076], 
+    #     # disease_one_hot_labels=[10, 1169], phenotype_names=[10], cand_gene_names=[10], 
+    #     # corr_gene_names=[10], disease_names=[10], cand_disease_names=[10], batch_pheno_nid=[10, 25], 
+    #     # batch_corr_gene_nid=[10, 0], batch_disease_nid=[10, 1], batch_cand_disease_nid=[10, 1169])
+
+
+    #     # return self.predict_in_batches(data, batch_size=1024, num_neighbors=[15, 10, 5])
+    #     n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
+    #     print("Number of Nodes: ", n_id)
+    #     x = self.node_emb(n_id)
+    #     print("Node Embeddings: ", len(x))
+    #     print("Node Embeddings Shape: ", x.shape)
+    #     gat_attn = []
+    #     for i in range(len(self.convs)):
+            
+    #         # Update node embeddings
+    #         print("Move to GPU: predict - update node embeddings")
+    #         print("Data edge index length: ", data.edge_index.size())
+    #         for edge_index in data.edge_index:
+    #             print("Edge Index size: ", edge_index.size())
+    #         data.edge_index.to(self.device)
+    #         print("Moved edge_index to GPU")
+
+    #         x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) # 
+    #         print("Moved: predict - update node embeddings")
+
+    #         edge_i = edge_i.detach().cpu()
+    #         alpha = alpha.detach().cpu()
+    #         edge_i[0,:] = n_id[edge_i[0,:]]
+    #         edge_i[1,:] = n_id[edge_i[1,:]]
+    #         gat_attn.append((edge_i, alpha))
+            
+    #         # Normalize
+    #         if i != self.n_layers - 1:
+    #             if self.norm_method in ["batch", "layer"]:
+    #                 x = self.norms[i](x)
+    #             elif self.norm_method == "batch_layer":
+    #                 x = self.layer_norms[i](x)
+    #             x = F.leaky_relu(x)
+    #             if self.norm_method == "batch_layer":
+    #                 x = self.batch_norms[i](x)
+        
+    #     assert x.shape[0] == self.node_emb.weight.shape[0]
+
+    #     return x, gat_attn
 
 
 

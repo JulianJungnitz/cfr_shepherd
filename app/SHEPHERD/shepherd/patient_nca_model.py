@@ -329,10 +329,10 @@ class CombinedPatientNCA(pl.LightningModule):
         print("inference patient_nca")
 
         print("batch: ",batch);
-        outputs, gat_attn = self.node_model.predict(self.all_data)
+        outputs, gat_attn = self.node_model.predict(batch)
 
-        pad_outputs = torch.cat([torch.zeros(1, outputs.size(1), device=outputs.device), outputs]) 
-
+        pad_outputs = torch.cat([torch.zeros(1, outputs.size(1), device=outputs.device), outputs])
+    
         # get masks
         phenotype_mask = (batch.batch_pheno_nid != 0)
         if self.hparams.hparams['loss'] == 'patient_disease_NCA': disease_mask = (batch.batch_cand_disease_nid != 0)
