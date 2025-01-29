@@ -320,48 +320,11 @@ def get_all_patients_diseases(df):
 
 def map_disease_to_doid(df):
 
-    # mondo_to_name_dict_file = utils.SHEPHERD_DIR + f"/data_prep/mondo_to_name_dict_8.9.21_kg.pkl"
-    # mondo_to_name_dict = pickle.load(open(mondo_to_name_dict_file, "rb"))
-    # name_to_mondo_dict = {v: k for k, v in mondo_to_name_dict.items()}
+    mondo_name_to_doid_dict = get_mondo_name_to_doid_dict()
+    print("First mondo_name_to_doid_dict: ", {k: v for k, v in list(mondo_name_to_doid_dict.items())[:5]})
+    print("Len: ", len(mondo_name_to_doid_dict))
+    df["doid"] = df["diseases"].map(mondo_name_to_doid_dict)
 
-    # orphanet_names_id_dict = project_utils.get_orphannet_names_to_Id()
-    # print("First Orphanet keys: ", list(orphanet_names_id_dict.keys())[:5])
-    # print("First Orphanet values: ", list(orphanet_names_id_dict.values())[:5])
-
-    # orphanet_to_mondo_dict = project_utils.get_orphannet_to_mondo()
-    # print("First orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
-    # print("First orphanet values: ", list(orphanet_to_mondo_dict.values())[:5])
-
-    # orphanet_to_mondo_dict = {k: int(v[0]) for k, v in orphanet_to_mondo_dict.items()}
-    # print("Mapped orphanet keys: ", list(orphanet_to_mondo_dict.keys())[:5])
-    # print("Mapped orphanet values: ", list(orphanet_to_mondo_dict.values())[:5])
-
-    # mondo_to_doid_dict = project_utils.get_mondo_to_doid_dict()
-    # print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
-
-    # mondo_to_doid_dict = {int(k.replace("MONDO:", "").lstrip("0")): v for k, v in mondo_to_doid_dict.items()}
-
-    # print("First monod keys: ", list(mondo_to_doid_dict.keys())[:5])
-    # print("First monod values: ", list(mondo_to_doid_dict.values())[:5])
-
-    # min_mondo = min(int(k) for k in mondo_to_doid_dict.keys())
-    # max_mondo = max(int(k) for k in mondo_to_doid_dict.keys())
-
-    # print("Min Mondo: ", min_mondo)
-    # print("Max Mondo: ", max_mondo)
-
-    # df["orphanet"] = df["diseases"].map(orphanet_names_id_dict)
-    # print("Empty Orphanet Names: ", df["orphanet"].isnull().sum())
-    # print("First empty Orphanet Names: ", df[df["orphanet"].isnull()].head())
-
-    # df["mondo"] = df["orphanet"].map(orphanet_to_mondo_dict)
-    # print("Empty MONDO: ", df["mondo"].isnull().sum())
-    # print("First empty MONDO: ", df[df["mondo"].isnull()].head())
-
-    print("Total DF: ", len(df))
-    # df["doid"] = df["diseases"].map(mondo_to_doid_dict)
-    # print("Empty DOID: ", df["doid"].isnull().sum())
-    # print("First empty DOID: ", df[df["doid"].isnull()].head())
     return df
 
 
@@ -607,7 +570,9 @@ def test_disease_mappings(score_file_path):
     # Mondo auf 7 stellen auffüllen und MONDO: davor setzen
     df["mondo_id"] = df["mondo_id"].apply(lambda x: f"MONDO:{str(x).zfill(7)}")
     df["doid"] = df["mondo_id"].map(mondo_id_to_doid_dict)
-    total_diseases_mondo_name_mondo_id_doid = df[df["doid"].notnull()]["diseases"].nunique()
+    total_diseases_mondo_name_mondo_id_doid = df[df["doid"].notnull()][
+        "diseases"
+    ].nunique()
 
     print(
         f"""Total Diseases: {total_diseases}, Total Diseases in Mondo: {total_diseases_in_mondo}, 
@@ -616,8 +581,6 @@ def test_disease_mappings(score_file_path):
         Total Diseases in Mondo Name to Mondo ID to DOID: {total_diseases_mondo_name_mondo_id_doid}
 """
     )
-
-    
 
     # check overlap
     overlap_mondo_db = len(
@@ -636,6 +599,17 @@ def test_disease_mappings(score_file_path):
     print(
         f"Overlap Mondo and DB: {overlap_mondo_db}, Overlap Mondo and DB Syn: {overlap_mondo_db_syn}, Overlap DB and DB Syn: {overlap_db_db_syn}"
     )
+
+
+def get_mondo_name_to_doid_dict():
+    mondo_name_to_mondo_dict = get_name_to_mondo_dict()
+    mondo_id_to_doid_dict = get_mondo_id_to_doid_dict()
+    mondo_name_to_doid_dict = {
+        k: mondo_id_to_doid_dict[f"MONDO:{str(v).zfill(7)}"]
+        for k, v in mondo_name_to_mondo_dict.items()
+        if f"MONDO:{str(v).zfill(7)}" in mondo_id_to_doid_dict
+    }
+    return mondo_name_to_doid_dict
 
 
 def get_mondo_to_doid_dict():
@@ -687,6 +661,7 @@ def get_name_to_mondo_dict():
     name_to_mondo = {v: k for k, v in mondo_to_name_dict.items()}
     return name_to_mondo
 
+
 def get_mondo_id_to_doid_dict():
     file = project_config.PROJECT_DIR / "mondo_id_to_doid_dict.pkl"
     if file.exists():
@@ -695,14 +670,15 @@ def get_mondo_id_to_doid_dict():
     else:
         mondo_id_to_doid_dict = create_mondo_id_to_doid_map()
         with open(file, "wb") as handle:
-            pickle.dump(mondo_id_to_doid_dict, handle) 
+            pickle.dump(mondo_id_to_doid_dict, handle)
     return mondo_id_to_doid_dict
 
+
 def create_mondo_id_to_doid_map():
-    mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
-    mondo_rare_ontology = Ontology(project_config.PROJECT_DIR / 'mondo-rare.obo')
+    mondo_ontology = Ontology(project_config.PROJECT_DIR / "mondo.obo")
+    mondo_rare_ontology = Ontology(project_config.PROJECT_DIR / "mondo-rare.obo")
     mondo_to_doid_dict = {}
-    print('Creating mondo to DOID dict')
+    print("Creating mondo to DOID dict")
     for term in mondo_ontology.terms():
         if term.id.startswith("MONDO:"):
             for xref in term.xrefs:
@@ -721,8 +697,8 @@ def create_mondo_id_to_doid_map():
 
     print("len after rare dis: ", len(mondo_to_doid_dict))
 
-
     return mondo_to_doid_dict
+
 
 def get_db_syn_names_to_doid_dict(disease_names):
     file_name = project_config.PROJECT_DIR / "db_syn_name_to_doid_dict.pkl"
@@ -750,7 +726,7 @@ if __name__ == "__main__":
     disease_char_file = (
         dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
     )
-    # evaluate_disease_characterization(disease_char_file,)
+    evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
-    test_disease_mappings(disease_char_file)
+    # test_disease_mappings(disease_char_file)
 # %%
