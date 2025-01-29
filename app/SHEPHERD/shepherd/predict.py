@@ -78,6 +78,7 @@ def parse_args():
     parser.add_argument('--saved_node_embeddings_path', type=str, default=None, help='Path to pretrained model checkpoint')
     parser.add_argument('--best_ckpt', type=str, default=None, help='Name of the best performing checkpoint')
     parser.add_argument('--patient_aggr_nodes', type=str,choices=["phenotypes","phenotypes_and_genes"], default="phenotypes", help='Which nodes to aggregate for patient representation')
+    parser.add_argument('--graph_shema', type=str,choices=["hauner","primeKG"], default="primeKG",)   
     args = parser.parse_args()
     return args
 
