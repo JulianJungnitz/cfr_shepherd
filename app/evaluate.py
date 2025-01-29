@@ -370,6 +370,9 @@ def evaluate_disease_characterization(
     # 1    15013028                  benign blood vessel neoplasm      0.000012  24286    DOID:60006
     # 2    15013028  autosomal recessive nonsyndromic deafness 53      0.000054  12333  DOID:0110509
 
+    # filter for doid not Nan
+    df = df[df["doid"].notnull()]
+
     disease_patients_map = get_disease_patient_map(df)
     print("Disease Patients Map: ", len(disease_patients_map))
 
