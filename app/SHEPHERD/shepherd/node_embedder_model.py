@@ -440,7 +440,7 @@ class NodeEmbeder(pl.LightningModule):
 
     @torch.no_grad()  # Disable gradient tracking for inference
     def predict(self, data):
-        return self.predict_with_mini_batches(data, batch_size=1024, num_neighbors=[15, 10, 5])
+        return self.predict_in_batches(data, batch_size=1024, num_neighbors=[15, 10, 5])
         print("[predict] Moving edge_index to GPU once...")
         edge_index = data.edge_index.to(self.device)
         print(f"[predict] edge_index shape: {edge_index.shape}, device: {edge_index.device}")
@@ -496,119 +496,88 @@ class NodeEmbeder(pl.LightningModule):
         return x, gat_attn
 
 
-    @torch.no_grad()  
-    def predict_with_mini_batches(self, data, batch_size=1024, num_neighbors=[15, 10, 5]):
+    @torch.no_grad()
+    def predict_in_batches(self, data, batch_size=1024, num_neighbors=[15, 10, 5]):
         """
-        Perform GNN inference via mini-batch neighbor sampling.
+        Perform GNN inference via mini-batch neighbor sampling, using self.forward(n_ids, adjs).
         
         Args:
-            data (torch_geometric.data.Data): The PyG Data object for your entire graph.
-            batch_size (int): Number of seed nodes per mini-batch.
-            num_neighbors (List[int]): Number of neighbors to sample at each GNN layer depth.
+            data (torch_geometric.data.Data): Full graph Data object.
+            batch_size (int): Number of seed (target) nodes per mini-batch.
+            num_neighbors (List[int]): Number of neighbors to sample at each hop.
 
         Returns:
-            all_embeddings (torch.Tensor): Node embeddings for all nodes in `data.x`.
-            all_attention (dict, optional): (edge_index, alpha) for each sub-graph, or None if disabled.
+            all_embeddings (torch.Tensor): Final node embeddings for all nodes in data (size [num_nodes, output_dim]).
         """
 
-        device = self.device  # Or torch.device('cuda') as needed
-        self.eval()           # Put the model in eval mode
+        self.eval()  # Put model in eval mode (no dropout, no grad)
+        device = self.device
 
-        # 1) Identify the target nodes to predict. For node-level tasks, we often want *all* nodes:
+        # 1) We want embeddings for *all* nodes:
         all_node_ids = torch.arange(data.num_nodes)
 
-        # 2) Create a NeighborLoader for inference
-        #    This will sample up to num_neighbors[0] neighbors at the first hop,
-        #    num_neighbors[1] at the second hop, etc.
-        inf_loader = NeighborLoader(
-            data, 
-            input_nodes=all_node_ids, 
-            num_neighbors=num_neighbors, 
+        # 2) Create a NeighborLoader that yields (n_id, adjs) compatible with self.forward
+        loader = NeighborLoader(
+            data,
+            input_nodes=all_node_ids,   # or data.test_mask if you only need certain nodes
+            num_neighbors=num_neighbors,
             batch_size=batch_size,
-            shuffle=False   # Inference typically doesn't need shuffling
+            shuffle=False,
+            # directed=True or False, depending on your graph. Typically True for GAT.
+            # The important part is that PyG returns .n_id and .adjs for each batch
         )
 
-        # 3) Prepare a tensor to hold the final embeddings for ALL nodes
-        #    Suppose your model outputs 'hidden_dim' embeddings in the last layer:
-        hidden_dim = self.convs[-1].out_channels  # Or however you define your output dim
-        all_embeddings = torch.zeros((data.num_nodes, hidden_dim), dtype=torch.float32)
+        # 3) Prepare a storage tensor for all embeddings
+        #    In your code, final dimension = self.output * self.n_heads (or self.output if you combine heads)
+        #    But for the snippet below, let's do it generically:
+        final_dim = self.output * self.n_heads  # or however you set your final dimension
+        all_embeddings = torch.zeros(data.num_nodes, final_dim, device='cpu')
 
-        # (Optional) If you need to store attention for all sub-graphs, define a structure:
-        # But storing all edges' attention can be huge for 70M edges.  
-        # This snippet shows how you *could* do it, but consider memory constraints!
-        all_attention = {}  # {batch_idx: (edge_index_cpu, alpha_cpu)}
+        # 4) Loop over each subgraph mini-batch
+        print(f"[Inference] Starting neighbor-loader inference with batch_size={batch_size}")
+        for batch_idx, mini_batch in enumerate(loader):
+            # Each 'mini_batch' is a PyG Data-like object containing:
+            #  mini_batch.n_id (the global IDs of all nodes in this subgraph)
+            #  mini_batch.adjs (list of (edge_index, e_id, e_type, size), one per GNN layer)
+            #  mini_batch.batch_size (number of *seed* nodes) — note: In PyG >= 2.3 it may differ; check docs
 
-        print(f"[Mini-Batch] Starting inference with batch_size={batch_size} ...")
+            # 4a) Move to device
+            mini_batch = mini_batch.to(device)
+            # n_id is shape [num_subgraph_nodes], adjs is a list of size self.n_layers
+            # For example, self.n_layers=3 → adjs has 3 tuples
 
-        # 4) Loop over the sub-graphs. 
-        #    Each subgraph_data has .n_id for mapping subgraph node IDs -> global IDs.
-        for batch_idx, subgraph_data in enumerate(inf_loader):
-            print(f"[Mini-Batch] Processing batch {batch_idx+1} with {subgraph_data.num_nodes} nodes ...")
+            # 4b) Forward pass
+            #     self.forward(...) returns final node embeddings (x) of shape [num_subgraph_nodes, final_dim]
+            #     but the first mini_batch.adjs[i].size[1] entries of x at each layer are the *target (seed) nodes*
+            #     The rest are the sampled neighborhood. After the last layer, we only want x[:size[1]].
+            x_batch, _ = self.forward(mini_batch.n_id, mini_batch.adjs)
 
-            # Move the sub-graph to GPU if available
-            subgraph_data = subgraph_data.to(device)
+            # 4c) Typically, each adjacency in adjs has a .size = (num_src, num_dst).
+            #     The last adjacency -> size = (N_in, N_out). N_out = mini_batch.batch_size
+            #     We only store the final embeddings for the *seed* (target) nodes in this batch.
+            #     In your code, you do x_target = x[:size[1]] in each layer; so x at the end
+            #     might already only be the target portion. Double-check your code logic:
+            #     - If x is entire subgraph embeddings at the last layer, do this:
+            #         size_out = mini_batch.adjs[-1].size[1]  # number of seed nodes in this batch
+            #         x_seed = x_batch[:size_out]
+            #
+            #     - If your `forward` already ends with `x` = target-only embeddings, you can skip slicing.
+            #       We'll assume you need slicing:
+            size_out = mini_batch.adjs[-1].size[1]
+            x_seed = x_batch[:size_out]  # shape [batch_size, final_dim]
 
-            # 4a) Forward pass: If your model has a 'forward' that can optionally return attention:
-            #     Make sure you set 'return_attention_weights=False' if you don't need them for memory reasons.
-            x_local, attn_info = self.convs_forward_with_attention(subgraph_data.x, 
-                                                                subgraph_data.edge_index, 
-                                                                return_attention_weights=True)
+            # 4d) Get the global IDs of the seed nodes (the first `size_out` of mini_batch.n_id)
+            #     In modern PyG, the seed nodes typically come first in mini_batch.n_id, so:
+            target_n_id = mini_batch.n_id[:size_out]
 
-            # 4b) Store node embeddings in the correct indices
-            #     subgraph_data.n_id maps the subgraph's node indices -> original node IDs
-            #     x_local is [num_subgraph_nodes, hidden_dim]
-            global_n_id = subgraph_data.n_id
-            all_embeddings[global_n_id] = x_local.detach().cpu()
+            # 4e) Store the seed-node embeddings into all_embeddings
+            all_embeddings[target_n_id] = x_seed.detach().cpu()
 
-            # (Optional) If storing attention:
-            #    Note that each layer can produce different attn_info. This snippet just shows
-            #    how to store them if you REALLY need them.
-            #    But storing attention for 70M edges is extremely large. Use with caution!
-            attn_cpu = []
-            for (edge_i, alpha) in attn_info:
-                # edge_i, alpha are on GPU -> move to CPU
-                ei_cpu = edge_i.detach().cpu()
-                alpha_cpu = alpha.detach().cpu()
-                attn_cpu.append((ei_cpu, alpha_cpu))
-            all_attention[batch_idx] = attn_cpu
+            print(f"  [Batch {batch_idx+1}] Stored embeddings for {size_out} seed nodes")
 
-            print(f"[Mini-Batch] Done with batch {batch_idx+1}. Copied embeddings to CPU buffer.")
+        print("[Inference] Done. All node embeddings shape =", all_embeddings.shape)
+        return all_embeddings
 
-        print("[Mini-Batch] All batches processed. Final embeddings shape:", all_embeddings.shape)
-        # Return embeddings; if storing full attention is too big, remove or limit the usage
-        return all_embeddings, all_attention
-
-
-    def convs_forward_with_attention(self, x, edge_index, return_attention_weights=False):
-        """
-        Helper method that replicates the forward pass of your GNN. 
-        This is just an example function to illustrate returning x, attn_info.
-        
-        If your original code uses a list of GATConv layers in `self.convs`,
-        adapt accordingly.
-        """
-        # We track attention for each layer if requested
-        attn_info = [] if return_attention_weights else None
-
-        for i, conv in enumerate(self.convs):
-            if return_attention_weights:
-                x, (edge_i, alpha) = conv(x, edge_index, return_attention_weights=True)
-                # Append for this layer
-                attn_info.append((edge_i, alpha))
-            else:
-                x = conv(x, edge_index)
-
-            # Apply activation except maybe on the last layer
-            if i != self.n_layers - 1:
-                if self.norm_method in ["batch", "layer"]:
-                    x = self.norms[i](x)
-                elif self.norm_method == "batch_layer":
-                    x = self.layer_norms[i](x)
-                x = F.leaky_relu(x)
-                if self.norm_method == "batch_layer":
-                    x = self.batch_norms[i](x)
-
-        return x, attn_info
 
 
     def predict_step(self, data, data_idx):
