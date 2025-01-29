@@ -124,7 +124,7 @@ class NodeEmbeder(pl.LightningModule):
         nn.init.xavier_uniform_(self.relation_weights, gain = nn.init.calculate_gain('leaky_relu'))
 
     def forward(self, n_ids, adjs): 
-        # x = self.node_emb(n_ids)
+        x = self.node_emb(n_ids)
         
         gat_attn = []
         assert len(adjs) == self.n_layers
