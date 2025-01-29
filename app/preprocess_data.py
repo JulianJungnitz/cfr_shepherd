@@ -14,40 +14,65 @@ def query_data(
     ONLY_PATIENTS_WITH_DISEASE=False,
     ONLY_PATIENTS_WITH_PHENOTYPES=False,
     ONLY_PATIENTS_WITH_GENES=False,
+    USE_HAUNER_GRAPH=False
 ):
-    query = (
+    if not USE_HAUNER_GRAPH:
+        query = (
+            """
+        MATCH (s:Biological_sample) """
+            + ("" if ONLY_PATIENTS_WITH_DISEASE else """ OPTIONAL """)
+            + """
+        MATCH (s)-[:HAS_DISEASE]->(d:Disease)
         """
-    MATCH (s:Biological_sample) """
-        + ("" if ONLY_PATIENTS_WITH_DISEASE else """ OPTIONAL """)
-        + """
-    MATCH (s)-[:HAS_DISEASE]->(d:Disease)
-    """
-        + ("" if ONLY_PATIENTS_WITH_GENES else """ OPTIONAL """)
-        + """ MATCH (s)-[:HAS_DAMAGE]->(g:Gene)
-    where not g.synonyms[1]=""
-    WITH s, collect(DISTINCT g.synonyms[1]) AS genes, d
-    """
-        + ("" if ONLY_PATIENTS_WITH_PHENOTYPES else """ OPTIONAL """)
-        + """ MATCH (s)-[:HAS_PHENOTYPE]->(p:Phenotype)
-    RETURN id(s) as id, genes as all_candidate_genes, collect(DISTINCT p.id) AS positive_phenotypes, collect(DISTINCT d.id) AS true_diseases_doid_ids
-    """
-        + (f"LIMIT {limit}" if limit else "")
-    )
-    result = utils.execute_query(driver, query)
-    doid_to_mondo = get_doid_to_mondo()
-    return_result = []
-    for record in result:
-        mondo_ids = [
-            doid_to_mondo.get(doid, None) for doid in record["true_diseases_doid_ids"]
-        ]
-        mondo_ids = [x.split(":")[1] for x in mondo_ids if x and ":" in x]
-        mondo_ids = list(set(mondo_ids))
-        if ONLY_PATIENTS_WITH_DISEASE and len(mondo_ids) == 0:
-            continue
-        record["true_diseases"] = mondo_ids
-        del record["true_diseases_doid_ids"]
-        return_result.append(record)
-    return return_result
+            + ("" if ONLY_PATIENTS_WITH_GENES else """ OPTIONAL """)
+            + """ MATCH (s)-[:HAS_DAMAGE]->(g:Gene)
+        where not g.synonyms[1]=""
+        WITH s, collect(DISTINCT g.synonyms[1]) AS genes, d
+        """
+            + ("" if ONLY_PATIENTS_WITH_PHENOTYPES else """ OPTIONAL """)
+            + """ MATCH (s)-[:HAS_PHENOTYPE]->(p:Phenotype)
+        RETURN id(s) as id, genes as all_candidate_genes, collect(DISTINCT p.id) AS positive_phenotypes, collect(DISTINCT d.id) AS true_diseases_doid_ids
+        """
+            + (f"LIMIT {limit}" if limit else "")
+        )
+        result = utils.execute_query(driver, query)
+        doid_to_mondo = get_doid_to_mondo()
+        return_result = []
+        for record in result:
+            mondo_ids = [
+                doid_to_mondo.get(doid, None) for doid in record["true_diseases_doid_ids"]
+            ]
+            mondo_ids = [x.split(":")[1] for x in mondo_ids if x and ":" in x]
+            mondo_ids = list(set(mondo_ids))
+            if ONLY_PATIENTS_WITH_DISEASE and len(mondo_ids) == 0:
+                continue
+            record["true_diseases"] = mondo_ids
+            del record["true_diseases_doid_ids"]
+            return_result.append(record)
+    else:
+        query = (
+            """
+        MATCH (s:Biological_sample) """
+            + ("" if ONLY_PATIENTS_WITH_DISEASE else """ OPTIONAL """)
+            + """
+        MATCH (s)-[:HAS_DISEASE]->(d:Disease)
+        """
+            + ("" if ONLY_PATIENTS_WITH_GENES else """ OPTIONAL """)
+            + """ MATCH (s)-[:HAS_DAMAGE]->(g:Gene)
+    
+        WITH s, collect(DISTINCT g.id) AS genes, d
+        """
+            + ("" if ONLY_PATIENTS_WITH_PHENOTYPES else """ OPTIONAL """)
+            + """ MATCH (s)-[:HAS_PHENOTYPE]->(p:Phenotype)
+        RETURN id(s) as id, genes as all_candidate_genes, collect(DISTINCT p.id) AS positive_phenotypes, 
+        collect(DISTINCT d.id) AS true_diseases
+        """
+            + (f"LIMIT {limit}" if limit else "")
+        )
+        result = utils.execute_query(driver, query)
+        
+        
+    return result
 
 
 def get_doid_to_mondo():
@@ -79,6 +104,7 @@ def create_patients_data_file(
     ONLY_PATIENTS_WITH_DISEASE=False,
     ONLY_PATIENTS_WITH_PHENOTYPES=False,
     ONLY_PATIENTS_WITH_GENES=False,
+    USE_HAUNER_GRAPH=False
 ):
     data = query_data(
         driver,
@@ -86,6 +112,7 @@ def create_patients_data_file(
         ONLY_PATIENTS_WITH_DISEASE=ONLY_PATIENTS_WITH_DISEASE,
         ONLY_PATIENTS_WITH_PHENOTYPES=ONLY_PATIENTS_WITH_PHENOTYPES,
         ONLY_PATIENTS_WITH_GENES=ONLY_PATIENTS_WITH_GENES,
+        USE_HAUNER_GRAPH=USE_HAUNER_GRAPH
     )
     driver.close()
     write_to_file(data, file_name)

@@ -11,7 +11,7 @@ from preprocess_data import create_patients_data_file, generate_spl_matrix
 from app.SHEPHERD.project_config import PROJECT_DIR
 
 
-def start_preprocessing_data(config):
+def start_preprocessing_data(config, USE_HAUNER_GRAPH):
     NUMBER_OF_SAMPLES_LIMIT = config["shepherd"]["NUMBER_OF_SAMPLES_LIMIT"]
     OVERWRITE_PREPROCESSED_DATA = config["shepherd"]["OVERWRITE_PREPROCESSED_DATA"]
     ONLY_PATIENTS_WITH_DISEASE = config["shepherd"]["ONLY_PATIENTS_WITH_DISEASE"]
@@ -29,6 +29,7 @@ def start_preprocessing_data(config):
             ONLY_PATIENTS_WITH_DISEASE=ONLY_PATIENTS_WITH_DISEASE,
             ONLY_PATIENTS_WITH_PHENOTYPES=ONLY_PATIENTS_WITH_PHENOTYPES,
             ONLY_PATIENTS_WITH_GENES=ONLY_PATIENTS_WITH_GENES,
+            USE_HAUNER_GRAPH=USE_HAUNER_GRAPH,
         )
         print("Samples written to file: " + file_name)
     else:
@@ -98,7 +99,7 @@ def move_results_to_output_dir():
     utils.run_subprocess(command)
 
 
-def run_shepherd_preprocessing(config):
+def run_shepherd_preprocessing(config,):
     print("Running shepherd preprocessing")
     dir = utils.SHEPHERD_DIR
     use_simulated_data = config["shepherd"]["USE_SIMULATED_PATIENTS"]
@@ -175,13 +176,16 @@ def main():
     driver = utils.connect_to_neo4j()
 
     config = utils.read_config()
-    start_preprocessing_data(config)
 
     CREATE_SPL_MATRIX = config["shepherd"]["CREATE_SPL_MATRIX"]
     USE_SIMULATED_DATA = config["shepherd"]["USE_SIMULATED_PATIENTS"]
     USE_HAUNER_GRAPH = config["shepherd"]["USE_HAUNER_GRAPH"]
     checkpoint_appendix = "_hauner" if USE_HAUNER_GRAPH else ""
     graph_shema = "hauner" if USE_HAUNER_GRAPH else "primeKG"
+
+    start_preprocessing_data(config,USE_HAUNER_GRAPH)
+
+    
     if CREATE_SPL_MATRIX:
         generate_spl_matrix(
             "shepherd" if USE_HAUNER_GRAPH else "primeKG",
