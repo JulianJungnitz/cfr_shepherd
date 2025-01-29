@@ -397,57 +397,36 @@ class NodeEmbeder(pl.LightningModule):
         self._logger({'node_curr_epoch': self.current_epoch})
 
     
-    def predict(self, data, batch, unique_n_ids):
+    def predict(self, data,):
+        n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
 
-        print("DATA: ", data)
-        # DATA:  Data(edge_index=[2, 73435672], edge_attr=[73435672], train_mask=[73435672], val_mask=[73435672], test_mask=[73435672])
-
-        print("BATCH: ", batch)
-        # BATCH:  Data(adjs=[3], batch_size=23734, patient_ids=[10], n_id=[232076], disease_one_hot_labels=[10, 1169], phenotype_names=[10], cand_gene_names=[10], corr_gene_names=[10], disease_names=[10], cand_disease_names=[10], batch_pheno_nid=[10, 25], batch_corr_gene_nid=[10, 0], batch_disease_nid=[10, 1], batch_cand_disease_nid=[10, 1169])
-        # e_emb.weight.shape[0], device=self.device)
-        
-        return self.forward(unique_n_ids, batch.adjs)
-
-        batch_n_id = batch.n_id.to(self.device)  # Move to the correct device if necessary
-        print(f"batch_n_id: {batch_n_id.shape}")
-
-        # Retrieve node embeddings for the batch
-        x = self.node_emb(batch_n_id)
-        print(f"Initial embeddings shape: {x.shape}")
-
-        batch_edge_index = batch.edge_index.to(self.device)
-
-        forward(x, batch_edge_index, return_attention_weights=False)
+        x = self.node_emb(n_id)
 
         gat_attn = []
         for i in range(len(self.convs)):
+            
             # Update node embeddings
-            print(f"Move to GPU: predict - update node embeddings at layer {i}")
-            x = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=False)
-            print(f"Moved: predict - update node embeddings at layer {i}")
+            print("Move to GPU: predict - update node embeddings")
+            x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) #
+            print("Moved: predict - update node embeddings")
 
+            edge_i = edge_i.detach().cpu()
+            alpha = alpha.detach().cpu()
+            edge_i[0,:] = n_id[edge_i[0,:]]
+            edge_i[1,:] = n_id[edge_i[1,:]]
+            gat_attn.append((edge_i, alpha))
+            
             # Normalize
             if i != self.n_layers - 1:
                 if self.norm_method in ["batch", "layer"]:
-                    if self.norm_method == "batch" and len(self.batch_norms) > i:
-                        x = self.batch_norms[i](x)
-                        print(f"Applied batch norm at layer {i}")
-                    elif self.norm_method == "layer" and len(self.layer_norms) > i:
-                        x = self.layer_norms[i](x)
-                        print(f"Applied layer norm at layer {i}")
+                    x = self.norms[i](x)
                 elif self.norm_method == "batch_layer":
-                    if len(self.layer_norms) > i and len(self.batch_norms) > i:
-                        x = self.layer_norms[i](x)
-                        x = F.leaky_relu(x)
-                        x = self.batch_norms[i](x)
-                        print(f"Applied batch_layer norm at layer {i}")
-                    else:
-                        x = F.leaky_relu(x)
-                        print(f"Applied leaky_relu at layer {i} without normalization")
-
-            # Activation
-            x = F.leaky_relu(x)
-            print(f"Applied leaky_relu at layer {i}")
+                    x = self.layer_norms[i](x)
+                x = F.leaky_relu(x)
+                if self.norm_method == "batch_layer":
+                    x = self.batch_norms[i](x)
+        
+        assert x.shape[0] == self.node_emb.weight.shape[0]
 
         return x, gat_attn
 

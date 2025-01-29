@@ -91,7 +91,6 @@ class CombinedPatientNCA(pl.LightningModule):
         return correct_disease_ranks
 
     def rank_patients(self, patient_softmax, labels):
-        print("labels shape: ", labels.shape)
         labels = labels * ~torch.eye(labels.shape[0], dtype=torch.bool).to(labels.device) # don't consider label positive for patients with themselves
         patient_ranks = torch.tensor(np.apply_along_axis(lambda row: rankdata(row * -1, method='average'), axis=1, arr=patient_softmax.detach().cpu().numpy()))
         if labels is None:
@@ -326,15 +325,7 @@ class CombinedPatientNCA(pl.LightningModule):
 
     
     def inference(self, batch, batch_idx):
-        # unique_n_ids = [
-        #     batch.n_id,
-        #     batch.batch_pheno_nid,
-        #     batch.batch_cand_disease_nid
-        # ]
-        print("Sizes: ", batch.n_id.shape, batch.batch_pheno_nid.shape, batch.batch_cand_disease_nid.shape)
-        unique_n_ids = torch.cat([batch.n_id, batch.batch_pheno_nid[0], batch.batch_cand_disease_nid]).tolist()
-
-        outputs, gat_attn = self.node_model.predict(self.all_data, batch, unique_n_ids)
+        outputs, gat_attn = self.node_model.predict(self.all_data)
 
         pad_outputs = torch.cat([torch.zeros(1, outputs.size(1), device=outputs.device), outputs]) 
 
