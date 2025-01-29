@@ -326,50 +326,74 @@ class CombinedPatientNCA(pl.LightningModule):
 
     
     def inference(self, batch, batch_idx):
-        print("inference patient_nca")
+        print("Inference: Patient NCA")
 
-        print("batch: ",batch);
-        outputs, gat_attn = self.node_model.predict(batch)
+        # Step 1: Extract unique node IDs from the batch
+        unique_node_ids = torch.unique(torch.cat([
+            batch.batch_pheno_nid.view(-1),
+            batch.batch_cand_disease_nid.view(-1) if self.hparams.hparams['loss'] == 'patient_disease_NCA' else torch.tensor([], device=batch.batch_pheno_nid.device)
+        ]))
+        unique_node_ids = unique_node_ids[unique_node_ids != 0]  # Exclude padding (if 0 is padding)
 
-        pad_outputs = torch.cat([torch.zeros(1, outputs.size(1), device=outputs.device), outputs])
-    
-        # get masks
-        phenotype_mask = (batch.batch_pheno_nid != 0)
-        if self.hparams.hparams['loss'] == 'patient_disease_NCA': disease_mask = (batch.batch_cand_disease_nid != 0)
-        else: disease_mask = None
+        print(f"Unique Node IDs: {unique_node_ids}")
 
-        # index into outputs using phenotype & disease batch node idx
+        # Step 2: Prepare subset edge_index for the unique nodes
+        # Assuming batch has edge_index reflecting connections within the subset
+        # If not, you need to construct it based on the global edge_index
+        # For example, if batch has a global edge_index, map it to subset
+        # Here, we'll assume batch.edge_index is already subset-specific
+        subset_edge_index = batch.edge_index  # Modify as per your data structure
+
+        # Step 3: Predict embeddings for the subset
+        outputs_subset, gat_attn = self.node_model.predict_subset(unique_node_ids, subset_edge_index)
+
+        # Step 4: Create padding (0) for index mapping
+        pad_outputs = torch.cat([torch.zeros(1, outputs_subset.size(1), device=outputs_subset.device), outputs_subset])  # Index 0 is padding
+
+        # Step 5: Create a mapping from global node IDs to local indices
+        id_map = {nid.item(): idx + 1 for idx, nid in enumerate(unique_node_ids)}  # +1 to reserve 0 for padding
+
+        # Function to map global IDs to local indices
+        def map_ids(global_ids):
+            return torch.tensor([id_map.get(nid.item(), 0) for nid in global_ids.view(-1)], device=pad_outputs.device)
+
+        # Step 6: Apply mapping to phenotype and disease node IDs
+        phenotype_mapped = map_ids(batch.batch_pheno_nid)
+        phenotype_mask = (phenotype_mapped != 0)
+
+        if self.hparams.hparams['loss'] == 'patient_disease_NCA':
+            disease_mapped = map_ids(batch.batch_cand_disease_nid)
+            disease_mask = (disease_mapped != 0)
+        else:
+            disease_mapped = None
+            disease_mask = None
+
+        # Step 7: Reshape to [batch_size, max_num, embedding_dim]
         batch_sz, max_n_phen = batch.batch_pheno_nid.shape
-        phenotype_embeddings = torch.index_select(pad_outputs, 0, batch.batch_pheno_nid.view(-1)).view(batch_sz, max_n_phen, -1)
-        if self.hparams.hparams['loss'] == 'patient_disease_NCA': 
+        phenotype_embeddings = torch.index_select(pad_outputs, 0, phenotype_mapped).view(batch_sz, max_n_phen, -1)
+
+        if self.hparams.hparams['loss'] == 'patient_disease_NCA':
             batch_sz, max_n_dx = batch.batch_cand_disease_nid.shape
-            disease_embeddings = torch.index_select(pad_outputs, 0, batch.batch_cand_disease_nid.view(-1)).view(batch_sz, max_n_dx, -1)
-        else: disease_embeddings = None
+            disease_embeddings = torch.index_select(pad_outputs, 0, disease_mapped).view(batch_sz, max_n_dx, -1)
+        else:
+            disease_embeddings = None
 
-        phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights = self.patient_model.forward(phenotype_embeddings, disease_embeddings, phenotype_mask, disease_mask)
+        # Step 8: Forward pass through the patient model
+        phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights = self.patient_model.forward(
+            phenotype_embeddings,
+            disease_embeddings,
+            phenotype_mask,
+            disease_mask
+        )
 
-        return outputs, gat_attn, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights
-
+        return outputs_subset, gat_attn, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights
 
     def predict_step(self, batch, batch_idx):
-        print("predict_step")
-        node_embeddings, gat_attn, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights = self.inference(batch, batch_idx)
-
-        # calculate patient embedding loss
-        use_candidate_list =  self.hparams.hparams['only_hard_distractors'] 
-        if self.hparams.hparams['loss'] == 'patient_disease_NCA': labels = batch.disease_one_hot_labels
-        else: labels = batch.patient_labels
-        loss, softmax, labels, candidate_disease_idx, candidate_disease_embeddings = self.patient_model.calc_loss(batch, phenotype_embedding, disease_embeddings, disease_mask, labels, use_candidate_list)
-        if labels.nelement() == 0:
-            correct_ranks = None
-        else:
-            if self.hparams.hparams['loss'] == 'patient_disease_NCA': correct_ranks = self.rank_diseases(softmax, disease_mask, labels)
-            else: correct_ranks, labels = self.rank_patients(softmax, labels)
-        
-
-        results_df, phen_df, attn_dfs, phenotype_embeddings, disease_embeddings = self.write_results_to_file(batch, softmax, correct_ranks, labels, phenotype_mask, disease_mask , attn_weights, gat_attn, node_embeddings, phenotype_embedding, disease_embeddings, save=True, loop_type='predict')
-        return results_df, phen_df, *attn_dfs, phenotype_embeddings, disease_embeddings
-
+        """
+        Lightning's hook for prediction.
+        This gets mini-batches from your inference DataLoader.
+        """
+        return self.inference(batch, batch_idx)
     
     def _epoch_end(self, outputs, loop_type):
         correct_ranks = torch.cat([ranks  for x in outputs for ranks in x[f'{loop_type}/correct_ranks']], dim=0) #if len(ranks.shape) > 0 else ranks.unsqueeze(-1)

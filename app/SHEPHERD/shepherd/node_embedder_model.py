@@ -409,6 +409,52 @@ class NodeEmbeder(pl.LightningModule):
         return x, gat_attn
 
     @torch.no_grad()
+    def predict_subset(self, unique_node_ids, edge_index):
+        """
+        Predict embeddings for a subset of node IDs.
+
+        Args:
+            unique_node_ids (torch.Tensor): Tensor of unique node IDs in the batch.
+            edge_index (torch.Tensor): Edge indices corresponding to the subset.
+
+        Returns:
+            torch.Tensor: Node embeddings for the subset.
+            list: List of attention weights from each GAT layer.
+        """
+        # Move to device
+        unique_node_ids = unique_node_ids.to(self.node_emb.weight.device)
+        edge_index = edge_index.to(self.node_emb.weight.device)
+
+        # Initialize node features
+        x = self.node_emb(unique_node_ids)
+        gat_attn = []
+
+        for i, conv in enumerate(self.convs):
+            # Apply GAT layer
+            x, (edge_i, alpha) = conv((x, x), edge_index, return_attention_weights=True)
+            # Store attention weights
+            gat_attn.append((edge_i.detach().cpu(), alpha.detach().cpu()))
+
+            # Apply normalization if necessary
+            if self.norm_method in ["batch", "layer"]:
+                if self.norm_method == "batch" and self.norms:
+                    x = self.norms[i](x)
+                elif self.norm_method == "layer" and self.layer_norms:
+                    x = self.layer_norms[i](x)
+            elif self.norm_method == "batch_layer":
+                if self.layer_norms and self.batch_norms:
+                    x = self.layer_norms[i](x)
+                    x = F.leaky_relu(x)
+                    x = self.batch_norms[i](x)
+                else:
+                    x = F.leaky_relu(x)
+
+            # Activation
+            x = F.leaky_relu(x)
+
+        return x, gat_attn
+
+    @torch.no_grad()
     def predict(self, batch):
         """Inference on a subgraph batch. 
            No full-graph usage => no memory blow-up on 70M edges."""
