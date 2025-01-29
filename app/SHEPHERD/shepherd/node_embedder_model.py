@@ -408,6 +408,8 @@ class NodeEmbeder(pl.LightningModule):
             # Update node embeddings
             print("Move to GPU: predict - update node embeddings")
             print("Data edge index length: ", len(data.edge_index))
+            for edge_index in data.edge_index:
+                print("Edge Index size: ", edge_index.size())
             data.edge_index.to(self.device)
             print("Moved edge_index to GPU")
 
