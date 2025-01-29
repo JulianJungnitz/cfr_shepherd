@@ -325,6 +325,7 @@ def map_disease_to_doid(df):
     print("Len: ", len(mondo_name_to_doid_dict))
     df["doid"] = df["diseases"].map(mondo_name_to_doid_dict)
     df = df[df["doid"].notnull()]
+    df["doid_full"] = df["doid"]
     
     df["doid"] = df["doid"].apply(lambda x: str(int(x.split(":")[-1])))
 
@@ -335,7 +336,8 @@ def get_disease_patient_map(df):
     driver = utils.connect_to_neo4j()
     patient_ids = df["patient_id"].unique()
 
-    diseases = df["doid"].unique()
+    diseases = df["doid_full"].unique()
+
 
     query = f"""
     MATCH (p:Biological_sample)-[:HAS_DISEASE]->(d:Disease)
