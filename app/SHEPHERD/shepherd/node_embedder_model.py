@@ -456,9 +456,9 @@ class NodeEmbeder(pl.LightningModule):
             print(f"\n[predict] ----- Convolution layer {i+1} / {len(self.convs)} -----")
             
             # Forward pass with attention
-            x = conv(x, edge_index, ) #return_attention_weights=True
-            # , (edge_i, alpha) = out 
-            # del out  # Explicitly free the temporary tuple
+            out = conv(x, edge_index, return_attention_weights=False)
+            x, (edge_i, alpha) = out
+            del out  # Explicitly free the temporary tuple
 
             print(f"[predict]   After conv {i+1}, x.shape: {x.shape}")
             print(f"[predict]   edge_i.shape: {edge_i.shape}, alpha.shape: {alpha.shape}")
@@ -470,7 +470,7 @@ class NodeEmbeder(pl.LightningModule):
             # Remap local subgraph indices back to global n_id if necessary
             edge_i[0, :] = n_id[edge_i[0, :]]
             edge_i[1, :] = n_id[edge_i[1, :]]
-            # gat_attn.append((edge_i, alpha))
+            gat_attn.append((edge_i, alpha))
 
             # Apply normalization and activation except on the last layer
             if i != self.n_layers - 1:
