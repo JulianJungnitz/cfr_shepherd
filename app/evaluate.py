@@ -450,7 +450,6 @@ def plot_disease_similarity_avg(
         k_overlap_random_total[k] / number_of_patient for k in k_values
     ]
 
-    # Aggregated lines
     k_overlap_cumsum = []
     k_overlap_random_cumsum = []
     cum_sum = 0
@@ -464,11 +463,11 @@ def plot_disease_similarity_avg(
     plt.figure(figsize=(8, 6))
     plt.plot(k_values, k_overlap_avg, label="Patients has disease")
     plt.plot(k_values, k_overlap_random_avg, label="Random Baseline")
-    plt.plot(k_values, k_overlap_cumsum, label="Aggregated")
-    plt.plot(k_values, k_overlap_random_cumsum, label="Aggregated Random")
+    plt.plot(k_values, k_overlap_cumsum, label="Patients has disease cumsum")
+    plt.plot(k_values, k_overlap_random_cumsum, label="Random Baseline cumsum")
 
     plt.xlabel("Top-K Similar Diseases")
-    plt.ylabel("Has disease average")
+    plt.ylabel("Has disease avgerage")
     plt.title("Disease Characterization: Patient has disease at position k")
     plt.legend()
     plt.grid(axis="y", linestyle="--", alpha=0.7)
