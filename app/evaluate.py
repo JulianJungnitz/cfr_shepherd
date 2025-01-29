@@ -530,7 +530,7 @@ def create_syn_names_to_doid_map(disease_names):
         res = utils.execute_query(driver, base_query, params, debug=False)
         if len(res) > 0:
             syn_name_id_map[clean_name] = res[0]["d.id"]
-        
+
     print("Synonym Name to DOID Map: ", len(syn_name_id_map))
     return syn_name_id_map
 
@@ -566,13 +566,39 @@ def test_disease_mappings(score_file_path):
         {k: v for k, v in list(db_syn_names_to_doid_dict.items())[:5]},
     )
 
-    total_diseases = len(disease_names)
-    total_diseases_in_mondo = df[df["diseases"].isin(mondo_to_doid_dict.keys())]["diseases"].nunique()
-    total_diseases_in_db = df[df["diseases"].isin(db_name_to_doid_dict.keys())]["diseases"].nunique()
-    total_diseases_in_db_syn =         df[df["diseases"].isin(db_syn_names_to_doid_dict.keys())]["diseases"].nunique()
-    
+    name_to_hpo_dict = get_name_to_hpo_dict()
     print(
-        f"Total Diseases: {total_diseases}, Total Diseases in Mondo: {total_diseases_in_mondo}, Total Diseases in DB: {total_diseases_in_db}, Total Diseases in DB Syn: {total_diseases_in_db_syn}"
+        "First name_to_hpo_dict: ",
+        {k: v for k, v in list(name_to_hpo_dict.items())[:5]},
+    )
+
+    name_to_mondo_dict = get_name_to_mondo_dict()
+    print(
+        "First name_to_mondo_dict: ",
+        {k: v for k, v in list(name_to_mondo_dict.items())[:5]},
+    )
+
+    total_diseases = len(disease_names)
+    total_diseases_in_mondo = df[df["diseases"].isin(mondo_to_doid_dict.keys())][
+        "diseases"
+    ].nunique()
+    total_diseases_in_db = df[df["diseases"].isin(db_name_to_doid_dict.keys())][
+        "diseases"
+    ].nunique()
+    total_diseases_in_db_syn = df[
+        df["diseases"].isin(db_syn_names_to_doid_dict.keys())
+    ]["diseases"].nunique()
+    total_diseases_in_hpo = df[df["diseases"].isin(name_to_hpo_dict.keys())][
+        "diseases"
+    ].nunique()
+    total_diseases_in_mondo_name = df[df["diseases"].isin(name_to_mondo_dict.keys())][
+        "diseases"
+    ].nunique()
+
+    print(
+        f"Total Diseases: {total_diseases}, Total Diseases in Mondo: {total_diseases_in_mondo}, 
+        Total Diseases in DB: {total_diseases_in_db}, Total Diseases in DB Syn: {total_diseases_in_db_syn}, 
+        Total Diseases in HPO: {total_diseases_in_hpo}, Total Diseases in Mondo Name: {total_diseases_in_mondo_name}"
     )
 
     # check overlap
@@ -582,7 +608,8 @@ def test_disease_mappings(score_file_path):
     overlap_mondo_db_syn = len(
         set(mondo_to_doid_dict.keys()).intersection(
             set(db_syn_names_to_doid_dict.keys())
-    ))
+        )
+    )
     overlap_db_db_syn = len(
         set(db_name_to_doid_dict.keys()).intersection(
             set(db_syn_names_to_doid_dict.keys())
@@ -615,6 +642,32 @@ def get_db_names_to_doid_dict(disease_names):
         with open(file_name, "wb") as handle:
             pickle.dump(db_name_to_doid_dict, handle)
     return db_name_to_doid_dict
+
+
+def get_name_to_hpo_dict():
+    file = (
+        project_config.PROJECT_DIR
+        / "knowledge_graph"
+        / "8.9.21_kg"
+        / f"hpo_to_name_dict_8.9.21_kg.pkl"
+    )
+    with open(file, "rb") as handle:
+        hpo_to_name_dict = pickle.load(handle)
+    name_to_hpo = {v: k for k, v in hpo_to_name_dict.items()}
+    return name_to_hpo
+
+
+def get_name_to_mondo_dict():
+    file = (
+        project_config.PROJECT_DIR
+        / "knowledge_graph"
+        / "8.9.21_kg"
+        / f"mondo_to_name_dict_8.9.21_kg.pkl"
+    )
+    with open(file, "rb") as handle:
+        mondo_to_name_dict = pickle.load(handle)
+    name_to_mondo = {v: k for k, v in mondo_to_name_dict.items()}
+    return name_to_mondo
 
 
 def get_db_syn_names_to_doid_dict(disease_names):
