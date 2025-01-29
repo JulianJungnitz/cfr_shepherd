@@ -285,7 +285,7 @@ class CombinedGPAligner(pl.LightningModule):
                 }
 
 
-    def inference(self, batch, batch_idx):
+    def inference(self, batch, batch_idx,):
         outputs, gat_attn = self.node_model.predict(self.all_data)
         pad_outputs = torch.cat([torch.zeros(1, outputs.size(1), device=outputs.device), outputs])
         t1 = time.time()

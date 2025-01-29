@@ -397,7 +397,7 @@ class NodeEmbeder(pl.LightningModule):
         self._logger({'node_curr_epoch': self.current_epoch})
 
     
-    def predict(self, data, batch):
+    def predict(self, data, batch, unique_n_ids):
 
         print("DATA: ", data)
         # DATA:  Data(edge_index=[2, 73435672], edge_attr=[73435672], train_mask=[73435672], val_mask=[73435672], test_mask=[73435672])
@@ -406,12 +406,18 @@ class NodeEmbeder(pl.LightningModule):
         # BATCH:  Data(adjs=[3], batch_size=23734, patient_ids=[10], n_id=[232076], disease_one_hot_labels=[10, 1169], phenotype_names=[10], cand_gene_names=[10], corr_gene_names=[10], disease_names=[10], cand_disease_names=[10], batch_pheno_nid=[10, 25], batch_corr_gene_nid=[10, 0], batch_disease_nid=[10, 1], batch_cand_disease_nid=[10, 1169])
         # e_emb.weight.shape[0], device=self.device)
         
+        return self.forward(unique_n_ids, data.adjs)
+
         batch_n_id = batch.n_id.to(self.device)  # Move to the correct device if necessary
         print(f"batch_n_id: {batch_n_id.shape}")
 
         # Retrieve node embeddings for the batch
         x = self.node_emb(batch_n_id)
         print(f"Initial embeddings shape: {x.shape}")
+
+        batch_edge_index = batch.edge_index.to(self.device)
+
+        forward(x, batch_edge_index, return_attention_weights=False)
 
         gat_attn = []
         for i in range(len(self.convs)):
