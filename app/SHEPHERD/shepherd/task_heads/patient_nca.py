@@ -53,41 +53,25 @@ class PatientNCA(pl.LightningModule):
 
 
     def forward(self, phenotype_embeddings, disease_embeddings, phenotype_mask=None, disease_mask=None): 
-        assert phenotype_mask is not None, "phenotype_mask cannot be None"
-        if self.hyperparameters['loss'] == 'patient_disease_NCA':
-            assert disease_mask is not None, "disease_mask cannot be None"
-            
-        # Ensure phenotype_mask is 2-D
-        if phenotype_mask.dim() == 1:
-            # Assuming the mask is [batch_size * seq_length], reshape accordingly
-            # You need to know the actual batch_size and seq_length to reshape properly
-            # Here, we'll assume it's [batch_size, seq_length]
-            # Modify this part based on your actual data
-            batch_size = ...      # Define or extract batch_size
-            seq_length = ...      # Define or extract seq_length
-            phenotype_mask = phenotype_mask.view(batch_size, seq_length)
+        assert phenotype_mask != None  
+        if self.hyperparameters['loss'] == 'patient_disease_NCA':  assert disease_mask != None
         
         if 'n_transformer_layers' in self.hyperparameters and self.hyperparameters['n_transformer_layers'] > 0:
-            # Transformer expects [seq_length, batch_size, embed_dim]
-            phenotype_embeddings = self.transformer_encoder(
-                phenotype_embeddings.transpose(0, 1), 
-                src_key_padding_mask=~phenotype_mask
-            ).transpose(0, 1)
-            
-        # Attention weighted average of phenotype embeddings
-        batched_attn = self.attn_vector.repeat(phenotype_embeddings.shape[0], 1)
+            phenotype_embeddings = self.transformer_encoder(phenotype_embeddings.transpose(0, 1), src_key_padding_mask=~phenotype_mask).transpose(0, 1)
+
+
+        # attention weighted average of phenotype embeddings
+        batched_attn = self.attn_vector.repeat(phenotype_embeddings.shape[0],1)
         attn_weights = self.attention(batched_attn, phenotype_embeddings, phenotype_mask)
         phenotype_embedding = weighted_sum(phenotype_embeddings, attn_weights)
         
-        # Project embeddings
+        # project embeddings
         phenotype_embedding = self.phen_project2(self.leaky_relu(self.phen_project(phenotype_embedding)))
-        if self.hyperparameters['loss'] == 'patient_disease_NCA':
-            disease_embeddings = self.disease_project2(self.leaky_relu(self.disease_project(disease_embeddings)))
-        else:
-            disease_embeddings = None
+        if self.hyperparameters['loss'] == 'patient_disease_NCA': disease_embeddings = self.disease_project2(self.leaky_relu(self.disease_project(disease_embeddings)))
+        else: disease_embeddings = None
 
         return phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights
-    
+
     def calc_loss(self, batch, phenotype_embedding, disease_embeddings, disease_mask, labels, use_candidate_list):
         if self.hyperparameters['loss'] == 'patient_disease_NCA':
             # print("calc_loss batch_disease_nid: ", batch.batch_disease_nid)
@@ -98,7 +82,7 @@ class PatientNCA(pl.LightningModule):
             # print("patient NCA loss: ", loss)
         else:
             raise NotImplementedError
-        # print("calc_loss: ", loss)
+        print("calc_loss: ", loss)
         return loss, softmax, labels, candidate_disease_idx, candidate_disease_embeddings
 
 

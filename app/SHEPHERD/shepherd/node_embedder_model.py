@@ -4,7 +4,6 @@ import torch.nn as nn
 
 import torch.nn.functional as F
 from torch_geometric.nn import BatchNorm, LayerNorm, GATv2Conv
-from torch_geometric.loader.neighbor_loader import NeighborLoader
 
 # Pytorch Lightning
 import pytorch_lightning as pl
@@ -124,40 +123,40 @@ class NodeEmbeder(pl.LightningModule):
             conv.reset_parameters()
         nn.init.xavier_uniform_(self.relation_weights, gain = nn.init.calculate_gain('leaky_relu'))
 
-    # def forward(self, n_ids, adjs): 
-    #     x = self.node_emb(n_ids)
+    def forward(self, n_ids, adjs): 
+        x = self.node_emb(n_ids)
         
-    #     gat_attn = []
-    #     assert len(adjs) == self.n_layers
-    #     for i, (edge_index, _, edge_type, size) in enumerate(adjs):
+        gat_attn = []
+        assert len(adjs) == self.n_layers
+        for i, (edge_index, _, edge_type, size) in enumerate(adjs):
             
-    #         # Update node embeddings
-    #         x_target = x[:size[1]]  # Target nodes are always placed first. 
+            # Update node embeddings
+            x_target = x[:size[1]]  # Target nodes are always placed first. 
             
-    #         # print("Type: ", type(edge_index))
-    #         # print("Edge Index size: ", edge_index.size)
-    #         # print("Edge Index (E_i) size: ", edge_index.edge_index.size())
+            # print("Type: ", type(edge_index))
+            # print("Edge Index size: ", edge_index.size)
+            # print("Edge Index (E_i) size: ", edge_index.edge_index.size())
 
-    #         x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index, return_attention_weights=True)
+            x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index, return_attention_weights=True)
 
-    #         edge_i = edge_i.detach().cpu()
-    #         alpha = alpha.detach().cpu()
-    #         edge_i[0,:] = n_ids[edge_i[0,:]]
-    #         edge_i[1,:] = n_ids[edge_i[1,:]]
-    #         gat_attn.append((edge_i, alpha))
+            edge_i = edge_i.detach().cpu()
+            alpha = alpha.detach().cpu()
+            edge_i[0,:] = n_ids[edge_i[0,:]]
+            edge_i[1,:] = n_ids[edge_i[1,:]]
+            gat_attn.append((edge_i, alpha))
 
-    #         # Normalize
-    #         if i != self.n_layers - 1:
-    #             if self.norm_method in ["batch", "layer"]:
-    #                 x = self.norms[i](x)
-    #             elif self.norm_method == "batch_layer":
-    #                 x = self.layer_norms[i](x)
-    #             x = F.leaky_relu(x)
-    #             if self.norm_method == "batch_layer":
-    #                 x = self.batch_norms[i](x)
-    #             x = F.dropout(x, p=self.dropout, training=self.training)
+            # Normalize
+            if i != self.n_layers - 1:
+                if self.norm_method in ["batch", "layer"]:
+                    x = self.norms[i](x)
+                elif self.norm_method == "batch_layer":
+                    x = self.layer_norms[i](x)
+                x = F.leaky_relu(x)
+                if self.norm_method == "batch_layer":
+                    x = self.batch_norms[i](x)
+                x = F.dropout(x, p=self.dropout, training=self.training)
 
-        # return x, gat_attn
+        return x, gat_attn
 
 
 
@@ -397,115 +396,39 @@ class NodeEmbeder(pl.LightningModule):
                       "test/node_total_f1": np.mean(f1)})
         self._logger({'node_curr_epoch': self.current_epoch})
 
-    def forward(self, n_ids, adjs):
-        """Existing forward method."""
-        x = self.node_emb(n_ids)
+    
+    def predict(self, data):
+        n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
+
+        x = self.node_emb(n_id)
+
         gat_attn = []
-        for i, (edge_index, _, edge_type, size) in enumerate(adjs):
-            x_target = x[:size[1]]  # seed nodes
-            x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index, return_attention_weights=True)
-            # normalization, activation, dropout...
+        for i in range(len(self.convs)):
+            
+            # Update node embeddings
+            print("Move to GPU: predict - update node embeddings")
+            x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) #
+            print("Moved: predict - update node embeddings")
+
+            edge_i = edge_i.detach().cpu()
+            alpha = alpha.detach().cpu()
+            edge_i[0,:] = n_id[edge_i[0,:]]
+            edge_i[1,:] = n_id[edge_i[1,:]]
             gat_attn.append((edge_i, alpha))
-        return x, gat_attn
-
-    @torch.no_grad()
-    def predict_subset(self, unique_node_ids, edge_index):
-        unique_node_ids = unique_node_ids.to(self.node_emb.weight.device)
-        edge_index = edge_index.to(self.node_emb.weight.device)
-
-        # Initialize node features
-        x = self.node_emb(unique_node_ids)
-        gat_attn = []
-
-        for i, conv in enumerate(self.convs):
-            # Apply GAT layer
-            x, (edge_i, alpha) = conv((x, x), edge_index, return_attention_weights=True)
-            gat_attn.append((edge_i.detach().cpu(), alpha.detach().cpu()))
-
-            # Apply normalization if necessary
+            
+            # Normalize
             if i != self.n_layers - 1:
                 if self.norm_method in ["batch", "layer"]:
-                    if self.norm_method == "batch" and self.batch_norms:
-                        x = self.batch_norms[i](x)
-                    elif self.norm_method == "layer" and self.layer_norms:
-                        x = self.layer_norms[i](x)
+                    x = self.norms[i](x)
                 elif self.norm_method == "batch_layer":
-                    if self.layer_norms and self.batch_norms:
-                        x = self.layer_norms[i](x)
-                        x = nn.functional.leaky_relu(x)
-                        x = self.batch_norms[i](x)
-                    else:
-                        x = nn.functional.leaky_relu(x)
-
-            # Activation
-            x = nn.functional.leaky_relu(x)
-
-        return x, gat_attn
-
-    @torch.no_grad()
-    def predict(self, batch):
-        """Inference on a subgraph batch. 
-           No full-graph usage => no memory blow-up on 70M edges."""
-        x, gat_attn = self.forward(batch.n_id, batch.adjs)
-        return x, gat_attn
-
-    def predict_step(self, batch, batch_idx):
-        """Lightning's hook for prediction. 
-           This gets mini-batches from your inference DataLoader."""
-        return self.predict(batch)
-
-
-
-    # @torch.no_grad()  # Disable gradient tracking for inference
-    # def predict(self, data):
-        # batch:  Data(adjs=[3], batch_size=23734, patient_ids=[10], n_id=[232076], 
-        # disease_one_hot_labels=[10, 1169], phenotype_names=[10], cand_gene_names=[10], 
-        # corr_gene_names=[10], disease_names=[10], cand_disease_names=[10], batch_pheno_nid=[10, 25], 
-        # batch_corr_gene_nid=[10, 0], batch_disease_nid=[10, 1], batch_cand_disease_nid=[10, 1169])
-
-
-    #     # return self.predict_in_batches(data, batch_size=1024, num_neighbors=[15, 10, 5])
-    #     n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
-    #     print("Number of Nodes: ", n_id)
-    #     x = self.node_emb(n_id)
-    #     print("Node Embeddings: ", len(x))
-    #     print("Node Embeddings Shape: ", x.shape)
-    #     gat_attn = []
-    #     for i in range(len(self.convs)):
-            
-    #         # Update node embeddings
-    #         print("Move to GPU: predict - update node embeddings")
-    #         print("Data edge index length: ", data.edge_index.size())
-    #         for edge_index in data.edge_index:
-    #             print("Edge Index size: ", edge_index.size())
-    #         data.edge_index.to(self.device)
-    #         print("Moved edge_index to GPU")
-
-    #         x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) # 
-    #         print("Moved: predict - update node embeddings")
-
-    #         edge_i = edge_i.detach().cpu()
-    #         alpha = alpha.detach().cpu()
-    #         edge_i[0,:] = n_id[edge_i[0,:]]
-    #         edge_i[1,:] = n_id[edge_i[1,:]]
-    #         gat_attn.append((edge_i, alpha))
-            
-    #         # Normalize
-    #         if i != self.n_layers - 1:
-    #             if self.norm_method in ["batch", "layer"]:
-    #                 x = self.norms[i](x)
-    #             elif self.norm_method == "batch_layer":
-    #                 x = self.layer_norms[i](x)
-    #             x = F.leaky_relu(x)
-    #             if self.norm_method == "batch_layer":
-    #                 x = self.batch_norms[i](x)
+                    x = self.layer_norms[i](x)
+                x = F.leaky_relu(x)
+                if self.norm_method == "batch_layer":
+                    x = self.batch_norms[i](x)
         
-    #     assert x.shape[0] == self.node_emb.weight.shape[0]
+        assert x.shape[0] == self.node_emb.weight.shape[0]
 
-    #     return x, gat_attn
-
-
-
+        return x, gat_attn
 
     def predict_step(self, data, data_idx):
         x, gat_attn = self.predict(data)
@@ -539,62 +462,3 @@ class NodeEmbeder(pl.LightningModule):
 
         return norm_loss 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @torch.no_grad()
-    def predict_in_batches(self, data, batch_size=1024, sizes=[15, 10, 5]):
-        self.eval()
-        device = self.device
-
-        # Create the sampler:
-        sampler = NeighborSampler(
-            data.edge_index,        # adjacency
-            node_idx=torch.arange(data.num_nodes),  
-            sizes=sizes,
-            batch_size=batch_size,
-            shuffle=False
-        )
-
-        # Prepare final embeddings
-        # final_dim = self.output * self.n_heads (depending on your architecture)
-        final_dim = self.output 
-        all_embeddings = torch.zeros(data.num_nodes, final_dim, device='cpu')
-
-        for batch_i, (batch_size, n_id, adjs) in enumerate(sampler):
-            # Move to device
-            adjs = [adj.to(device) for adj in adjs]
-            n_id = n_id.to(device)
-
-            # forward returns final node embeddings for the *target nodes* 
-            # in this batch (in GNN code, often x[:size[1]] is for the seeds)
-            x_batch, _ = self.forward(n_id, adjs)
-
-            # The last adjacency gives us size[1] = number of seed nodes
-            size_out = adjs[-1].size[1]
-            x_seed = x_batch[:size_out]
-
-            # n_id[:size_out] are the actual seed nodes we want to store
-            seed_nid = n_id[:size_out]
-            all_embeddings[seed_nid] = x_seed.cpu()
-
-            print(f"Batch {batch_i+1} done. Stored embeddings for {size_out} nodes")
-
-        return all_embeddings
