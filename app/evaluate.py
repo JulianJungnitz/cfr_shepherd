@@ -604,6 +604,8 @@ def test_disease_mappings(score_file_path):
 
     # first map using the mondo to name dict then from mondo to doid
     df["mondo_id"] = df["diseases"].map(name_to_mondo_dict)
+    # Mondo auf 7 stellen auffüllen und MONDO: davor setzen
+    df["mondo_id"] = df["mondo_id"].apply(lambda x: f"MONDO:{str(x).zfill(7)}")
     df["doid"] = df["mondo_id"].map(mondo_id_to_doid_dict)
     total_diseases_mondo_name_mondo_id_doid = df[df["doid"].notnull()]["diseases"].nunique()
 
@@ -614,6 +616,8 @@ def test_disease_mappings(score_file_path):
         Total Diseases in Mondo Name to Mondo ID to DOID: {total_diseases_mondo_name_mondo_id_doid}
 """
     )
+
+    
 
     # check overlap
     overlap_mondo_db = len(
