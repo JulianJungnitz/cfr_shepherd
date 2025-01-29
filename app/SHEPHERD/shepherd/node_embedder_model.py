@@ -408,6 +408,7 @@ class NodeEmbeder(pl.LightningModule):
         print("Number of Nodes: ", n_id)
         x = self.node_emb(n_id)
         print("Node Embeddings: ", len(x))
+        print("Node Embeddings Shape: ", x.shape)
         gat_attn = []
         for i in range(len(self.convs)):
             
