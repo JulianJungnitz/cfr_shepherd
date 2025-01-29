@@ -692,6 +692,7 @@ def get_mondo_id_to_doid_dict():
         mondo_id_to_doid_dict = create_mondo_id_to_doid_map()
         with open(file, "wb") as handle:
             pickle.dump(mondo_id_to_doid_dict, handle) 
+    return mondo_id_to_doid_dict
 
 def create_mondo_id_to_doid_map():
     mondo_ontology = Ontology(project_config.PROJECT_DIR / 'mondo.obo')
