@@ -397,43 +397,100 @@ class NodeEmbeder(pl.LightningModule):
         self._logger({'node_curr_epoch': self.current_epoch})
 
     
-    def predict(self, data):
-        n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
+    # def predict(self, data):
+    #     n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
 
+    #     x = self.node_emb(n_id)
+
+    #     gat_attn = []
+    #     for i in range(len(self.convs)):
+            
+    #         # Update node embeddings
+    #         print("Move to GPU: predict - update node embeddings")
+    #         print("Data edge index length: ", data.edge_index.size())
+    #         for edge_index in data.edge_index:
+    #             print("Edge Index size: ", edge_index.size())
+    #         data.edge_index.to(self.device)
+    #         print("Moved edge_index to GPU")
+
+    #         x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) # 
+    #         print("Moved: predict - update node embeddings")
+
+    #         edge_i = edge_i.detach().cpu()
+    #         alpha = alpha.detach().cpu()
+    #         edge_i[0,:] = n_id[edge_i[0,:]]
+    #         edge_i[1,:] = n_id[edge_i[1,:]]
+    #         gat_attn.append((edge_i, alpha))
+            
+    #         # Normalize
+    #         if i != self.n_layers - 1:
+    #             if self.norm_method in ["batch", "layer"]:
+    #                 x = self.norms[i](x)
+    #             elif self.norm_method == "batch_layer":
+    #                 x = self.layer_norms[i](x)
+    #             x = F.leaky_relu(x)
+    #             if self.norm_method == "batch_layer":
+    #                 x = self.batch_norms[i](x)
+        
+    #     assert x.shape[0] == self.node_emb.weight.shape[0]
+
+    #     return x, gat_attn
+
+
+    @torch.no_grad()  # Disable gradient tracking for inference
+    def predict(self, data):
+        print("[predict] Moving edge_index to GPU once...")
+        edge_index = data.edge_index.to(self.device)
+        print(f"[predict] edge_index shape: {edge_index.shape}, device: {edge_index.device}")
+
+        # Create an index of all node IDs
+        n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
+        print(f"[predict] Created n_id of shape: {n_id.shape}")
+
+        # Initial node embeddings from your embedding layer
         x = self.node_emb(n_id)
+        print(f"[predict] Initial node embeddings x shape: {x.shape}, device: {x.device}")
 
         gat_attn = []
-        for i in range(len(self.convs)):
+        for i, conv in enumerate(self.convs):
+            print(f"\n[predict] ----- Convolution layer {i+1} / {len(self.convs)} -----")
             
-            # Update node embeddings
-            print("Move to GPU: predict - update node embeddings")
-            print("Data edge index length: ", len(data.edge_index))
-            for edge_index in data.edge_index:
-                print("Edge Index size: ", edge_index.size())
-            data.edge_index.to(self.device)
-            print("Moved edge_index to GPU")
+            # Forward pass with attention
+            out = conv(x, edge_index, return_attention_weights=True)
+            x, (edge_i, alpha) = out
+            del out  # Explicitly free the temporary tuple
 
-            x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) # 
-            print("Moved: predict - update node embeddings")
+            print(f"[predict]   After conv {i+1}, x.shape: {x.shape}")
+            print(f"[predict]   edge_i.shape: {edge_i.shape}, alpha.shape: {alpha.shape}")
 
+            # Detach and move attention weights to CPU to free GPU memory
             edge_i = edge_i.detach().cpu()
             alpha = alpha.detach().cpu()
-            edge_i[0,:] = n_id[edge_i[0,:]]
-            edge_i[1,:] = n_id[edge_i[1,:]]
+
+            # Remap local subgraph indices back to global n_id if necessary
+            edge_i[0, :] = n_id[edge_i[0, :]]
+            edge_i[1, :] = n_id[edge_i[1, :]]
             gat_attn.append((edge_i, alpha))
-            
-            # Normalize
+
+            # Apply normalization and activation except on the last layer
             if i != self.n_layers - 1:
                 if self.norm_method in ["batch", "layer"]:
                     x = self.norms[i](x)
+                    print(f"[predict]   Applied norm method: {self.norm_method}")
                 elif self.norm_method == "batch_layer":
                     x = self.layer_norms[i](x)
+                    print("[predict]   Applied layer_norms")
                 x = F.leaky_relu(x)
                 if self.norm_method == "batch_layer":
                     x = self.batch_norms[i](x)
-        
-        assert x.shape[0] == self.node_emb.weight.shape[0]
+                    print("[predict]   Applied batch_norms")
 
+        print(f"\n[predict] Final x shape: {x.shape}")
+        print(f"[predict] Expected number of nodes: {self.node_emb.weight.shape[0]}")
+        assert x.shape[0] == self.node_emb.weight.shape[0], \
+            "Output embedding size does not match the number of nodes."
+
+        print("[predict] Done with prediction.")
         return x, gat_attn
 
     def predict_step(self, data, data_idx):
