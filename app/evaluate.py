@@ -329,7 +329,7 @@ def map_disease_to_doid(df):
             continue
         else:
             doid = row["doid"]
-            if(doid is float):
+            if isinstance(doid, float):
                 print(f"Float: {doid}")
                 continue
             stripped_disease = doid.split(":")[-1]
