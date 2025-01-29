@@ -326,11 +326,12 @@ class CombinedPatientNCA(pl.LightningModule):
 
     
     def inference(self, batch, batch_idx):
-        unique_n_ids = [
-            batch.n_id,
-            batch.batch_pheno_nid,
-            batch.batch_cand_disease_nid
-        ]
+        # unique_n_ids = [
+        #     batch.n_id,
+        #     batch.batch_pheno_nid,
+        #     batch.batch_cand_disease_nid
+        # ]
+        unique_n_ids = torch.cat([batch.n_id, batch.batch_pheno_nid, batch.batch_cand_disease_nid]).tolist()
 
         outputs, gat_attn = self.node_model.predict(self.all_data, batch, unique_n_ids)
 
