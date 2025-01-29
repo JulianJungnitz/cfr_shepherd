@@ -423,18 +423,19 @@ class NodeEmbeder(pl.LightningModule):
             gat_attn.append((edge_i.detach().cpu(), alpha.detach().cpu()))
 
             # Apply normalization if necessary
-            if self.norm_method in ["batch", "layer"]:
-                if self.norm_method == "batch" and self.batch_norms:
-                    x = self.batch_norms[i](x)
-                elif self.norm_method == "layer" and self.layer_norms:
-                    x = self.layer_norms[i](x)
-            elif self.norm_method == "batch_layer":
-                if self.layer_norms and self.batch_norms:
-                    x = self.layer_norms[i](x)
-                    x = nn.functional.leaky_relu(x)
-                    x = self.batch_norms[i](x)
-                else:
-                    x = nn.functional.leaky_relu(x)
+            if i != self.n_layers - 1:
+                if self.norm_method in ["batch", "layer"]:
+                    if self.norm_method == "batch" and self.batch_norms:
+                        x = self.batch_norms[i](x)
+                    elif self.norm_method == "layer" and self.layer_norms:
+                        x = self.layer_norms[i](x)
+                elif self.norm_method == "batch_layer":
+                    if self.layer_norms and self.batch_norms:
+                        x = self.layer_norms[i](x)
+                        x = nn.functional.leaky_relu(x)
+                        x = self.batch_norms[i](x)
+                    else:
+                        x = nn.functional.leaky_relu(x)
 
             # Activation
             x = nn.functional.leaky_relu(x)
