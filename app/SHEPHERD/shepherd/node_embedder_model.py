@@ -481,12 +481,10 @@ class NodeEmbeder(pl.LightningModule):
         )
 
         with torch.no_grad():
-            for (batch_size, n_id, adjs) in loader:
-                
-                adjs = [ (edge_index, e_id, e_type, size)
-                         for (edge_index, e_id, e_type, size) in adjs ]
-                
-                out = self.forward(n_id, adjs)
+            for sub_data in loader:
+                batch_size = sub_data.batch_size
+                n_id = sub_data.n_id
+                out = self.forward(n_id, sub_data)
                 x_all[n_id.cpu()] = out.cpu()
 
         return x_all
