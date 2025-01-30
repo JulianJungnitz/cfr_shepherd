@@ -326,18 +326,15 @@ class CombinedPatientNCA(pl.LightningModule):
 
     
     def inference(self, batch, batch_idx):
-        # unique_n_ids = [
-        #     batch.n_id,
-        #     batch.batch_pheno_nid,
-        #     batch.batch_cand_disease_nid
-        # ]
+        
         # print("Sizes: ", batch.n_id.shape, batch.batch_pheno_nid.shape, batch.batch_cand_disease_nid.shape)
         # print("First 5 of batch.n_id: ", batch.n_id[:5])
         # print("First 5 of batch.batch_pheno_nid: ", batch.batch_pheno_nid[0][:5], batch.batch_pheno_nid[1][:5],)
         # print("First 5 of batch.batch_cand_disease_nid: ", batch.batch_cand_disease_nid[0][:5], batch.batch_cand_disease_nid[1][:5],)
-        # unique_n_ids = torch.cat([ batch.batch_pheno_nid,]).tolist()
+        unique_n_ids = torch.unique(batch.n_id)
+        print("unique_n_ids: ", unique_n_ids)
 
-        outputs, gat_attn = self.node_model.predict(self.all_data)
+        outputs = self.node_model.predict_in_batches(self.all_data, node_idx=batch.n_id,)
 
         pad_outputs = torch.cat([torch.zeros(1, outputs.size(1), device=outputs.device), outputs]) 
 
@@ -356,7 +353,7 @@ class CombinedPatientNCA(pl.LightningModule):
 
         phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights = self.patient_model.forward(phenotype_embeddings, disease_embeddings, phenotype_mask, disease_mask)
 
-        return outputs, gat_attn, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights
+        return outputs, None, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights
 
 
     def predict_step(self, batch, batch_idx):

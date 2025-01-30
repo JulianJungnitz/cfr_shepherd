@@ -4,6 +4,7 @@ import torch.nn as nn
 
 import torch.nn.functional as F
 from torch_geometric.nn import BatchNorm, LayerNorm, GATv2Conv
+from torch_geometric.loader.neighbor_loader import NeighborSampler
 
 # Pytorch Lightning
 import pytorch_lightning as pl
@@ -397,7 +398,7 @@ class NodeEmbeder(pl.LightningModule):
         self._logger({'node_curr_epoch': self.current_epoch})
 
     
-    def predict(self, data,):
+    def predict(self, data, unique_n_ids):
 
         print("DATA: ", data)
         # DATA:  Data(edge_index=[2, 73435672], edge_attr=[73435672], train_mask=[73435672], val_mask=[73435672], test_mask=[73435672])
@@ -412,8 +413,8 @@ class NodeEmbeder(pl.LightningModule):
         # print(f"batch_n_id: {batch_n_id.shape}")
 
         n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
-        x = self.node_emb(n_id)
-        # print(f"Initial embeddings shape: {x.shape}")
+        x = self.node_emb(unique_n_ids)
+        print(f"Initial embeddings shape: {x.shape}")
 
         # batch_edge_index = batch.edge_index.to(self.device)
 
@@ -423,7 +424,7 @@ class NodeEmbeder(pl.LightningModule):
         for i in range(len(self.convs)):
             # Update node embeddings
             print(f"Move to GPU: predict - update node embeddings at layer {i}")
-            x = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=False)
+            x = self.convs[i](x, data.edge_index.to(self.device),)
             print(f"Moved: predict - update node embeddings at layer {i}")
 
             # Normalize
@@ -455,6 +456,48 @@ class NodeEmbeder(pl.LightningModule):
         x, gat_attn = self.predict(data)
         return x, gat_attn
     
+    
+    
+
+    def predict_in_batches(self, data,  node_idx=None):
+        batch_size=10,
+        """
+        Compute embeddings for all nodes by sampling neighbors in small batches.
+        """
+        self.eval()  # inference mode
+        device = self.device
+        
+        x_all = torch.zeros(self.num_nodes, self.output * self.n_heads,
+                            device='cpu')
+
+        sampler = NeighborSampler(
+            data.edge_index,
+            node_idx=node_idx,      
+            sizes=[15, 10, 5], 
+            batch_size=batch_size,
+            shuffle=False
+        )
+
+        with torch.no_grad():
+            for (batch_size, n_id, adjs) in sampler:
+                # Move subgraphs to GPU
+                adjs = [ (edge_index.to(device), e_id.to(device), e_type.to(device), size)
+                         for (edge_index, e_id, e_type, size) in adjs ]
+                
+                # Forward pass for these nodes + neighbors
+                out = self.forward(n_id.to(device), adjs)
+                # out shape = [n_id.size(0), out_dim], but we only need the embedding
+                # for the first `batch_size` = the "target" nodes in this chunk
+
+                # The sub-batch "target" nodes are always the *first* `batch_size` indices of n_id
+                # but if you want embeddings for *all* n_id as well, you can store them all.
+                # Typically, we store embeddings in x_all[n_id] = out
+                # Here we store for all n_id so we get a complete embedding for the entire graph:
+                x_all[n_id.cpu()] = out.cpu()
+
+        return x_all
+    
+
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay = self.wd)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=self.lr_factor, patience=self.lr_patience, threshold=self.lr_threshold, threshold_mode=self.lr_threshold_mode, cooldown=self.lr_cooldown, min_lr=self.min_lr, eps=self.eps)
