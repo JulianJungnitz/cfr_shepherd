@@ -471,8 +471,8 @@ class NodeEmbeder(pl.LightningModule):
                             device='cpu')
 
         sampler = NeighborSampler(
-            data.edge_index,
-            node_idx=node_idx,      
+            data,
+            input_nodes=node_idx,      
             sizes=[15, 10, 5], 
             batch_size=batch_size,
             shuffle=False
