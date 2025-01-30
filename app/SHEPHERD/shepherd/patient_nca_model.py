@@ -612,12 +612,12 @@ class CombinedPatientNCA(pl.LightningModule):
 
         disease_nids = torch.unique(batch.batch_cand_disease_nid)
         print("disease_nids: ", disease_nids)
-        
+
 
 
         outputs = self.node_model.predict_in_batches(
             self.all_data,
-            node_idx=batch.n_id,
+            node_idx=phen_nids,
         )
 
         pad_outputs = torch.cat(
