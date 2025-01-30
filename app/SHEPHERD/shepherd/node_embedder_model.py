@@ -4,7 +4,7 @@ import torch.nn as nn
 
 import torch.nn.functional as F
 from torch_geometric.nn import BatchNorm, LayerNorm, GATv2Conv
-from torch_geometric.loader.neighbor_loader import NeighborSampler
+from torch_geometric.loader.neighbor_sampler import NeighborSampler
 
 # Pytorch Lightning
 import pytorch_lightning as pl
