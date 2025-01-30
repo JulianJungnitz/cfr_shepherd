@@ -484,6 +484,7 @@ class NodeEmbeder(pl.LightningModule):
             for sub_data in loader:
                 batch_size = sub_data.batch_size
                 n_id = sub_data.n_id
+                print("sub_data: ", sub_data)
                 out = self.forward(n_id, sub_data)
                 x_all[n_id.cpu()] = out.cpu()
 
