@@ -606,6 +606,7 @@ class CombinedPatientNCA(pl.LightningModule):
         batch_nid = torch.unique(batch.n_id)
         print("batch_nid: ", batch_nid)
         # batch_nid:  tensor([     0,      1,      2,  ..., 361428, 361429, 361445])
+        print("batch_idx: ", batch_idx)
 
         phen_nids = torch.unique(batch.batch_pheno_nid)
         print("phen_nids: ", phen_nids)
