@@ -398,7 +398,7 @@ class NodeEmbeder(pl.LightningModule):
         self._logger({'node_curr_epoch': self.current_epoch})
 
     
-    def predict(self, data, unique_n_ids):
+    def predict(self, data):
 
         print("DATA: ", data)
         # DATA:  Data(edge_index=[2, 73435672], edge_attr=[73435672], train_mask=[73435672], val_mask=[73435672], test_mask=[73435672])
@@ -413,7 +413,7 @@ class NodeEmbeder(pl.LightningModule):
         # print(f"batch_n_id: {batch_n_id.shape}")
 
         n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
-        x = self.node_emb(unique_n_ids)
+        x = self.node_emb(n_id)
         print(f"Initial embeddings shape: {x.shape}")
 
         # batch_edge_index = batch.edge_index.to(self.device)
@@ -485,7 +485,9 @@ class NodeEmbeder(pl.LightningModule):
                 batch_size = sub_data.batch_size
                 n_id = sub_data.n_id
                 print("sub_data: ", sub_data)
-                out = self.forward(n_id, sub_data)
+                # sub_data:  Data(edge_index=[2, 1354], edge_attr=[1354], train_mask=[1354], val_mask=[1354], test_mask=[1354], n_id=[1249], e_id=[1354], input_id=[10], batch_size=10)
+                adjs = sub_data
+                out = self.forward(n_id, adjs)
                 x_all[n_id.cpu()] = out.cpu()
 
         return x_all

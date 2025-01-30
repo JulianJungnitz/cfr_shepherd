@@ -605,6 +605,8 @@ class CombinedPatientNCA(pl.LightningModule):
         # print("First 5 of batch.batch_cand_disease_nid: ", batch.batch_cand_disease_nid[0][:5], batch.batch_cand_disease_nid[1][:5],)
         batch_nid = torch.unique(batch.n_id)
         print("batch_nid: ", batch_nid)
+        print("Batch: ", batch)
+
         # batch_nid:  tensor([     0,      1,      2,  ..., 361428, 361429, 361445])
         print("batch_idx: ", batch_idx)
         # batch_idx:  0
@@ -615,11 +617,12 @@ class CombinedPatientNCA(pl.LightningModule):
         disease_nids = torch.unique(batch.batch_cand_disease_nid)
         print("disease_nids: ", disease_nids)
 
+        print("all_data: ", self.all_data)
+       
 
 
-        outputs = self.node_model.predict_in_batches(
-            self.all_data,
-            node_idx=phen_nids,
+        outputs = self.node_model.predict(
+            batch,
         )
 
         pad_outputs = torch.cat(
@@ -667,6 +670,7 @@ class CombinedPatientNCA(pl.LightningModule):
         )
 
     def predict_step(self, batch, batch_idx):
+
         (
             node_embeddings,
             gat_attn,
