@@ -460,7 +460,7 @@ class NodeEmbeder(pl.LightningModule):
     
 
     def predict_in_batches(self, data,  node_idx=None):
-        batch_size=10,
+        batch_size=10
         """
         Compute embeddings for all nodes by sampling neighbors in small batches.
         """
