@@ -481,11 +481,11 @@ class NodeEmbeder(pl.LightningModule):
         with torch.no_grad():
             for (batch_size, n_id, adjs) in sampler:
                 # Move subgraphs to GPU
-                adjs = [ (edge_index.to(device), e_id.to(device), e_type.to(device))
+                adjs = [ (edge_index, e_id, e_type)
                          for (edge_index, e_id, e_type) in adjs ]
                 
                 # Forward pass for these nodes + neighbors
-                out = self.forward(n_id.to(device), adjs)
+                out = self.forward(n_id, adjs)
                 # out shape = [n_id.size(0), out_dim], but we only need the embedding
                 # for the first `batch_size` = the "target" nodes in this chunk
 
