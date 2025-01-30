@@ -618,7 +618,7 @@ class CombinedPatientNCA(pl.LightningModule):
         print("disease_nids: ", disease_nids)
 
         print("all_data: ", self.all_data)
-       
+        batch.edge_index = self.all_data.edge_index
 
 
         outputs = self.node_model.predict(
