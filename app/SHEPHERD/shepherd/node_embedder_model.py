@@ -482,7 +482,7 @@ class NodeEmbeder(pl.LightningModule):
             for (batch_size, n_id, adjs) in sampler:
                 # Move subgraphs to GPU
                 adjs = [ (edge_index.to(device), e_id.to(device), e_type.to(device))
-                         for (edge_index, e_id, e_type, size) in adjs ]
+                         for (edge_index, e_id, e_type) in adjs ]
                 
                 # Forward pass for these nodes + neighbors
                 out = self.forward(n_id.to(device), adjs)
