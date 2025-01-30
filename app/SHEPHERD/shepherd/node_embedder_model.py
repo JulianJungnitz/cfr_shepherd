@@ -406,7 +406,7 @@ class NodeEmbeder(pl.LightningModule):
         # BATCH:  Data(adjs=[3], batch_size=23734, patient_ids=[10], n_id=[232076], disease_one_hot_labels=[10, 1169], phenotype_names=[10], cand_gene_names=[10], corr_gene_names=[10], disease_names=[10], cand_disease_names=[10], batch_pheno_nid=[10, 25], batch_corr_gene_nid=[10, 0], batch_disease_nid=[10, 1], batch_cand_disease_nid=[10, 1169])
         # e_emb.weight.shape[0], device=self.device)
         
-        return self.forward(unique_n_ids, batch.adjs)
+        return self.forward(batch.n_id, batch.adjs)
 
         batch_n_id = batch.n_id.to(self.device)  # Move to the correct device if necessary
         print(f"batch_n_id: {batch_n_id.shape}")
