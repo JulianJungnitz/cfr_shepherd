@@ -61,8 +61,8 @@ CORRUPT_VAL_DATA = MY_DATA_DIR / f"disease_split_val_sim_patients_{CURR_KG}_phen
 #MY_VAL_DATA = "/n/data1/hms/dbmi/zaklab/mli/rare_disease_diagnosis/test_camera_ready/data/patients/mygene2_patients/mygene2_5.7.22_max250candgenes.txt"
 
 MY_TEST_DATA = MY_DATA_DIR / "data.txt"
-MY_SPL_DATA = MY_DATA_DIR / "disease_split_all_sim_patients_kg_{CURR_KG}_agg=mean_spl_matrix.npy"
-MY_SPL_INDEX_DATA = MY_DATA_DIR / "disease_split_all_sim_patients_kg_{CURR_KG}_spl_index_dict.pkl"
+MY_SPL_DATA = MY_DATA_DIR / f"disease_split_all_sim_patients_kg_{CURR_KG}_agg=mean_spl_matrix.npy"
+MY_SPL_INDEX_DATA = MY_DATA_DIR / f"disease_split_all_sim_patients_kg_{CURR_KG}_spl_index_dict.pkl"
 
 # Exomiser
 # MY_TEST_DATA = "/home/ema30/zaklab/rare_disease_dx/formatted_patients/UDN_patients-2022-01-05/all_udn_patients_kg_8.9.21_kgsolved_exomiser_distractor_genes_5_candidates_mapped_only_genes.txt" # MY_DATA_DIR / "PATH/TO/YOUR/DATA"
