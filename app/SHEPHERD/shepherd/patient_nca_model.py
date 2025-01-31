@@ -367,6 +367,9 @@ class CombinedPatientNCA(pl.LightningModule):
         # Batch_idx:  0
         # Data:  Data(edge_index=[2, 73435672], edge_attr=[73435672], train_mask=[73435672], val_mask=[73435672], test_mask=[73435672])
 
+        print("Forward:")
+        out = self.forward(batch)
+        print("out: ", out)
 
         node_embeddings, gat_attn, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights = self.inference(batch, batch_idx)
 
