@@ -233,6 +233,7 @@ class NCALoss(BaseMetricLossFunction):
                 phenotype_embedding, candidate_disease_embeddings, labels, indices_tuple, use_one_hot_labels=True
             )
         # print("compute loss: ", loss_dict)
+        print("Loss dict: ", loss_dict, " Disease softmax: ", disease_softmax, " Labels: ", labels, " Candidate disease idx: ", candidate_disease_idx, " Candidate disease embeddings: ", candidate_disease_embeddings)
         return loss_dict, disease_softmax, labels, candidate_disease_idx, candidate_disease_embeddings
 
     def nca_computation(
