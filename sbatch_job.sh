@@ -35,7 +35,7 @@ export PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True"
 
 conda activate v5_shepherd
 
-nvidia-smi
+# nvidia-smi
 
 echo "Memory usage before running predict.py:"
 free -h
