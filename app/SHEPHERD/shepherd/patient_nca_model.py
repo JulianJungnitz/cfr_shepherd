@@ -104,6 +104,8 @@ class CombinedPatientNCA(pl.LightningModule):
     def _step(self, batch, step_type):
         print("Step type: ", step_type)
         print("Batch: ", batch)
+        print("Data: ", self.all_data)
+        print("Adjs: ", batch.adjs)
         t0 = time.time()
         if step_type != 'test':
             batch = get_edges(batch, self.all_data, step_type)
