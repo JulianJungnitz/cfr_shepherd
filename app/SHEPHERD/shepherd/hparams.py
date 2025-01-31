@@ -133,7 +133,7 @@ def get_train_hparams(args):
                'pin_memory': False,
                'time': False,
                'log_gpu_memory': True,
-               'debug': False, 
+               'debug': True, 
                'plot_softmax': False,
                'plot_intrain': False, # Flag to plot gene rank vs. in train sets
                'plot_PG_embed': False, # Flag to plot embeddings with phenotype and gene labels

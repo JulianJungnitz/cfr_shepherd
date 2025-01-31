@@ -102,6 +102,8 @@ class CombinedPatientNCA(pl.LightningModule):
         return correct_patient_ranks, labels
     
     def _step(self, batch, step_type):
+        print("Step type: ", step_type)
+        print("Batch: ", batch)
         t0 = time.time()
         if step_type != 'test':
             batch = get_edges(batch, self.all_data, step_type)
@@ -353,6 +355,7 @@ class CombinedPatientNCA(pl.LightningModule):
         print("Batch_idx: ", batch_idx)
         print("Data: ", self.all_data)
         print("Adjs: ", batch.adjs)
+
      
         # Batch:  Data(adjs=[3], batch_size=23734, patient_ids=[10], n_id=[232076], disease_one_hot_labels=[10, 1169], phenotype_names=[10], cand_gene_names=[10], corr_gene_names=[10], disease_names=[10], cand_disease_names=[10], batch_pheno_nid=[10, 25], batch_corr_gene_nid=[10, 0], batch_disease_nid=[10, 1], batch_cand_disease_nid=[10, 1169])
         # Batch_idx:  0
