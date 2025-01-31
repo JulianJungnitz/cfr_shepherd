@@ -212,7 +212,7 @@ class NCALoss(BaseMetricLossFunction):
     def compute_loss(self, phenotype_embedding, disease_embedding, batch_corr_disease_nid, batch_cand_disease_nid, disease_mask, labels, indices_tuple, use_candidate_list):
 
         if len(phenotype_embedding) <= 1:
-            return self.zero_losses(), None, None
+            return self.zero_losses(), None, None, None, None
 
         if disease_embedding is None: #phenotype-phenotypes
             loss_dict, disease_softmax, labels = self.nca_computation(
