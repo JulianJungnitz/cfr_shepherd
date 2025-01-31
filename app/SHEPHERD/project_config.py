@@ -38,11 +38,13 @@ else:
     PROJECT_DIR = Path("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data")
 
 config = read_config()
+print("Config: ", config)
 
 if(config["shepherd"]["USE_HAUNER_GRAPH"]):
     CURR_KG = 'hauner_graph_reduced'
 else:
     CURR_KG = '8.9.21_kg' 
+print("Using knowledge graph: ", CURR_KG)
 
 KG_DIR = PROJECT_DIR / 'knowledge_graph' / CURR_KG
 PREDICT_RESULTS_DIR = PROJECT_DIR / 'results'
