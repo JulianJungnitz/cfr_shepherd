@@ -352,6 +352,12 @@ class CombinedPatientNCA(pl.LightningModule):
         print("Batch: ", batch)
         print("Batch_idx: ", batch_idx)
         print("Data: ", self.all_data)
+        print("Adjs: ", batch.adjs)
+     
+        # Batch:  Data(adjs=[3], batch_size=23734, patient_ids=[10], n_id=[232076], disease_one_hot_labels=[10, 1169], phenotype_names=[10], cand_gene_names=[10], corr_gene_names=[10], disease_names=[10], cand_disease_names=[10], batch_pheno_nid=[10, 25], batch_corr_gene_nid=[10, 0], batch_disease_nid=[10, 1], batch_cand_disease_nid=[10, 1169])
+        # Batch_idx:  0
+        # Data:  Data(edge_index=[2, 73435672], edge_attr=[73435672], train_mask=[73435672], val_mask=[73435672], test_mask=[73435672])
+
 
         node_embeddings, gat_attn, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights = self.inference(batch, batch_idx)
 

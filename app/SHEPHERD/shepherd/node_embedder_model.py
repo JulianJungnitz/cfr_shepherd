@@ -158,7 +158,38 @@ class NodeEmbeder(pl.LightningModule):
 
         return x, gat_attn
 
+    def predict(self, data,):
+        n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
 
+        x = self.node_emb(n_id)
+
+        gat_attn = []
+        for i in range(len(self.convs)):
+            
+            # Update node embeddings
+            print("Move to GPU: predict - update node embeddings")
+            x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) #
+            print("Moved: predict - update node embeddings")
+
+            edge_i = edge_i.detach().cpu()
+            alpha = alpha.detach().cpu()
+            edge_i[0,:] = n_id[edge_i[0,:]]
+            edge_i[1,:] = n_id[edge_i[1,:]]
+            gat_attn.append((edge_i, alpha))
+            
+            # Normalize
+            if i != self.n_layers - 1:
+                if self.norm_method in ["batch", "layer"]:
+                    x = self.norms[i](x)
+                elif self.norm_method == "batch_layer":
+                    x = self.layer_norms[i](x)
+                x = F.leaky_relu(x)
+                if self.norm_method == "batch_layer":
+                    x = self.batch_norms[i](x)
+        
+        assert x.shape[0] == self.node_emb.weight.shape[0]
+
+        return x, gat_attn
 
     
     def get_negative_target_nodes(self, data, pos_target_embeds, curr_pos_target_embeds, all_edge_types):
@@ -397,38 +428,7 @@ class NodeEmbeder(pl.LightningModule):
         self._logger({'node_curr_epoch': self.current_epoch})
 
     
-    def predict(self, data,):
-        n_id = torch.arange(self.node_emb.weight.shape[0], device=self.device)
 
-        x = self.node_emb(n_id)
-
-        gat_attn = []
-        for i in range(len(self.convs)):
-            
-            # Update node embeddings
-            print("Move to GPU: predict - update node embeddings")
-            x, (edge_i, alpha) = self.convs[i](x, data.edge_index.to(self.device), return_attention_weights=True) #
-            print("Moved: predict - update node embeddings")
-
-            edge_i = edge_i.detach().cpu()
-            alpha = alpha.detach().cpu()
-            edge_i[0,:] = n_id[edge_i[0,:]]
-            edge_i[1,:] = n_id[edge_i[1,:]]
-            gat_attn.append((edge_i, alpha))
-            
-            # Normalize
-            if i != self.n_layers - 1:
-                if self.norm_method in ["batch", "layer"]:
-                    x = self.norms[i](x)
-                elif self.norm_method == "batch_layer":
-                    x = self.layer_norms[i](x)
-                x = F.leaky_relu(x)
-                if self.norm_method == "batch_layer":
-                    x = self.batch_norms[i](x)
-        
-        assert x.shape[0] == self.node_emb.weight.shape[0]
-
-        return x, gat_attn
 
     def predict_step(self, data, data_idx):
         x, gat_attn = self.predict(data)
