@@ -357,6 +357,10 @@ class CombinedPatientNCA(pl.LightningModule):
         print("Batch_idx: ", batch_idx)
         print("Data: ", self.all_data)
         print("Adjs: ", batch.adjs)
+        # Adjs:  [HeterogeneousEdgeIndex(edge_index=tensor([[ 19514,  33469,  36192,  ..., 232073, 232074, 232075],
+        # [     0,      0,      0,  ..., 218476, 218476, 218476]]), e_id=tensor([10367667, 17147075, 19821744,  ...,  3310222,  4281160,  4277586]), edge_type=tensor([7, 7, 7,  ..., 4, 4, 4]), size=[232076, 218477]), HeterogeneousEdgeIndex(edge_index=tensor([[ 21025,  24954,  26303,  ...,  23714,  23714,  23714],
+        # [     0,      0,      0,  ..., 199770, 199771, 199772]]), e_id=tensor([30946414,  8595088,  9950021,  ..., 42583739, 43071715, 43071716]), edge_type=tensor([10,  7,  7,  ...,  4,  4,  4]), size=[218477, 199773]), HeterogeneousEdgeIndex(edge_index=tensor([[  6993,   7398,   7411,  ..., 152100, 152102, 152103],
+        # [     0,      0,      0,  ...,  23731,  23732,  23733]]), e_id=tensor([36717836,    10946,    10961,  ..., 73435210, 73435336, 73435640]), edge_type=tensor([0, 0, 0,  ..., 4, 4, 4]), size=[199773, 23734])]
 
      
         # Batch:  Data(adjs=[3], batch_size=23734, patient_ids=[10], n_id=[232076], disease_one_hot_labels=[10, 1169], phenotype_names=[10], cand_gene_names=[10], corr_gene_names=[10], disease_names=[10], cand_disease_names=[10], batch_pheno_nid=[10, 25], batch_corr_gene_nid=[10, 0], batch_disease_nid=[10, 1], batch_cand_disease_nid=[10, 1169])
