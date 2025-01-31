@@ -367,6 +367,21 @@ class CombinedPatientNCA(pl.LightningModule):
         print("Data: ", self.all_data)
         print("Adjs: ", batch.adjs)
         print("batch_pheno_nid: ", batch.batch_pheno_nid)
+       
+        # vor rausnehmen von predict filter in datasampler
+        # batch_pheno_nid:  tensor([[ 67658, 361136,  63821, 360258,  59121,  63587,  57554,  61705, 358562,
+        #  360213,  60788,  66772, 358590,  55560, 358300,  64785, 360348,  69196,
+        #   69485,      0,      0,      0,      0,      0,      0],
+        # [ 60333,  
+        # nach rausnehmen:
+        # batch_pheno_nid:  tensor([[22778, 23733, 10873, 23724, 22694, 10872, 10816, 22725, 23710, 23723,
+        #  10851, 22769, 23711, 10794, 11840, 22747, 23726, 22796, 22799,     0,
+        #      0,     0,     0,     0,     0],
+        # [22707, 22719,
+
+
+
+
         # Adjs:  [HeterogeneousEdgeIndex(edge_index=tensor([[ 19514,  33469,  36192,  ..., 232073, 232074, 232075],
         # [     0,      0,      0,  ..., 218476, 218476, 218476]]), e_id=tensor([10367667, 17147075, 19821744,  ...,  3310222,  4281160,  4277586]), edge_type=tensor([7, 7, 7,  ..., 4, 4, 4]), size=[232076, 218477]), HeterogeneousEdgeIndex(edge_index=tensor([[ 21025,  24954,  26303,  ...,  23714,  23714,  23714],
         # [     0,      0,      0,  ..., 199770, 199771, 199772]]), e_id=tensor([30946414,  8595088,  9950021,  ..., 42583739, 43071715, 43071716]), edge_type=tensor([10,  7,  7,  ...,  4,  4,  4]), size=[218477, 199773]), HeterogeneousEdgeIndex(edge_index=tensor([[  6993,   7398,   7411,  ..., 152100, 152102, 152103],
@@ -378,10 +393,10 @@ class CombinedPatientNCA(pl.LightningModule):
         # Data:  Data(edge_index=[2, 73435672], edge_attr=[73435672], train_mask=[73435672], val_mask=[73435672], test_mask=[73435672])
         batch = get_edges(batch, self.all_data, "test")
         print("Forward:")
-        out = self.forward(batch)
-        print("out: ", out)
+        node_embeddings, gat_attn, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights = self.forward(batch)
+        
 
-        node_embeddings, gat_attn, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights = self.inference(batch, batch_idx)
+        # node_embeddings, gat_attn, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights = self.inference(batch, batch_idx)
 
         # calculate patient embedding loss
         use_candidate_list =  self.hparams.hparams['only_hard_distractors'] 
