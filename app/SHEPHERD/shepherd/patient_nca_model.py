@@ -348,6 +348,11 @@ class CombinedPatientNCA(pl.LightningModule):
 
 
     def predict_step(self, batch, batch_idx):
+        print("Predicting...")
+        print("Batch: ", batch)
+        print("Batch_idx: ", batch_idx)
+        print("Data: ", self.all_data)
+
         node_embeddings, gat_attn, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights = self.inference(batch, batch_idx)
 
         # calculate patient embedding loss
