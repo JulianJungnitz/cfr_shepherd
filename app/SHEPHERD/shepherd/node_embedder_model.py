@@ -137,14 +137,13 @@ class NodeEmbeder(pl.LightningModule):
             # print("Edge Index size: ", edge_index.size)
             # print("Edge Index (E_i) size: ", edge_index.edge_index.size())
 
-            out = self.convs[i]((x, x_target), edge_index, return_attention_weights=False)
+            x, (edge_i, alpha) = self.convs[i]((x, x_target), edge_index, return_attention_weights=True)
 
-            x = out[0]
-            # edge_i = edge_i.detach().cpu()
-            # alpha = alpha.detach().cpu()
-            # edge_i[0,:] = n_ids[edge_i[0,:]]
-            # edge_i[1,:] = n_ids[edge_i[1,:]]
-            # gat_attn.append((edge_i, alpha))
+            edge_i = edge_i.detach().cpu()
+            alpha = alpha.detach().cpu()
+            edge_i[0,:] = n_ids[edge_i[0,:]]
+            edge_i[1,:] = n_ids[edge_i[1,:]]
+            gat_attn.append((edge_i, alpha))
 
             # Normalize
             if i != self.n_layers - 1:
