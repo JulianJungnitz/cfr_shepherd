@@ -212,7 +212,7 @@ def plot_patient_similarity_avg(
     file = (
         project_config.PROJECT_DIR
         / "plots"
-        / f"patient_similarity_scores_min_d_{min_dis_count}.eps"
+        / f"patient_similarity_scores_min_d_{min_dis_count}_patients_len_{len_patient_ids}.png"
     )
     print(f"Saving plot to {file}")
     plt.savefig(file, format="eps")
@@ -461,10 +461,13 @@ def plot_disease_similarity_avg(
         k_overlap_random_cumsum.append(cum_sum_random)
 
     plt.figure(figsize=(8, 6))
-    plt.plot(k_values, k_overlap_avg, label="Patients has disease")
-    plt.plot(k_values, k_overlap_random_avg, label="Random Baseline")
-    plt.plot(k_values, k_overlap_cumsum, label="Patients has disease aggregated")
-    plt.plot(k_values, k_overlap_random_cumsum, label="Random Baseline aggregated")
+    # Define colors for each metric
+    color1 = 'blue'
+    color2 = 'red'
+    plt.plot(k_values, k_overlap_avg, label="Patients has disease", color=color1)
+    plt.plot(k_values, k_overlap_random_avg, label="Random Baseline", color=color1, linestyle="--")
+    plt.plot(k_values, k_overlap_cumsum, label="Patients has disease aggregated", color=color2)
+    plt.plot(k_values, k_overlap_random_cumsum, label="Random Baseline aggregated", color=color2, linestyle="--")
 
     plt.xlabel("Top-K Similar Diseases")
     plt.ylabel("Has disease avgerage")
@@ -750,10 +753,10 @@ if __name__ == "__main__":
     # evaluate_patients_like_me(file, min_dis_count=3)
     evaluate_patients_like_me(file, min_dis_count=10)
 
-    # disease_char_file = (
-    #     dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
-    # )
-    # evaluate_disease_characterization(disease_char_file,)
-    # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
-    # test_disease_mappings(disease_char_file)
+    disease_char_file = (
+        dir / "checkpoints.disease_characterization_scores_phen_primeKG_w_dis.csv"
+    )
+    evaluate_disease_characterization(disease_char_file,)
+    evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
+    test_disease_mappings(disease_char_file)
 # %%
