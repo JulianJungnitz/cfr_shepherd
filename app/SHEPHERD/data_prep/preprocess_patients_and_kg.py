@@ -26,7 +26,7 @@ sys.path.insert(0, '../../..') # add config to path
 
 import preprocess 
 import project_config
-from project_utils import read_patients, write_patients
+from project_utils import read_patients, write_patients, get_mondo_to_doid_dict
 pd.options.mode.chained_assignment = None
 
 # input locations

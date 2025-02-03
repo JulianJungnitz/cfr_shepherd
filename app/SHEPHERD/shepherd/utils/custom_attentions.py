@@ -3,6 +3,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from typing import Optional, Callable
 
 
 def masked_softmax(tensor: torch.Tensor, mask: torch.BoolTensor = None, dim: int = -1) -> torch.Tensor:
@@ -76,36 +77,6 @@ class CosineAttention(nn.Module):
         return attn_weights
 
 
-class BilinearAttention(nn.Module):
-    """
-    Implements Bilinear Attention: score(h, x) = h^T W x
-    """
-
-    def __init__(self, vector_dim: int, matrix_dim: int):
-        super().__init__()
-        # matrix_dim is the size of keys' last dimension
-        # vector_dim is the size of query
-        # We'll learn a weight matrix of shape (vector_dim, matrix_dim)
-        self.weight = nn.Parameter(torch.Tensor(vector_dim, matrix_dim))
-        nn.init.xavier_uniform_(self.weight)
-
-    def forward(
-        self,
-        query: torch.Tensor,         
-        keys: torch.Tensor,          
-        mask: torch.BoolTensor = None
-    ) -> torch.Tensor:
-        # query: (batch_size, vector_dim)
-        # keys:  (batch_size, seq_len, matrix_dim)
-
-        # Weighted query => (batch_size, matrix_dim)
-        #   query @ self.weight => (batch_size, matrix_dim)
-        weighted_query = torch.matmul(query, self.weight)
-        # scores => (batch_size, seq_len)
-        scores = torch.bmm(keys, weighted_query.unsqueeze(-1)).squeeze(-1)
-
-        attn_weights = masked_softmax(scores, mask=mask, dim=-1)
-        return attn_weights
 
 
 class AdditiveAttention(nn.Module):
@@ -154,3 +125,107 @@ class AdditiveAttention(nn.Module):
 
         attn_weights = masked_softmax(scores, mask=mask, dim=-1)
         return attn_weights
+
+
+
+# class BilinearAttention(nn.Module):
+#     """
+#     Implements Bilinear Attention: score(h, x) = h^T W x
+#     """
+
+#     def __init__(self, vector_dim: int, matrix_dim: int):
+#         super().__init__()
+#         # matrix_dim is the size of keys' last dimension
+#         # vector_dim is the size of query
+#         # We'll learn a weight matrix of shape (vector_dim, matrix_dim)
+#         self.weight = nn.Parameter(torch.Tensor(vector_dim, matrix_dim))
+#         nn.init.xavier_uniform_(self.weight)
+
+#     def forward(
+#         self,
+#         query: torch.Tensor,         
+#         keys: torch.Tensor,          
+#         mask: torch.BoolTensor = None
+#     ) -> torch.Tensor:
+#         # query: (batch_size, vector_dim)
+#         # keys:  (batch_size, seq_len, matrix_dim)
+
+#         # Weighted query => (batch_size, matrix_dim)
+#         #   query @ self.weight => (batch_size, matrix_dim)
+#         weighted_query = torch.matmul(query, self.weight)
+#         # scores => (batch_size, seq_len)
+#         scores = torch.bmm(keys, weighted_query.unsqueeze(-1)).squeeze(-1)
+
+#         attn_weights = masked_softmax(scores, mask=mask, dim=-1)
+#         return attn_weights
+
+
+
+def masked_softmax(
+    logits: torch.Tensor, mask: Optional[torch.BoolTensor], dim: int
+) -> torch.Tensor:
+    if mask is not None:
+        logits = logits.masked_fill(~mask, float('-inf'))
+    return torch.softmax(logits, dim=dim)
+
+
+class BilinearAttention(nn.Module):
+    """
+    Replicates the old AllenNLP-style BilinearAttention (x^T W y + b + optional activation).
+    """
+    def __init__(
+        self,
+        vector_dim: int,
+        matrix_dim: int,
+        activation: Optional[Callable] = None,
+        add_bias: bool = True,
+        normalize: bool = True,
+    ):
+        super().__init__()
+        # Weight matrix matches old: _weight_matrix
+        self._weight_matrix = nn.Parameter(torch.empty(vector_dim, matrix_dim))
+
+        # Optional bias matches old: _bias
+        self._bias = nn.Parameter(torch.empty(1)) if add_bias else None
+
+        # Optional activation (old default is "linear" -> no-op)
+        self.activation = activation or (lambda x: x)
+
+        # Whether to softmax the final scores (old default was True)
+        self.normalize = normalize
+
+        # Initialize
+        nn.init.xavier_uniform_(self._weight_matrix)
+        if self._bias is not None:
+            nn.init.zeros_(self._bias)
+
+    def forward(
+        self,
+        query: torch.Tensor,           # shape: (batch_size, vector_dim)
+        keys: torch.Tensor,            # shape: (batch_size, seq_len, matrix_dim)
+        mask: Optional[torch.BoolTensor] = None
+    ) -> torch.Tensor:
+        """
+        Returns attention over `keys` given `query`, shape = (batch_size, seq_len).
+        """
+        # (1) Multiply query by W => (batch_size, matrix_dim), then unsqueeze(1)
+        #     => shape (batch_size, 1, matrix_dim)
+        weighted_query = query @ self._weight_matrix
+        weighted_query = weighted_query.unsqueeze(1)
+
+        # (2) Multiply by keys^T => shape (batch_size, 1, seq_len), then squeeze
+        #     => shape (batch_size, seq_len)
+        scores = weighted_query.bmm(keys.transpose(1, 2)).squeeze(1)
+
+        # (3) Add bias (old code has shape [1], broadcasts across seq_len)
+        if self._bias is not None:
+            scores = scores + self._bias
+
+        # (4) Optional activation
+        scores = self.activation(scores)
+
+        # (5) Optionally apply softmax with masking
+        if self.normalize:
+            scores = masked_softmax(scores, mask=mask, dim=-1)
+
+        return scores

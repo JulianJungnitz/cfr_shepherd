@@ -3,7 +3,9 @@ import torch
 import torch.nn as nn
 
 import torch.nn.functional as F
-from torch_geometric.nn import BatchNorm, LayerNorm, GATv2Conv
+from torch_geometric.nn import BatchNorm, GATv2Conv
+from torch_geometric.nn.norm import LayerNorm
+# from utils.old_layer_norm import LayerNorm
 
 # Pytorch Lightning
 import pytorch_lightning as pl
@@ -16,8 +18,10 @@ import tqdm
 import time
 import wandb
 
+
 # Own
 from utils.pretrain_utils import sample_node_for_et, get_batched_data, get_edges, calc_metrics, plot_roc_curve, metrics_per_rel
+
 from decoders import bilinear, trans, dot
 
 # Global variables
@@ -102,16 +106,16 @@ class NodeEmbeder(pl.LightningModule):
 
         if self.norm_method == "batch":
             self.norms = torch.nn.ModuleList()
-            self.norms.append(BatchNorm(self.nhid1*self.n_heads if not fix_layer_size else 1))
-            self.norms.append(BatchNorm(self.nhid2*self.n_heads if not fix_layer_size else 1))
+            self.norms.append(BatchNorm(self.nhid1*self.n_heads))
+            self.norms.append(BatchNorm(self.nhid2*self.n_heads))
         elif self.norm_method == "layer":
             self.norms = torch.nn.ModuleList()
             self.norms.append(LayerNorm(self.nhid1*self.n_heads if not fix_layer_size else 1))
             self.norms.append(LayerNorm(self.nhid2*self.n_heads if not fix_layer_size else 1))
         elif self.norm_method == "batch_layer":
             self.batch_norms = torch.nn.ModuleList()
-            self.batch_norms.append(BatchNorm(self.nhid1*self.n_heads if not fix_layer_size else 1))
-            if self.n_layers == 3: self.batch_norms.append(BatchNorm(self.nhid2*self.n_heads if not fix_layer_size else 1))
+            self.batch_norms.append(BatchNorm(self.nhid1*self.n_heads))
+            if self.n_layers == 3: self.batch_norms.append(BatchNorm(self.nhid2*self.n_heads))
             self.layer_norms = torch.nn.ModuleList()
             self.layer_norms.append(LayerNorm(self.nhid1*self.n_heads if not fix_layer_size else 1))
             if self.n_layers == 3: self.layer_norms.append(LayerNorm(self.nhid2*self.n_heads if not fix_layer_size else 1))

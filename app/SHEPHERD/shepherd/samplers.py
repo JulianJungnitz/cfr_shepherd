@@ -458,18 +458,28 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         #     # nid_first_cand_gene = first_cand_gene[0].item()
         #     # print("nid_first_cand_gene", nid_first_cand_gene)
 
-        #     cand_gene_idx_to_spl = [torch.LongTensor(np.vectorize(self.nid_to_spl_dict.get)(cand_genes)) for cand_genes in list(candidate_gene_node_idx)]
-        #     # get SPLs for each patient's candidate genes
-        #     batch_cand_gene_to_phenotypes_spl = [gene_spls[cand_genes] for cand_genes, gene_spls in zip(cand_gene_idx_to_spl, gene_to_phenotypes_spl)]
-        #     # pad to same # of candidate genes
-        #     data['batch_cand_gene_to_phenotypes_spl'] = pad_sequence(batch_cand_gene_to_phenotypes_spl, batch_first=True, padding_value=0)
-        #     # get unique gene idx across all patients in the batch
-        #     cand_gene_idx_flattened_unique = torch.unique(torch.cat(cand_gene_idx_to_spl)).flatten()
-        #     # get SPLs for unique genes in the batch
-        #     data['batch_concat_cand_gene_to_phenotypes_spl'] = gene_to_phenotypes_spl[:, cand_gene_idx_flattened_unique]
-        # else:
-        data['batch_cand_gene_to_phenotypes_spl'] = None
-        data['batch_concat_cand_gene_to_phenotypes_spl'] = None
+            cand_gene_idx_to_spl = []
+            for cand_genes in candidate_gene_node_idx:
+                if len(cand_genes) == 0:
+                    print("WARNING: there are no candidate genes for this patient")
+                    cand_gene_idx_to_spl.append(torch.LongTensor([]))
+                else:
+                    arr = np.vectorize(self.nid_to_spl_dict.get)(cand_genes)
+                    cand_gene_idx_to_spl.append(torch.LongTensor(arr))
+
+            # cand_gene_idx_to_spl = [torch.LongTensor(np.vectorize(self.nid_to_spl_dict.get)(cand_genes)) for cand_genes in list(candidate_gene_node_idx)]
+
+            # get SPLs for each patient's candidate genes
+            batch_cand_gene_to_phenotypes_spl = [gene_spls[cand_genes] for cand_genes, gene_spls in zip(cand_gene_idx_to_spl, gene_to_phenotypes_spl)]
+            # pad to same # of candidate genes
+            data['batch_cand_gene_to_phenotypes_spl'] = pad_sequence(batch_cand_gene_to_phenotypes_spl, batch_first=True, padding_value=0)
+            # get unique gene idx across all patients in the batch
+            cand_gene_idx_flattened_unique = torch.unique(torch.cat(cand_gene_idx_to_spl)).flatten()
+            # get SPLs for unique genes in the batch
+            data['batch_concat_cand_gene_to_phenotypes_spl'] = gene_to_phenotypes_spl[:, cand_gene_idx_flattened_unique]
+        else:
+            data['batch_cand_gene_to_phenotypes_spl'] = None
+            data['batch_concat_cand_gene_to_phenotypes_spl'] = None
 
 
         # Create mapping from KG node IDs to batch indices

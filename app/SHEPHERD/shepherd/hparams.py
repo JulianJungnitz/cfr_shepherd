@@ -245,10 +245,11 @@ def get_predict_hparams(args):
                'only_hard_distractors': False, # Flag when true only uses the curated hard distractors at train time
                'patient_similarity_type': 'gene', # How we determine labels for similar patients in "Patients Like Me"
                'n_similar_patients': 2, # (Patients Like Me only) Number of patients with the same gene/disease that we add to the batch
+
+               "graph_shema": args.graph_shema,
     
                 # Set by Julian
                'attention_type': 'bilinear',
-
                 'decoder_type': 'bilinear',
                 'pos_weight': 1,
                'neg_weight': 20,
