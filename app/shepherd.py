@@ -59,10 +59,6 @@ def predict_causal_gene_discovery(
     utils.run_subprocess(command)
 
 
-def predict_disease_categorization(
-    PATIENTS_AGGR_NODES=None,
-    graph_shema="primeKG",
-):
 def predict_disease_categorization(PATIENTS_AGGR_NODES=None, checkpoint_appendix="", graph_shema="primeKG"):
     dir = utils.SHEPHERD_DIR
     print("Predicting disease categorization. Dir: " + dir)
