@@ -9,6 +9,7 @@ import utils as utils
 sys.path.insert(0, utils.SHEPHERD_DIR)
 from preprocess_data import create_patients_data_file, generate_spl_matrix
 from app.SHEPHERD.project_config import PROJECT_DIR
+from app.SHEPHERD import project_config
 
 
 def start_preprocessing_data(config, USE_HAUNER_GRAPH):
@@ -17,7 +18,7 @@ def start_preprocessing_data(config, USE_HAUNER_GRAPH):
     ONLY_PATIENTS_WITH_DISEASE = config["shepherd"]["ONLY_PATIENTS_WITH_DISEASE"]
     ONLY_PATIENTS_WITH_PHENOTYPES = config["shepherd"]["ONLY_PATIENTS_WITH_PHENOTYPES"]
     ONLY_PATIENTS_WITH_GENES = config["shepherd"]["ONLY_PATIENTS_WITH_GENES"]
-    file_name = utils.SHEPHERD_DIR + "/data/patients/hauner_data/data.txt"
+    file_name = project_config.PROJECT_DIR / f"patients/hauner_data/data.txt"
     if OVERWRITE_PREPROCESSED_DATA:
         print("Overwriting preprocessed data")
         LIMIT_SAMPLE_SIZE = config["shepherd"]["LIMIT_SAMPLE_SIZE"]
