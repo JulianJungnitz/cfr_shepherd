@@ -17,7 +17,7 @@ shepherd:
   USE_HAUNER_GRAPH: True
   USE_SIMULATED_PATIENTS: False
 
-  OVERWRITE_PREPROCESSED_DATA: True # If True, the patients data will be pulled from the neo4j database
+  OVERWRITE_PREPROCESSED_DATA: False # If True, the patients data will be pulled from the neo4j database
   LIMIT_SAMPLE_SIZE: True 
   NUMBER_OF_SAMPLES_LIMIT: 11
   ONLY_PATIENTS_WITH_DISEASE: False # If True, only patients with disease will be used. If during mapping from DOID to MONDO, no diseases are found, the patient will be excluded.
