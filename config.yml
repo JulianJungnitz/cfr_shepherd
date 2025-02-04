@@ -9,8 +9,6 @@ neo4j_credentials:
   NEO4J_USERNAME: neo4j
   NEO4J_PASSWORD: Neo4JJJJJ
   NEO4J_DB: graphdb2
-  NEO4J_PASSWORD: Neo4JJJJJ
-  NEO4J_DB: graphdb2
 
 shepherd:
   RUN_PRETRAINING: False
@@ -24,7 +22,7 @@ shepherd:
   ONLY_PATIENTS_WITH_PHENOTYPES: True 
   ONLY_PATIENTS_WITH_GENES: False
 
-  CREATE_SPL_MATRIX: True # This is necessary if the algo is run on new data
+  CREATE_SPL_MATRIX: False # This is necessary if the algo is run on new data
   
   # this runs the predictions
   RUN_PATIENTS_LIKE_ME: False
