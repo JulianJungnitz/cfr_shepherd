@@ -229,8 +229,8 @@ def main():
     if RUN_DISEASE_CATEGORIZATION:
         predict_disease_categorization(
             PATIENTS_AGGR_NODES,
-            graph_shema,
-            PATIENTS_AGGR_NODES, checkpoint_appendix, graph_shema
+            graph_shema=graph_shema,
+        checkpoint_appendix=checkpoint_appendix,
         )
 
     MOVE_RESULTS_TO_OUTPUT_DIR = config["shepherd"]["MOVE_RESULTS_TO_OUTPUT_DIR"]
