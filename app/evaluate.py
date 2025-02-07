@@ -396,6 +396,7 @@ def evaluate_disease_characterization(
     max_k = 20
     for patient_id, group in grouped:
         group = group.sort_values(by="similarities", ascending=False)
+        print("Length of group: ", len(group), " for patient: ", patient_id)
         for k in range(1, max_k + 1):
             overlap_score, overlap_score_random = get_disease_similarity_scores(
                 patient_id, group, disease_patients_map, k
@@ -417,7 +418,7 @@ def evaluate_disease_characterization(
 
 def get_disease_similarity_scores(patient_id, group, disease_patients_map, k=5):
     index = k - 1
-    print("group: ", group)
+    # print("group: ", group)
     candidate_disease_id = group.iloc[index]["doid"]
     stripped_disease_id = candidate_disease_id.split(":")[-1]
     stripped_disease_id = str(int(stripped_disease_id))
