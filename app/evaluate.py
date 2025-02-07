@@ -395,6 +395,7 @@ def evaluate_disease_characterization(
     patient_sim_map = {}
     max_k = 20
     for patient_id, group in grouped:
+        group = group.sort_values(by="similarities", ascending=False)
         for k in range(1, max_k + 1):
             overlap_score, overlap_score_random = get_disease_similarity_scores(
                 patient_id, group, disease_patients_map, k
@@ -416,15 +417,15 @@ def evaluate_disease_characterization(
 
 def get_disease_similarity_scores(patient_id, group, disease_patients_map, k=5):
     index = k - 1
-    group_sorted = group.sort_values(by="similarities", ascending=False)
-    candidate_disease_id = group_sorted.iloc[index]["doid"]
+
+    candidate_disease_id = group.iloc[index]["doid"]
     stripped_disease_id = candidate_disease_id.split(":")[-1]
     stripped_disease_id = str(int(stripped_disease_id))
-    if len(group_sorted) < k:
+    if len(group) < k:
         print(f"Patient {patient_id} has less than {k} diseases")
         return 0, 0
     if stripped_disease_id not in disease_patients_map:
-        print(f"Disease {stripped_disease_id} has no patients")
+        # print(f"Disease {stripped_disease_id} has no patients")
         return 0, 0
 
     overlap_score = 1 if patient_id in disease_patients_map[stripped_disease_id] else 0
