@@ -423,11 +423,11 @@ def get_disease_similarity_scores(patient_id, group, disease_patients_map, k=5):
     if len(group_sorted) < k:
         print(f"Patient {patient_id} has less than {k} diseases")
         return 0, 0
-    if candidate_disease_id not in disease_patients_map:
-        print(f"Disease {candidate_disease_id} has no patients")
+    if stripped_disease_id not in disease_patients_map:
+        print(f"Disease {stripped_disease_id} has no patients")
         return 0, 0
 
-    overlap_score = 1 if patient_id in disease_patients_map[candidate_disease_id] else 0
+    overlap_score = 1 if patient_id in disease_patients_map[stripped_disease_id] else 0
 
     random_dec = random.randint(0, len(disease_patients_map) - 1)
     overlap_score_random = 1 if random_dec == 1 else 0
