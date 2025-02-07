@@ -366,7 +366,7 @@ def evaluate_disease_characterization(
 
     # return
 
-    df = map_disease_to_doid(df)
+    # df = map_disease_to_doid(df)
     df["doid_full"] = df["diseases"]
     df["doid"] = df["diseases"]
 
