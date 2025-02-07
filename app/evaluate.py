@@ -394,12 +394,14 @@ def evaluate_disease_characterization(
 
     patient_sim_map = {}
     max_k = 20
+    different_diseases = []
     for patient_id, group in grouped:
         group = group.sort_values(by="similarities", ascending=False)
-
-        test_doid = "110761"
-        index_of_test_doid = group[group["doid"] == test_doid].index
-        print("Index of test doid: ", index_of_test_doid)
+        # add first k diseases to different diseases
+        different_diseases.append(group["doid"].values[:max_k])
+        # test_doid = "110761"
+        # index_of_test_doid = group[group["doid"] == test_doid].index
+        # print("Index of test doid: ", index_of_test_doid)
         # print("Length of group: ", len(group), " for patient: ", patient_id)
         for k in range(1, max_k + 1):
             overlap_score, overlap_score_random = get_disease_similarity_scores(
