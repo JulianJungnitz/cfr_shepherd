@@ -397,6 +397,7 @@ def evaluate_disease_characterization(
     different_diseases = []
     for patient_id, group in grouped:
         group = group.sort_values(by="similarities", ascending=False)
+        print("Group: ", group)
         # add first k diseases to different diseases
         different_diseases.append(group["doid"].values[:max_k])
         # test_doid = "110761"
