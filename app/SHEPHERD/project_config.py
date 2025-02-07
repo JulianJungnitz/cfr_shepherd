@@ -1,6 +1,9 @@
 from pathlib import Path
 import os
 
+import sys
+sys.path.append("..") 
+
 from app.utils import read_config
 
 
