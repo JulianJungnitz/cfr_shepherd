@@ -417,14 +417,14 @@ def evaluate_disease_characterization(
 
 def get_disease_similarity_scores(patient_id, group, disease_patients_map, k=5):
     index = k - 1
-
+    print("group: ", group)
     candidate_disease_id = group.iloc[index]["doid"]
     stripped_disease_id = candidate_disease_id.split(":")[-1]
     stripped_disease_id = str(int(stripped_disease_id))
     if len(group) < k:
         print(f"Patient {patient_id} has less than {k} diseases")
         return 0, 0
-    if stripped_disease_id not in disease_patients_map:
+    if stripped_disease_id not in disease_patients_map.keys():
         # print(f"Disease {stripped_disease_id} has no patients")
         return 0, 0
 
