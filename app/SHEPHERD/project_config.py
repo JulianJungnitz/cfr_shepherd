@@ -35,7 +35,7 @@ elif "jj56rivo" in current_dir:
     print("Running on cluster")
     PROJECT_DIR = Path("/work/scratch/jj56rivo/cfr_shepherd_data")
 elif "vagrant" in current_dir:
-    PROJECT_DIR = Path("/dev/Julian/cfr_shepherd_data")
+    PROJECT_DIR = Path("/home/vagrant/dev/Julian/cfr_shepherd_data")
 else:
     PROJECT_DIR = Path("/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data")
 
