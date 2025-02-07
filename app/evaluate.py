@@ -415,7 +415,8 @@ def evaluate_disease_characterization(
             }
 
     number_of_patients = len(patient_sim_map)
-
+    different_diseases = list(set([item for sublist in different_diseases for item in sublist]))
+    print("Different Diseases in top 20: ", len(different_diseases))
     # Plot the average overlap vs K
     plot_disease_similarity_avg(patient_sim_map, max_k, file_name, number_of_patients)
 
