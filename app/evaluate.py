@@ -769,7 +769,7 @@ if __name__ == "__main__":
     # evaluate_patients_like_me(file, min_dis_count=10)
 
     disease_char_file = (
-        dir / "checkpoints.disease_characterization_hauner_scores.csv"
+        dir / "checkpoints.disease_characterization_hauner_scores_10.csv"
     )
     evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
