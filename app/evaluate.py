@@ -487,6 +487,7 @@ def plot_disease_similarity_avg(
     print(f"Saving plot to {out_file}")
     plt.savefig(out_file)
     plt.close()
+    print("Last aggregated Value: ", k_overlap_cumsum[-1])
 
 
 def create_names_to_doid_map(disease_names):
