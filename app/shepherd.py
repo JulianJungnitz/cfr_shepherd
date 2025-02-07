@@ -17,7 +17,7 @@ def start_preprocessing_data(config, USE_HAUNER_GRAPH):
     ONLY_PATIENTS_WITH_DISEASE = config["shepherd"]["ONLY_PATIENTS_WITH_DISEASE"]
     ONLY_PATIENTS_WITH_PHENOTYPES = config["shepherd"]["ONLY_PATIENTS_WITH_PHENOTYPES"]
     ONLY_PATIENTS_WITH_GENES = config["shepherd"]["ONLY_PATIENTS_WITH_GENES"]
-    file_name = utils.SHEPHERD_DIR + "/data/patients/hauner_data/data.txt"
+    file_name = PROJECT_DIR / "patients/hauner_data/data.txt"
     if OVERWRITE_PREPROCESSED_DATA:
         print("Overwriting preprocessed data")
         LIMIT_SAMPLE_SIZE = config["shepherd"]["LIMIT_SAMPLE_SIZE"]
