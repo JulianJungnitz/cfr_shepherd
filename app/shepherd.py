@@ -31,7 +31,7 @@ def start_preprocessing_data(config, USE_HAUNER_GRAPH):
             ONLY_PATIENTS_WITH_GENES=ONLY_PATIENTS_WITH_GENES,
             USE_HAUNER_GRAPH=USE_HAUNER_GRAPH,
         )
-        print("Samples written to file: " + file_name)
+        print("Samples written to file: " + str(file_name))
     else:
         print("Not overwriting preprocessed data")
 
