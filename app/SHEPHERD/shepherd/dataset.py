@@ -200,7 +200,7 @@ class PatientDataset(Dataset):
             for g in patient["true_genes"]
             if g in self.ensembl_to_idx_dict
         ]
-        print("correct_genes_node_idx: ", len(correct_genes_node_idx))
+        print("correct_genes_node_idx len: ", len(correct_genes_node_idx))
         if "all_candidate_genes" in patient:
             # print("all_candidate_genes in patient")
             candidate_gene_node_idx = [
