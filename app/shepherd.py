@@ -58,13 +58,13 @@ def predict_causal_gene_discovery():
 def predict_disease_categorization(PATIENTS_AGGR_NODES=None, checkpoint_appendix="", graph_shema="primeKG"):
     dir = utils.SHEPHERD_DIR
     print("Predicting disease categorization. Dir: " + dir)
-    # command = ["bash", dir + "/predict_disease_categorization.sh", PATIENTS_AGGR_NODES, checkpoint_appendix, graph_shema]
-    command = ["bash",
-        utils.SHEPHERD_DIR + "/shepherd/train_disease_characterization.sh",
-        PATIENTS_AGGR_NODES,
-        "my_data",
-        "checkpoints/pretrain_hauner.ckpt",
-        graph_shema,]
+    command = ["bash", dir + "/predict_disease_categorization.sh", PATIENTS_AGGR_NODES, checkpoint_appendix, graph_shema]
+    # command = ["bash",
+    #     utils.SHEPHERD_DIR + "/shepherd/train_disease_characterization.sh",
+    #     PATIENTS_AGGR_NODES,
+    #     "my_data",
+    #     "checkpoints/pretrain_hauner.ckpt",
+    #     graph_shema,]
     utils.run_subprocess(command)
 
 

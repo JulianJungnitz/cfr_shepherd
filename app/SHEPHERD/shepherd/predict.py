@@ -114,7 +114,8 @@ def predict(args):
     hparams.update({'inference_batch_size': len(dataset)})
     print('batch size: ', hparams['inference_batch_size'])
     # Get dataloader
-    nid_to_spl_dict = {nid: idx for idx, nid in enumerate(nodes[nodes["node_type"] == "gene/protein"]["node_idx"].tolist())}
+    gene_identifier = 'gene/protein' if hparams['graph_shema'] == 'primeKG' else 'Gene'
+    nid_to_spl_dict = {nid: idx for idx, nid in enumerate(nodes[nodes["node_type"] == gene_identifier]["node_idx"].tolist())}
 
 
     # print("HPARAMS befor PatientNeighborSampler creation:", hparams)
