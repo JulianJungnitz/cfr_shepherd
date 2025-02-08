@@ -440,7 +440,19 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
 
         if self.hparams['loss'] == 'patient_patient_NCA':
             if patient_labels is None: data['patient_labels'] = None
-            else: data['patient_labels'] = torch.stack(patient_labels)
+            else: 
+                print("set patients labels")
+                # check if patient_labels is a list of lists and they are all the same length
+                if all(len(t) == len(patient_labels[0]) for t in patient_labels):
+                    data['patient_labels'] = torch.stack(patient_labels)
+                else:
+                    # set to the missing values to -1  
+                    max_len = max([len(t) for t in patient_labels])
+                    print("max_len patient labels", max_len)
+                    for i in range(len(patient_labels)):
+                        patient_labels[i] = patient_labels[i] + [-1]*(max_len - len(patient_labels[i]))
+                    data['patient_labels'] = torch.stack(patient_labels)
+            
 
         # Get candidate genes to phenotypes SPL
         # if not self.gp_spl is None:
