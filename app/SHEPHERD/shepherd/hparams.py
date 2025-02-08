@@ -243,7 +243,7 @@ def get_predict_hparams(args):
                'test_n_cand_diseases': -1, 
                'candidate_disease_type': 'all_kg_nodes', 
                'only_hard_distractors': False, # Flag when true only uses the curated hard distractors at train time
-               'patient_similarity_type': 'gene', # How we determine labels for similar patients in "Patients Like Me"
+               'patient_similarity_type': 'disease', # set by julian from gene # How we determine labels for similar patients in "Patients Like Me"
                'n_similar_patients': 2, # (Patients Like Me only) Number of patients with the same gene/disease that we add to the batch
     
                 # Set by Julian

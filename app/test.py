@@ -394,7 +394,7 @@ def check_patients_data():
     file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted_new.jsonl"
     with open(file, "r") as f:
         data = [json.loads(line) for line in f]
-        
+
     
     # check if all patients have true genes
     patients_withoute_true_genes = 0
@@ -410,15 +410,31 @@ def check_patients_data():
     print("Patients without true genes: ", patients_withoute_true_genes)
     print("Patients without candidate genes: ", patients_without_candidate_genes)
 
+    node_map_file = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/knowledge_graph/hauner_graph_reduced/KG_node_map.txt"
+    df = pd.read_csv(
+        node_map_file,
+        sep="\t",
+    )
+    kg_genes = set(df[df["node_type"] == "Gene"]["node_name"])
+    print("Number of genes in KG: ", len(kg_genes))
+
+    for patient in data:
+        true_genes = patient.get("true_genes", [])
+        candidate_genes = patient.get("all_candidate_genes", [])
+        for gene in true_genes:
+            if gene not in kg_genes:
+                print("Gene not in KG: ", gene)
+        
+
 
 if __name__ == "__main__":
     # save_mondo_to_diod()
     # test_mapping()
     # save_ens_to_id_dict()
-    # check_patients_data()
-    transform_sim_patients(
-        "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl"
-    )
+    check_patients_data()
+    # transform_sim_patients(
+    #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl"
+    # )
     # create_hpo_to_idx_dict()
     # create_ensembl_to_idx_dict()
     # test_hpo_dict(

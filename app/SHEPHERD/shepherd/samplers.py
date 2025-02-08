@@ -671,6 +671,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         # get patient labels
         patient_labels = correct_genes_node_idx
         
+        
         # Add candidate diseases to batch
         if self.hparams['add_cand_diseases']:
             # print("add_cand_diseases: disease_node_idx", disease_node_idx)
