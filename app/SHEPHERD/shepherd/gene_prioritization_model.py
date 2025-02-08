@@ -369,7 +369,7 @@ class CombinedGPAligner(pl.LightningModule):
             results_df, phen_df, attn_dfs, phenotype_embeddings, disease_embeddings = self.write_results_to_file(batch_info, phen_gene_sims, gene_mask, phenotype_mask, attn_weights, correct_gene_ranks, gat_attn, node_embeddings, phenotype_embedding, loop_type=loop_type)
             
             print("Writing results for test...")
-            output_base = "/home/ml499/public_repos/SHEPHERD/shepherd/results/gp"
+            output_base = project_config.PROJECT_DIR / "results/gp"
             results_df.to_csv(str(output_base) + '_scores.csv', index=False)
             print(results_df)
 

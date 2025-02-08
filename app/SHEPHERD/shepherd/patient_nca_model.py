@@ -446,7 +446,7 @@ class CombinedPatientNCA(pl.LightningModule):
             results_df, phen_df, attn_dfs, phenotype_embeddings, disease_embeddings = self.write_results_to_file(batch_info, softmax, correct_ranks_with_pad, labels, phenotype_mask, disease_mask, attn_weights, gat_attn, node_embeddings, phenotype_embedding, disease_embeddings, save=True, loop_type='test')
 
             print("Writing results for test...")
-            output_base = "/home/ml499/public_repos/SHEPHERD/shepherd/results/patients_like_me"
+            output_base = project_config.PROJECT_DIR / "results/patient_nca"
             results_df.to_csv(str(output_base) + '_scores.csv', index=False)
             print(results_df)
 
