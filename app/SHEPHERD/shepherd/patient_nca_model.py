@@ -142,7 +142,7 @@ class CombinedPatientNCA(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         correct_ranks, softmax, labels, node_embedder_loss, patient_loss, roc_score, ap_score, acc, f1, gat_attn, node_embeddings, phenotype_embedding, disease_embeddings, phenotype_mask, disease_mask, attn_weights, cand_disease_idx, cand_disease_embeddings = self._step(batch, 'train')
-        print("Patient loss: ", patient_loss)
+        # print("Patient loss: ", patient_loss)
         # print("Node embedder loss: ", node_embedder_loss)
         loss = (self.hparams.hparams['lambda'] * node_embedder_loss) + ((1 - self.hparams.hparams['lambda']) *  patient_loss)
         self.log('train_loss/overall_loss', loss, prog_bar=True, on_epoch=True)

@@ -79,10 +79,10 @@ class PatientNCA(pl.LightningModule):
             print("disease NCA loss: ", loss)
         elif self.hyperparameters['loss'] == 'patient_patient_NCA':
             loss, softmax, labels, candidate_disease_idx, candidate_disease_embeddings = self.loss(phenotype_embedding, None, None, None, None, labels, use_candidate_list=False)
-            print("patient NCA loss: ", loss)
+            # print("patient NCA loss: ", loss)
         else:
             raise NotImplementedError
-        print("calc_loss: ", loss)
+        # print("calc_loss: ", loss)
         return loss, softmax, labels, candidate_disease_idx, candidate_disease_embeddings
 
 
