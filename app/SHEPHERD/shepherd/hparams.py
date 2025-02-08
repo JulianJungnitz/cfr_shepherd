@@ -122,7 +122,7 @@ def get_train_hparams(args):
                'only_hard_distractors': False, # Flag wattention_typehen true only uses the curated hard distractors at train time
                'sample_edges_from_train_patients': False, # Preferentially sample edges connected to training patients
                'gradclip': 1.0,
-               'inference_batch_size': 64,
+               'inference_batch_size': 16,
                'max_epochs': 100, 
                'n_gpus': 1, 
                'num_workers': 4,
