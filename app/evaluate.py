@@ -385,7 +385,7 @@ def evaluate_disease_characterization(
     df = df[df["doid"].notnull()]
     print("length of df after filtering: " + str(len(df)))
 
-    disease_patients_map = get_disease_patient_map(df)
+    disease_patients_map = {} #get_disease_patient_map(df)
     print("Disease Patients Map: ", len(disease_patients_map))
     print("First Disease Patients Map: ", {k: v for k, v in list(disease_patients_map.items())[:5]})
 
