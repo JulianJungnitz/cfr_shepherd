@@ -772,7 +772,7 @@ if __name__ == "__main__":
     disease_char_file = (
         dir / "checkpoints.disease_characterization_hauner_scores.csv"
     )
-    disease_char_file = "/home/julian/Downloads/scores.csv"
+    # disease_char_file = "/home/julian/Downloads/scores.csv"
     evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
     # test_disease_mappings(disease_char_file)
