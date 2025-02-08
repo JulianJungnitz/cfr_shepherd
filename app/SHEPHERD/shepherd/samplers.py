@@ -447,6 +447,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
                     data['patient_labels'] = torch.stack(patient_labels)
                 else:
                     # set to the missing values to -1  
+                    patient_labels = list(patient_labels)
                     max_len = max([len(t) for t in patient_labels])
                     print("max_len patient labels", max_len)
                     for i in range(len(patient_labels)):
@@ -713,6 +714,7 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
         # add patient information to data object
 
         # print("befor add_patient info: disease_nide_idx", disease_node_idx)
+        print("patient_ids", patient_ids)
         data = self.add_patient_information(patient_ids, phenotype_node_idx, candidate_gene_node_idx, correct_genes_node_idx, sim_gene_node_idx, gene_sims, gene_degs, disease_node_idx, candidate_disease_node_idx, labels, disease_labels, patient_labels, additional_labels, adjs, batch_size, n_id, sparse_idx, target_batch) #candidate_disease_node_idx
         t4 = time.time()
         
