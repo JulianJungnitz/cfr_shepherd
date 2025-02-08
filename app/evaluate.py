@@ -394,10 +394,14 @@ def evaluate_disease_characterization(
 
     patient_sim_map = {}
     max_k = 20
+    print_n = 5
     different_diseases = []
     for patient_id, group in grouped:
         group = group.sort_values(by="similarities", ascending=False)
-        print("Group: ", group)
+        if(print_n > 0):
+            print("Patient: ", patient_id)
+            print(group.head(print_n))
+            print_n -= 1
         # add first k diseases to different diseases
         different_diseases.append(group["doid"].values[:max_k])
         # test_doid = "110761"
