@@ -186,7 +186,7 @@ def get_run_type_args(args, hparams):
                         'loss': 'patient_patient_NCA',
                         'use_diseases': False,
                         'add_cand_diseases': False,
-                        'add_similar_patients': True,
+                        'add_similar_patients': False, # Set by Julian from True
                        })
     else:
         raise Exception('You must specify run type.')
