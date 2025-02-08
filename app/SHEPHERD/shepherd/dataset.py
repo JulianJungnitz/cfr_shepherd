@@ -227,13 +227,13 @@ class PatientDataset(Dataset):
             else:
                 mondo_diseases = [str(d) for d in patient["true_diseases"]]
 
-            print("mondo_diseases (in reality doid): ", mondo_diseases)
+            # print("mondo_diseases (in reality doid): ", mondo_diseases)
             disease_node_idx = [
                 self.disease_to_idx_dict[d]
                 for d in mondo_diseases
                 if d in self.disease_to_idx_dict
             ]
-            print("disease_node_idx for patient: ", disease_node_idx)
+            # print("disease_node_idx for patient: ", disease_node_idx)
         else:
             disease_node_idx = None
 
