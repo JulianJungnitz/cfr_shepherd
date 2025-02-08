@@ -450,7 +450,8 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
                     max_len = max([len(t) for t in patient_labels])
                     print("max_len patient labels", max_len)
                     for i in range(len(patient_labels)):
-                        patient_labels[i] = patient_labels[i] + [-1]*(max_len - len(patient_labels[i]))
+                        padding = torch.full((max_len - len(patient_labels[i]),), -1, dtype=patient_labels[i].dtype, device=patient_labels[i].device)
+                        patient_labels[i] = torch.cat((patient_labels[i], padding))
                     data['patient_labels'] = torch.stack(patient_labels)
             
 
