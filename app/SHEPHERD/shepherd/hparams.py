@@ -248,9 +248,8 @@ def get_predict_hparams(args):
     
                 # Set by Julian
                'attention_type': 'bilinear',
-
-                'decoder_type': 'bilinear',
-                'pos_weight': 1,
+               'decoder_type': 'bilinear',
+               'pos_weight': 1,
                'neg_weight': 20,
                'margin': 0.4,
                'thresh': 1,
