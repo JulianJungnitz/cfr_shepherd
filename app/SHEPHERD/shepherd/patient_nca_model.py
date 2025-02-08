@@ -333,7 +333,7 @@ class CombinedPatientNCA(pl.LightningModule):
                 'test/cand_disease_names': None
 
             })
-        
+        self._test_outputs.append(batch_results)
         return batch_results
 
     
@@ -534,9 +534,12 @@ class CombinedPatientNCA(pl.LightningModule):
         self._epoch_end(self._val_outputs, 'val')
         self._val_outputs = []
 
+    def on_test_epoch_start(self, ):
+        self._test_outputs = []
+
     def on_test_epoch_end(self, ):
-        # self._epoch_end(outputs, 'test')
-        pass
+        self._epoch_end(self._test_outputs, 'test')
+        self._test_outputs = []
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.hparams.hparams['lr'])
