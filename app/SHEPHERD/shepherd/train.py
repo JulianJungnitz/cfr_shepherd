@@ -669,7 +669,8 @@ def inference(args, hparams):
         load_from_checkpoint=True,
     )
 
-    trainer = pl.Trainer(gpus=0, logger=wandb_logger)
+    trainer = pl.Trainer(
+        accelerator="auto", logger=wandb_logger)
     results = trainer.test(model, dataloaders=test_dataloader)
     print(results)
     print("---- RESULTS ----")
