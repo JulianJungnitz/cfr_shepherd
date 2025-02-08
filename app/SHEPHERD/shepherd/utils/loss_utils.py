@@ -232,7 +232,7 @@ class NCALoss(BaseMetricLossFunction):
             loss_dict, disease_softmax, labels = self.nca_computation(
                 phenotype_embedding, candidate_disease_embeddings, labels, indices_tuple, use_one_hot_labels=True
             )
-        print("compute loss: ", loss_dict)
+        # print("compute loss: ", loss_dict)
         return loss_dict, disease_softmax, labels, candidate_disease_idx, candidate_disease_embeddings
 
     def nca_computation(
@@ -251,22 +251,22 @@ class NCALoss(BaseMetricLossFunction):
         if labels.nelement() == 0:
             loss_dict = None
         else:
-            print("use one hot labels: ", use_one_hot_labels)
-            print("labels prior : ", labels)
+            # print("use one hot labels: ", use_one_hot_labels)
+            # print("labels prior : ", labels)
             if not use_one_hot_labels:
                 labels = c_f.to_dtype(
                     labels.unsqueeze(1) == labels.unsqueeze(0), dtype=dtype
                 )
                 labels = labels.squeeze(-1)
-            print("Softmax 1: ", softmax) 
-            print("Labels 1: ", labels)
+            # print("Softmax 1: ", softmax) 
+            # print("Labels 1: ", labels)
             exp = torch.sum(softmax * labels, dim=1) 
             non_zero = exp != 0
             epsilon = 1e-9
-            print("Exp: ", exp)
-            print("non_zero: ", non_zero)
+            # print("Exp: ", exp)
+            # print("non_zero: ", non_zero)
             loss = -torch.log(exp[non_zero])
-            print("Loss calc: ", loss)
+            # print("Loss calc: ", loss)
             indices =  c_f.torch_arange_from_size(query)[non_zero]
             loss_dict = {
                 "loss": {
