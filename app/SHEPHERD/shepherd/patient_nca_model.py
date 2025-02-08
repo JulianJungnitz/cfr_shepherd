@@ -480,6 +480,7 @@ class CombinedPatientNCA(pl.LightningModule):
         self._val_outputs = []
 
     def on_validation_epoch_end(self):
+        return
         self._epoch_end(self._val_outputs, 'val')
         self._val_outputs = []
 
