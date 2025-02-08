@@ -670,7 +670,7 @@ def inference(args, hparams):
     )
 
     trainer = pl.Trainer(
-        accelerator="auto", logger=wandb_logger, precision="bf16")
+        accelerator="auto", logger=wandb_logger,) # precision="bf16"
     results = trainer.test(model, dataloaders=test_dataloader)
     print(results)
     print("---- RESULTS ----")
