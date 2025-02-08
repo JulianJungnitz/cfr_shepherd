@@ -127,7 +127,7 @@ def get_train_hparams(args):
                'n_gpus': 1, 
                'num_workers': 4,
                'wandb_save_dir' : project_config.PROJECT_DIR / 'wandb',
-               'precision': 16, 
+               'precision': 5, 
                'reload_dataloaders_every_n_epochs': 0,
                'profiler': 'simple',
                'pin_memory': False,
