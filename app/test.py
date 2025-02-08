@@ -5,6 +5,7 @@ import pandas as pd
 import json
 from tqdm import tqdm
 from pronto import Ontology
+import sys
 from app.SHEPHERD import project_config
 from app import utils
 import pickle
@@ -411,14 +412,41 @@ def check_patients_data():
     print("Patients without candidate genes: ", patients_without_candidate_genes)
 
 
+def check_simulated_patients():
+    path = "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted_new.jsonl"
+    with open(path, "r") as f:
+        data = [json.loads(line) for line in f]
+    print("Number of patients: ", len(data))
+    # print("First patient: ", data[0])
+    disease_counts = {}
+    for patient in data:
+        disease = patient.get("disease_id")
+        if disease in disease_counts:
+            disease_counts[disease] += 1
+        else:
+            disease_counts[disease] = 1
+    
+    # plot disease counts descending
+    disease_counts = dict(sorted(disease_counts.items(), key=lambda item: item[1], reverse=True))
+    # print("Disease counts: ", disease_counts)
+    print("Number of diseases: ", len(disease_counts))
+
+    # plot disease counts
+    import matplotlib.pyplot as plt
+    plt.bar(disease_counts.keys(), disease_counts.values())
+    plt.show()
+
+
+
 if __name__ == "__main__":
+    check_simulated_patients()
     # save_mondo_to_diod()
     # test_mapping()
     # save_ens_to_id_dict()
     # check_patients_data()
-    transform_sim_patients(
-        "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl"
-    )
+    # transform_sim_patients(
+    #     "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_formatted.jsonl"
+    # )
     # create_hpo_to_idx_dict()
     # create_ensembl_to_idx_dict()
     # test_hpo_dict(
