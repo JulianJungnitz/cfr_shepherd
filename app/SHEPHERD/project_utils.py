@@ -3,7 +3,8 @@ import jsonlines
             
 import sys
 import pickle
-import project_config
+from app.SHEPHERD import project_config
+
 
 
 ##############################################
