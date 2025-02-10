@@ -448,13 +448,18 @@ def compare_disease_sets():
     query = 'Match (d:Disease)<-[:HAS_DISEASE]-(b:Biological_sample) return d.id as disease_id'
     result = utils.execute_query(driver, query)
     db_diseases = set([record["disease_id"] for record in result])
-    print("Number of diseases in db: ", len(db_diseases))
 
     with open(sim_pat_dis, "r") as f:
         sim_pat_diseases = set([line.strip() for line in f])
     
     print("First 5 db diseases: ", list(db_diseases)[:5])
     print("First 5 sim_pat diseases: ", list(sim_pat_diseases)[:5])
+
+    print("Number of diseases in db: ", len(db_diseases))
+    print("Number of diseases in sim_pat: ", len(sim_pat_diseases))
+
+    print("Diseases in db but not in sim_pat: ", len(db_diseases - sim_pat_diseases))
+    print("Diseases in sim_pat but not in db: ", len(sim_pat_diseases - db_diseases))
 
 
 if __name__ == "__main__":
