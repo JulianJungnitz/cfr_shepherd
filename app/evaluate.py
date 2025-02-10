@@ -665,13 +665,8 @@ def test_disease_mappings(score_file_path):
 
 
 def get_mondo_name_to_doid_dict():
-    mondo_name_to_mondo_dict = get_name_to_mondo_dict()
-    mondo_id_to_doid_dict = get_mondo_id_to_doid_dict()
-    mondo_name_to_doid_dict = {
-        k: mondo_id_to_doid_dict[f"MONDO:{str(v).zfill(7)}"]
-        for k, v in mondo_name_to_mondo_dict.items()
-        if f"MONDO:{str(v).zfill(7)}" in mondo_id_to_doid_dict
-    }
+    mondo_name_to_doid_dict = get_name_to_doid_dict()
+    
     return mondo_name_to_doid_dict
 
 
@@ -712,14 +707,14 @@ def get_name_to_hpo_dict():
     return name_to_hpo
 
 
-def get_name_to_mondo_dict():
+def get_name_to_doid_dict():
     file = (
         project_config.PROJECT_DIR
         / f"mondo_to_doid_dict.pkl"
     )
     with open(file, "rb") as handle:
         mondo_to_name_dict = pickle.load(handle)
-    name_to_mondo = {v: k for k, v in mondo_to_name_dict.items()}
+    name_to_mondo = {k: v for k, v in mondo_to_name_dict.items()}
     print("Frist name_to_mondo: ", {k: v for k, v in list(name_to_mondo.items())[:5]})
     return name_to_mondo
 
