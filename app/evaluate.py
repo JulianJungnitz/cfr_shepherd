@@ -320,7 +320,7 @@ def get_all_patients_diseases(df):
 
 def map_disease_to_doid(df):
 
-    mondo_name_to_doid_dict = get_mondo_name_to_doid_dict()
+    mondo_name_to_doid_dict = get_db_syn_names_to_doid_dict()
     print("First mondo_name_to_doid_dict: ", {k: v for k, v in list(mondo_name_to_doid_dict.items())[:5]})
     print("Len: ", len(mondo_name_to_doid_dict))
     df["doid"] = df["diseases"].map(mondo_name_to_doid_dict)
@@ -378,7 +378,7 @@ def evaluate_disease_characterization(
     # print("First 5 diseases in df: ", df["doid_full"].unique()[:5])
     # filter for diseases in db
     print("length of df: " + str(len(df)))
-    df = df[df["doid_full"].isin(db_diseases)]
+    # df = df[df["doid_full"].isin(db_diseases)]
     print("length of df after filtering: " + str(len(df)))
 
     # df["doid"] = df["diseases"].apply(lambda x: str(int(x.split(":")[-1])))
