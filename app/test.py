@@ -431,10 +431,15 @@ def check_simulated_patients():
     # print("Disease counts: ", disease_counts)
     print("Number of diseases: ", len(disease_counts))
 
-    # plot disease counts
-    import matplotlib.pyplot as plt
-    plt.bar(disease_counts.keys(), disease_counts.values())
-    plt.show()
+    diseases = set(disease_counts.keys())
+    print("diseases len")
+
+    out_file= "/home/julian/Documents/cfr_shepherd/app/SHEPHERD/data/patients/simulated_patients/simulated_patients_diseases_doid.txt"
+
+    with open(out_file, "w") as f:
+        for disease in diseases:
+            f.write(disease + "\n")
+        
 
 
 
