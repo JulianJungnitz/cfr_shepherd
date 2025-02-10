@@ -144,3 +144,4 @@ dmypy.json
 SHEPHERD/shepherd/lightning_logs/*
 app/e_log.txt
 app/i_log.txt
+simulated_patients_formatted.jsonl

@@ -441,10 +441,19 @@ def check_simulated_patients():
             f.write(disease + "\n")
         
 
+def compare_disease_sets():
+    sim_pat_dis = project_config.PROJECT_DIR / "data/patients/simulated_patients_diseases_doid.txt"
+    
+    driver = utils.connect_to_neo4j()
+    query = 'Match (d:Disease)<-[:HAS_DISEASE]-(b:Biological_sample) return d.id as disease_id'
+    result = utils.execute_query(driver, query)
+    db_diseases = set([record["disease_id"] for record in result])
+    print("Number of diseases in db: ", len(db_diseases))
+
 
 
 if __name__ == "__main__":
-    check_simulated_patients()
+    compare_disease_sets()
     # save_mondo_to_diod()
     # test_mapping()
     # save_ens_to_id_dict()
@@ -498,3 +507,5 @@ if __name__ == "__main__":
 
     # with open(new_file, "wb") as f:
     #     pickle.dump(new_data, f)
+
+# %%
