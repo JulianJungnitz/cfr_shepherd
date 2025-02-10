@@ -757,7 +757,7 @@ def create_mondo_id_to_doid_map():
     return mondo_to_doid_dict
 
 
-def get_db_syn_names_to_doid_dict(disease_names):
+def get_db_syn_names_to_doid_dict(disease_names=None):
     file_name = project_config.PROJECT_DIR / "db_syn_name_to_doid_dict.pkl"
     if file_name.exists():
         with open(file_name, "rb") as handle:
