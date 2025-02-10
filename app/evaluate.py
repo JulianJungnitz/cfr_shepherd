@@ -365,9 +365,19 @@ def evaluate_disease_characterization(
     df = pd.read_csv(file_name)
 
     # return
+    driver = utils.connect_to_neo4j()
+    query = 'Match (d:Disease)<-[:HAS_DISEASE]-(b:Biological_sample) return d.id as disease_id'
+    result = utils.execute_query(driver, query)
+    db_diseases = set([record["disease_id"] for record in result])
+
 
     # df = map_disease_to_doid(df)
     df["doid_full"] = df["diseases"]
+    # filter for diseases in db
+    print("length of df: " + str(len(df)))
+    df = df[df["doid_full"].isin(db_diseases)]
+    print("length of df after filtering: " + str(len(df)))
+
     df["doid"] = df["diseases"].apply(lambda x: str(int(x.split(":")[-1])))
 
 
@@ -774,7 +784,7 @@ if __name__ == "__main__":
     # evaluate_patients_like_me(file, min_dis_count=10)
 
     disease_char_file = (
-        dir / "checkpoints.disease_characterization_hauner_scores.csv"
+        dir / "checkpoints.disease_characterization_phen_primeKG.csv"
     )
     # disease_char_file = "/home/vagrant/dev/Julian/cfr_shepherd_data/checkpoints/patient_NCA/01_27_25:09:35:52_val_simulated_pats.disease_split_val_sim_pats_hauner_graph_reduced_seed_33/scores.csv"
     evaluate_disease_characterization(disease_char_file,)
