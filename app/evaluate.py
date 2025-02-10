@@ -394,10 +394,14 @@ def evaluate_disease_characterization(
 
     patient_sim_map = {}
     max_k = 20
+    print_n = 5
     different_diseases = []
     for patient_id, group in grouped:
         group = group.sort_values(by="similarities", ascending=False)
-        print("Group: ", group)
+        if(print_n > 0):
+            print("Patient: ", patient_id)
+            print(group.head(print_n))
+            print_n -= 1
         # add first k diseases to different diseases
         different_diseases.append(group["doid"].values[:max_k])
         # test_doid = "110761"
@@ -772,7 +776,7 @@ if __name__ == "__main__":
     disease_char_file = (
         dir / "checkpoints.disease_characterization_hauner_scores.csv"
     )
-    # disease_char_file = "/home/julian/Downloads/scores.csv"
+    # disease_char_file = "/home/vagrant/dev/Julian/cfr_shepherd_data/checkpoints/patient_NCA/01_27_25:09:35:52_val_simulated_pats.disease_split_val_sim_pats_hauner_graph_reduced_seed_33/scores.csv"
     evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
     # test_disease_mappings(disease_char_file)

@@ -623,7 +623,7 @@ def inference(args, hparams):
     # Get logger & trainer
     curr_time = datetime.now().strftime("%m_%d_%y:%H:%M:%S")
     lr = hparams["lr"]
-    test_data = hparams["test_data"].split(".txt")[0].replace("/", ".")
+    test_data = str(hparams["test_data"]).split(".txt")[0].replace("/", ".")
     run_name = "{}_lr_{}_test_{}".format(curr_time, lr, test_data)
     wandb_logger = WandbLogger(
         run_name,
@@ -669,7 +669,8 @@ def inference(args, hparams):
         load_from_checkpoint=True,
     )
 
-    trainer = pl.Trainer(gpus=0, logger=wandb_logger)
+    trainer = pl.Trainer(
+        accelerator="auto", logger=wandb_logger,) # precision="bf16"
     results = trainer.test(model, dataloaders=test_dataloader)
     print(results)
     print("---- RESULTS ----")

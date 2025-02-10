@@ -247,23 +247,18 @@ def get_predict_hparams(args):
                'n_similar_patients': 2, # (Patients Like Me only) Number of patients with the same gene/disease that we add to the batch
     
                 # Set by Julian
-               'attention_type': 'bilinear',
-
-                'decoder_type': 'bilinear',
-                'pos_weight': 1,
-               'neg_weight': 20,
-               'margin': 0.4,
-               'thresh': 1,
-               'filter_edges': False,
-               'softmax_scale': 1,
-               'leaky_relu': 0.1,
-               'decoder_type': 'bilinear',
-               'combined_training': True,
-               'sample_from_gpd': True,
-               'attention_type': 'bilinear',
-               'n_cand_diseases': 1000,
-               'test_n_cand_diseases': -1, 
-               'candidate_disease_type': 'all_kg_nodes',
+            #    'attention_type': 'bilinear',
+            #    'decoder_type': 'bilinear',
+            #    'pos_weight': 1,
+            #    'neg_weight': 20,
+            #    'margin': 0.4,
+            #    'thresh': 1,
+            #    'filter_edges': False,
+            #    'softmax_scale': 1,
+            #    'leaky_relu': 0.1,
+            #    'decoder_type': 'bilinear',
+            #    'combined_training': True,
+            #    'sample_from_gpd': True,
 
     }
 

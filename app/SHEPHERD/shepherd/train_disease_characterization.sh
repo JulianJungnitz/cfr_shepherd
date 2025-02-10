@@ -23,3 +23,5 @@ python train.py \
         --kappa 0.029999999999999992 \
         --patient_aggr_nodes $patient_aggr_nodes \
         --graph_shema $graph_shema 
+        # --do_inference \
+        # --best_ckpt checkpoints/disease_characterization_hauner.ckpt
