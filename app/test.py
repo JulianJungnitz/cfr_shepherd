@@ -442,7 +442,7 @@ def check_simulated_patients():
         
 
 def compare_disease_sets():
-    sim_pat_dis = project_config.PROJECT_DIR / "data/patients/simulated_patients_diseases_doid.txt"
+    sim_pat_dis = project_config.PROJECT_DIR / "patients/simulated_patients_diseases_doid.txt"
     
     driver = utils.connect_to_neo4j()
     query = 'Match (d:Disease)<-[:HAS_DISEASE]-(b:Biological_sample) return d.id as disease_id'
