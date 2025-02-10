@@ -458,6 +458,8 @@ def compare_disease_sets():
     print("Number of diseases in db: ", len(db_diseases))
     print("Number of diseases in sim_pat: ", len(sim_pat_diseases))
 
+    overlap = db_diseases.intersection(sim_pat_diseases)
+    print("Overlap: ", len(overlap))
     print("Diseases in db but not in sim_pat: ", len(db_diseases - sim_pat_diseases))
     print("Diseases in sim_pat but not in db: ", len(sim_pat_diseases - db_diseases))
 
