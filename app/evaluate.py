@@ -371,7 +371,7 @@ def evaluate_disease_characterization(
     db_diseases = set([record["disease_id"] for record in result])
 
     print("Different diseases in db: ", len(db_diseases))
-    print("First 5 diseases in db: ", {k: v for k, v in list(db_diseases)[:5]})
+    print("First 5 diseases in db: ", list(db_diseases)[:5])
     # df = map_disease_to_doid(df)
     df["doid_full"] = df["diseases"]
     print("First 5 diseases in df: ", df["doid_full"].unique()[:5])
