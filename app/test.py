@@ -450,6 +450,11 @@ def compare_disease_sets():
     db_diseases = set([record["disease_id"] for record in result])
     print("Number of diseases in db: ", len(db_diseases))
 
+    with open(sim_pat_dis, "r") as f:
+        sim_pat_diseases = set([line.strip() for line in f])
+    
+    print("First 5 db diseases: ", list(db_diseases)[:5])
+    print("First 5 sim_pat diseases: ", list(sim_pat_diseases)[:5])
 
 
 if __name__ == "__main__":
