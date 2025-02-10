@@ -320,7 +320,7 @@ def get_all_patients_diseases(df):
 
 def map_disease_to_doid(df):
 
-    mondo_name_to_doid_dict = get_db_syn_names_to_doid_dict()
+    mondo_name_to_doid_dict = get_mondo_name_to_doid_dict()
     print("First mondo_name_to_doid_dict: ", {k: v for k, v in list(mondo_name_to_doid_dict.items())[:5]})
     print("Len: ", len(mondo_name_to_doid_dict))
     df["doid"] = df["diseases"].map(mondo_name_to_doid_dict)
