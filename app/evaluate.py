@@ -373,15 +373,15 @@ def evaluate_disease_characterization(
     print("Different diseases in db: ", len(db_diseases))
     print("First 5 diseases in db: ", list(db_diseases)[:5])
 
-    df = map_disease_to_doid(df)
-    # df["doid_full"] = df["diseases"]
+    # df = map_disease_to_doid(df)
+    df["doid_full"] = df["diseases"]
     # print("First 5 diseases in df: ", df["doid_full"].unique()[:5])
     # filter for diseases in db
     print("length of df: " + str(len(df)))
-    # df = df[df["doid_full"].isin(db_diseases)]
+    df = df[df["doid_full"].isin(db_diseases)]
     print("length of df after filtering: " + str(len(df)))
 
-    # df["doid"] = df["diseases"].apply(lambda x: str(int(x.split(":")[-1])))
+    df["doid"] = df["diseases"].apply(lambda x: str(int(x.split(":")[-1])))
 
 
     print("different diseases: " + str(df["diseases"].nunique()))
@@ -514,6 +514,7 @@ def plot_disease_similarity_avg(
     plt.savefig(out_file)
     plt.close()
     print("Last aggregated Value: ", k_overlap_cumsum[-1])
+    print("Aggregated Values: ", k_overlap_cumsum)
 
 
 def create_names_to_doid_map(disease_names):
