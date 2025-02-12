@@ -782,7 +782,7 @@ if __name__ == "__main__":
     # evaluate_patients_like_me(file, min_dis_count=10)
 
     disease_char_file = (
-        dir / "checkpoints.disease_characterization_scores_phen_primeKG.csv"
+        dir / "checkpoints.disease_characterization_scores_phen_gen_primeKG.csv"
     )
     # disease_char_file = "/home/vagrant/dev/Julian/cfr_shepherd_data/checkpoints/patient_NCA/01_27_25:09:35:52_val_simulated_pats.disease_split_val_sim_pats_hauner_graph_reduced_seed_33/scores.csv"
     evaluate_disease_characterization(disease_char_file,)
