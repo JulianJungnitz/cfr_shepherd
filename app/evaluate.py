@@ -367,18 +367,18 @@ def evaluate_disease_characterization(
     # return
     driver = utils.connect_to_neo4j()
     query = 'Match (d:Disease)<-[:HAS_DISEASE]-(b:Biological_sample) return d.id as disease_id'
-    result = utils.execute_query(driver, query)
-    db_diseases = set([record["disease_id"] for record in result])
+    # result = utils.execute_query(driver, query)
+    # db_diseases = set([record["disease_id"] for record in result])
 
-    print("Different diseases in db: ", len(db_diseases))
-    print("First 5 diseases in db: ", list(db_diseases)[:5])
+    # print("Different diseases in db: ", len(db_diseases))
+    # print("First 5 diseases in db: ", list(db_diseases)[:5])
 
     df = map_disease_to_doid(df)
     # df["doid_full"] = df["diseases"]
     # print("First 5 diseases in df: ", df["doid_full"].unique()[:5])
     # filter for diseases in db
     print("length of df: " + str(len(df)))
-    df = df[df["doid_full"].isin(db_diseases)]
+    # df = df[df["doid_full"].isin(db_diseases)]
     print("length of df after filtering: " + str(len(df)))
 
     # df["doid"] = df["diseases"].apply(lambda x: str(int(x.split(":")[-1])))
