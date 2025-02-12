@@ -366,9 +366,9 @@ def evaluate_disease_characterization(
 
     # return
 
-    # df = map_disease_to_doid(df)
-    df["doid_full"] = df["diseases"]
-    df["doid"] = df["diseases"].apply(lambda x: str(int(x.split(":")[-1])))
+    df = map_disease_to_doid(df)
+    # df["doid_full"] = df["diseases"]
+    # df["doid"] = df["diseases"].apply(lambda x: str(int(x.split(":")[-1])))
 
 
     print("different diseases: " + str(df["diseases"].nunique()))
