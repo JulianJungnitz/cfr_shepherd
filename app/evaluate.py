@@ -765,14 +765,14 @@ if __name__ == "__main__":
     dir = project_config.PROJECT_DIR / "results"
     file = dir / f"{base_res}_{agg_type}_primeKG_w_dis.csv"
 
-    evaluate_patients_like_me(file, min_dis_count=0)
+    # evaluate_patients_like_me(file, min_dis_count=0)
     # evaluate_patients_like_me(file, min_dis_count=3)
     # evaluate_patients_like_me(file, min_dis_count=10)
 
     disease_char_file = (
-        dir / "checkpoints.disease_characterization_hauner_scores.csv"
+        dir / "checkpoints.disease_characterization_scores_phen_gen_primeKG.csv"
     )
     # evaluate_disease_characterization(disease_char_file,)
-    # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
+    evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
     # test_disease_mappings(disease_char_file)
 # %%
