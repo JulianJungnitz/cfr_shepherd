@@ -398,9 +398,9 @@ def evaluate_disease_characterization(
     df = df[df["doid"].notnull()]
     print("length of df after filtering: " + str(len(df)))
 
-    disease_patients_map = get_disease_patient_map(df)
-    print("Disease Patients Map: ", len(disease_patients_map))
-    print("First Disease Patients Map: ", {k: v for k, v in list(disease_patients_map.items())[:5]})
+    # disease_patients_map = get_disease_patient_map(df)
+    # print("Disease Patients Map: ", len(disease_patients_map))
+    # print("First Disease Patients Map: ", {k: v for k, v in list(disease_patients_map.items())[:5]})
 
     # group by patient_id
     grouped = df.groupby("patient_id")
@@ -410,15 +410,49 @@ def evaluate_disease_characterization(
     max_k = 1
     print_n = 5
     different_diseases = []
-    similarity_threshold = 0.03
+    current_threshold = 0.03
+
     copy_df = df.copy()
-    copy_df = copy_df[copy_df["similarities"] > similarity_threshold]
-    print("length of copy_df with filter for threshold: " , similarity_threshold, " : ", str(len(copy_df)))
+    
     print("number of patients: " + str(number_of_patients))
 
-    for patient_id, group in grouped:
-        group = group.sort_values(by="similarities", ascending=False)
-        group = group[group["similarities"] > similarity_threshold]
+    goal_ratio = 0.37
+    tolerance = 0.01
+    lower_threshold = 0.0
+    upper_threshold = 1.0
+    current_threshold = 0.5
+
+   
+    while True:
+        copy_df = df.copy()
+        copy_df = copy_df[copy_df["similarities"] > current_threshold]
+
+        grouped_total = df.groupby("patient_id").size()
+        grouped_predicted = copy_df.groupby("patient_id").size()
+        # Align the indexes and fill missing with 0
+        ratios = (grouped_predicted.reindex(grouped_total.index, fill_value=0) /
+                  grouped_total)
+
+        avg_ratio = ratios.mean()
+        print(f"Threshold: {current_threshold:.4f}, Average predicted ratio: {avg_ratio:.4f}")
+
+        error = avg_ratio - goal_ratio
+        if abs(error) < tolerance:
+            print("Found threshold:", current_threshold)
+            break
+
+        # If predicted ratio is too high (i.e. error > 0), increase threshold to reduce predictions.
+        if error > 0:
+            lower_threshold = current_threshold
+        else:
+            upper_threshold = current_threshold
+
+        current_threshold = (lower_threshold + upper_threshold) / 2.0
+
+
+    # for patient_id, group in grouped:
+    #     group = group.sort_values(by="similarities", ascending=False)
+    #     group = group[group["similarities"] > similarity_threshold]
         
 
     return
