@@ -404,41 +404,54 @@ def evaluate_disease_characterization(
 
     # group by patient_id
     grouped = df.groupby("patient_id")
+    number_of_patients = len(grouped)
 
     patient_sim_map = {}
-    max_k = 20
+    max_k = 1
     print_n = 5
     different_diseases = []
+    similarity_threshold = 0.03
+    copy_df = df.copy()
+    copy_df = copy_df[copy_df["similarities"] > similarity_threshold]
+    print("length of copy_df with filter for threshold: " , similarity_threshold, " : ", str(len(copy_df)))
+    print("number of patients: " + str(number_of_patients))
+
     for patient_id, group in grouped:
         group = group.sort_values(by="similarities", ascending=False)
-        if(print_n > 0):
-            print("Patient: ", patient_id)
-            print(group.head(print_n))
-            print_n -= 1
-        # add first k diseases to different diseases
-        different_diseases.append(group["doid"].values[:max_k])
-        # test_doid = "110761"
-        # index_of_test_doid = group[group["doid"] == test_doid].index
-        # print("Index of test doid: ", index_of_test_doid)
-        # print("Length of group: ", len(group), " for patient: ", patient_id)
-        for k in range(1, max_k + 1):
-            overlap_score, overlap_score_random = get_disease_similarity_scores(
-                patient_id, group, disease_patients_map, k
-            )
-            if patient_id not in patient_sim_map:
-                patient_sim_map[patient_id] = {}
-            patient_sim_map[patient_id][k] = {
-                "overlap_score": overlap_score,
-                "overlap_score_random": overlap_score_random,
-            }
-
-    number_of_patients = len(patient_sim_map)
-    different_diseases = list(set([item for sublist in different_diseases for item in sublist]))
-    print("Different Diseases in top 20: ", len(different_diseases))
-    # Plot the average overlap vs K
-    plot_disease_similarity_avg(patient_sim_map, max_k, file_name, number_of_patients)
+        group = group[group["similarities"] > similarity_threshold]
+        
 
     return
+
+
+# plot evaluation
+# if(print_n > 0):
+#             print("Patient: ", patient_id)
+#             print(group.head(print_n))
+#             print_n -= 1
+#         # add first k diseases to different diseases
+#         different_diseases.append(group["doid"].values[:max_k])
+#         # test_doid = "110761"
+#         # index_of_test_doid = group[group["doid"] == test_doid].index
+#         # print("Index of test doid: ", index_of_test_doid)
+#         # print("Length of group: ", len(group), " for patient: ", patient_id)
+#         for k in range(1, max_k + 1):
+#             overlap_score, overlap_score_random = get_disease_similarity_scores(
+#                 patient_id, group, disease_patients_map, k
+#             )
+#             if patient_id not in patient_sim_map:
+#                 patient_sim_map[patient_id] = {}
+#             patient_sim_map[patient_id][k] = {
+#                 "overlap_score": overlap_score,
+#                 "overlap_score_random": overlap_score_random,
+#             }
+
+#     number_of_patients = len(patient_sim_map)
+#     different_diseases = list(set([item for sublist in different_diseases for item in sublist]))
+#     print("Different Diseases in top: ", len(different_diseases))
+#     # Plot the average overlap vs K
+#     plot_disease_similarity_avg(patient_sim_map, max_k, file_name, number_of_patients)
+
 
 
 def get_disease_similarity_scores(patient_id, group, disease_patients_map, k=5):
@@ -782,7 +795,7 @@ if __name__ == "__main__":
     # evaluate_patients_like_me(file, min_dis_count=10)
 
     disease_char_file = (
-        dir / "checkpoints.disease_characterization_scores_phen_gen_primeKG.csv"
+        dir / "checkpoints.disease_characterization_scores_phen_primeKG.csv"
     )
     # disease_char_file = "/home/vagrant/dev/Julian/cfr_shepherd_data/checkpoints/patient_NCA/01_27_25:09:35:52_val_simulated_pats.disease_split_val_sim_pats_hauner_graph_reduced_seed_33/scores.csv"
     evaluate_disease_characterization(disease_char_file,)
