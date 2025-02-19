@@ -459,10 +459,10 @@ def get_ideal_threshold(df,):
         # Align the indexes and fill missing with 0
         ratios = grouped_total / number_of_patients
 
-        avg_ratio = ratios.mean()
-        print(f"Threshold: {current_threshold:.4f}, Average predicted ratio: {avg_ratio:.4f}")
+        
+        print(f"Threshold: {current_threshold:.4f}, Average predicted ratio: {ratios:.4f}")
 
-        error = avg_ratio - goal_ratio
+        error = ratios - goal_ratio
         if abs(error) < tolerance:
             print("Found threshold:", current_threshold)
             break
