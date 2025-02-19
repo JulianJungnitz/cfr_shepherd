@@ -366,8 +366,8 @@ def evaluate_disease_characterization(
 
     df = df.sort_values(by="similarities", ascending=False).groupby("patient_id").head(1)
     print("First 5: ", df.head())
-    get_ideal_threshold(df)
-    return
+    # get_ideal_threshold(df)
+    # return
     driver = utils.connect_to_neo4j()
     query = 'Match (d:Disease)<-[:HAS_DISEASE]-(b:Biological_sample) return d.id as disease_id'
     # result = utils.execute_query(driver, query)
@@ -421,7 +421,8 @@ def evaluate_disease_characterization(
     
     print("number of patients: " + str(number_of_patients))
 
-    threshold = 0.00014400482177734
+    threshold =  0.00010919570922851562
+    # 0.00014400482177734
     
     filtered_df = df[df["similarities"] > threshold]
     print("length of filtered df: " + str(len(filtered_df)))
