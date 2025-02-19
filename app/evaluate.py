@@ -428,12 +428,15 @@ def evaluate_disease_characterization(
     print("length of filtered df: " + str(len(filtered_df)))
     print("Filterded head: ", filtered_df.head())
 
+
+
     predicted_correct = 0
     total_predicted = len(filtered_df)
     for row in filtered_df.iterrows():
         patient_id = row[1]["patient_id"]
         disease_id = row[1]["doid"]
-        if disease_id in disease_patients_map and patient_id in disease_patients_map[disease_id]:
+        overlap_score, overlap_score_random = get_disease_similarity_scores(patient_id, filtered_df, disease_patients_map, k=1)
+        if overlap_score > 0:
             predicted_correct += 1
 
     print("Predicted correct: ", predicted_correct)
