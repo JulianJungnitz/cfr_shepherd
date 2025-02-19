@@ -363,8 +363,11 @@ def evaluate_disease_characterization(
     file_name,
 ):
     df = pd.read_csv(file_name)
-    # get_ideal_threshold(df)
-    # return
+
+    df = df.sort_values(by="similarities", ascending=False).groupby("patient_id").head(1)
+    print("First 5: ", df.head())
+    get_ideal_threshold(df)
+    return
     driver = utils.connect_to_neo4j()
     query = 'Match (d:Disease)<-[:HAS_DISEASE]-(b:Biological_sample) return d.id as disease_id'
     # result = utils.execute_query(driver, query)
