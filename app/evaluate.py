@@ -320,7 +320,7 @@ def get_all_patients_diseases(df):
 
 def map_disease_to_doid(df):
 
-    mondo_name_to_doid_dict = get_db_syn_names_to_doid_dict()
+    mondo_name_to_doid_dict = get_mondo_name_to_doid_dict()
     print("First mondo_name_to_doid_dict: ", {k: v for k, v in list(mondo_name_to_doid_dict.items())[:5]})
     print("Len: ", len(mondo_name_to_doid_dict))
     df["doid"] = df["diseases"].map(mondo_name_to_doid_dict)
@@ -364,14 +364,17 @@ def evaluate_disease_characterization(
 ):
     df = pd.read_csv(file_name)
 
+    df = df.sort_values(by="similarities", ascending=False).groupby("patient_id").head(1)
+    print("First 5: ", df.head())
+    # get_ideal_threshold(df)
     # return
     driver = utils.connect_to_neo4j()
     query = 'Match (d:Disease)<-[:HAS_DISEASE]-(b:Biological_sample) return d.id as disease_id'
-    result = utils.execute_query(driver, query)
-    db_diseases = set([record["disease_id"] for record in result])
+    # result = utils.execute_query(driver, query)
+    # db_diseases = set([record["disease_id"] for record in result])
 
-    print("Different diseases in db: ", len(db_diseases))
-    print("First 5 diseases in db: ", list(db_diseases)[:5])
+    # print("Different diseases in db: ", len(db_diseases))
+    # print("First 5 diseases in db: ", list(db_diseases)[:5])
 
     df = map_disease_to_doid(df)
     # df["doid_full"] = df["diseases"]
@@ -404,41 +407,115 @@ def evaluate_disease_characterization(
 
     # group by patient_id
     grouped = df.groupby("patient_id")
+    number_of_patients = len(grouped)
+
+    
 
     patient_sim_map = {}
-    max_k = 20
+    max_k = 1
     print_n = 5
     different_diseases = []
-    for patient_id, group in grouped:
-        group = group.sort_values(by="similarities", ascending=False)
-        if(print_n > 0):
-            print("Patient: ", patient_id)
-            print(group.head(print_n))
-            print_n -= 1
-        # add first k diseases to different diseases
-        different_diseases.append(group["doid"].values[:max_k])
-        # test_doid = "110761"
-        # index_of_test_doid = group[group["doid"] == test_doid].index
-        # print("Index of test doid: ", index_of_test_doid)
-        # print("Length of group: ", len(group), " for patient: ", patient_id)
-        for k in range(1, max_k + 1):
-            overlap_score, overlap_score_random = get_disease_similarity_scores(
-                patient_id, group, disease_patients_map, k
-            )
-            if patient_id not in patient_sim_map:
-                patient_sim_map[patient_id] = {}
-            patient_sim_map[patient_id][k] = {
-                "overlap_score": overlap_score,
-                "overlap_score_random": overlap_score_random,
-            }
+    current_threshold = 0.03
 
-    number_of_patients = len(patient_sim_map)
-    different_diseases = list(set([item for sublist in different_diseases for item in sublist]))
-    print("Different Diseases in top 20: ", len(different_diseases))
-    # Plot the average overlap vs K
-    plot_disease_similarity_avg(patient_sim_map, max_k, file_name, number_of_patients)
+    copy_df = df.copy()
+    
+    print("number of patients: " + str(number_of_patients))
+
+    threshold =  0.00010919570922851562
+    # 0.00014400482177734
+    
+    filtered_df = df[df["similarities"] > threshold]
+    print("length of filtered df: " + str(len(filtered_df)))
+    print("Filterded head: ", filtered_df.head())
+
+
+
+    predicted_correct = 0
+    total_predicted = len(filtered_df)
+    for row in filtered_df.iterrows():
+        patient_id = row[1]["patient_id"]
+        disease_id = row[1]["doid"]
+        overlap_score, overlap_score_random = get_disease_similarity_scores(patient_id, filtered_df, disease_patients_map, k=1)
+        if overlap_score > 0:
+            predicted_correct += 1
+
+    print("Predicted correct: ", predicted_correct)
+    print("Total predicted: ", total_predicted)
+    print("Predicted ratio: ", predicted_correct / total_predicted)
+        
+    
+        
 
     return
+
+def get_ideal_threshold(df,):
+    goal_ratio = 0.37
+    tolerance = 0.01
+    lower_threshold = 0.0
+    upper_threshold = 1.0
+    current_threshold = 0.5
+
+    number_of_patients = df["patient_id"].nunique()
+   
+    while True:
+        copy_df = df.copy()
+        copy_df = copy_df[copy_df["similarities"] > current_threshold]
+
+        grouped_total = len(copy_df)
+        print("grouped_predicted: ", number_of_patients)
+        # Align the indexes and fill missing with 0
+        ratios = grouped_total / number_of_patients
+
+        
+        print(f"Threshold: {current_threshold:.4f}, Average predicted ratio: {ratios:.4f}")
+
+        error = ratios - goal_ratio
+        if abs(error) < tolerance:
+            print("Found threshold:", current_threshold)
+            break
+
+        # If predicted ratio is too high (i.e. error > 0), increase threshold to reduce predictions.
+        if error > 0:
+            lower_threshold = current_threshold
+        else:
+            upper_threshold = current_threshold
+
+        current_threshold = (lower_threshold + upper_threshold) / 2.0
+
+
+    print("Threshold: ", current_threshold)
+    return current_threshold
+
+
+
+# plot evaluation
+# if(print_n > 0):
+#             print("Patient: ", patient_id)
+#             print(group.head(print_n))
+#             print_n -= 1
+#         # add first k diseases to different diseases
+#         different_diseases.append(group["doid"].values[:max_k])
+#         # test_doid = "110761"
+#         # index_of_test_doid = group[group["doid"] == test_doid].index
+#         # print("Index of test doid: ", index_of_test_doid)
+#         # print("Length of group: ", len(group), " for patient: ", patient_id)
+#         for k in range(1, max_k + 1):
+#             overlap_score, overlap_score_random = get_disease_similarity_scores(
+#                 patient_id, group, disease_patients_map, k
+#             )
+#             if patient_id not in patient_sim_map:
+#                 patient_sim_map[patient_id] = {}
+#             patient_sim_map[patient_id][k] = {
+#                 "overlap_score": overlap_score,
+#                 "overlap_score_random": overlap_score_random,
+#             }
+
+#     number_of_patients = len(patient_sim_map)
+#     different_diseases = list(set([item for sublist in different_diseases for item in sublist]))
+#     print("Different Diseases in top: ", len(different_diseases))
+#     # Plot the average overlap vs K
+#     plot_disease_similarity_avg(patient_sim_map, max_k, file_name, number_of_patients)
+
 
 
 def get_disease_similarity_scores(patient_id, group, disease_patients_map, k=5):
@@ -514,6 +591,7 @@ def plot_disease_similarity_avg(
     plt.savefig(out_file)
     plt.close()
     print("Last aggregated Value: ", k_overlap_cumsum[-1])
+    print("Aggregated Values: ", k_overlap_cumsum)
 
 
 def create_names_to_doid_map(disease_names):
