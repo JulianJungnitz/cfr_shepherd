@@ -203,7 +203,7 @@ def plot_patient_similarity_avg(
     ax.set_xlabel("K")
     ax.set_ylabel("Similarity")
     ax.set_title(
-        f"Patient Similarity Average of patient at rank k.\n At least one similar disease or icd10 code (min_dis_count: {min_dis_count})"
+        f"Patient Similarity Average of patient at rank k.\n At least one similar disease or icd10 code " + ("(min_dis_count: {min_dis_count})" if min_dis_count > 1 else "")
     )
     handles, labels = ax.get_legend_handles_labels()
     sorted_handles_labels = sorted(zip(handles, labels), key=lambda x: "Random" in x[1])
@@ -366,9 +366,9 @@ def evaluate_disease_characterization(
 
     # return
 
-    # df = map_disease_to_doid(df)
-    df["doid_full"] = df["diseases"]
-    df["doid"] = df["diseases"].apply(lambda x: str(int(x.split(":")[-1])))
+    df = map_disease_to_doid(df)
+    # df["doid_full"] = df["diseases"]
+    # df["doid"] = df["diseases"].apply(lambda x: str(int(x.split(":")[-1])))
 
 
     print("different diseases: " + str(df["diseases"].nunique()))
@@ -765,12 +765,12 @@ if __name__ == "__main__":
     dir = project_config.PROJECT_DIR / "results"
     file = dir / f"{base_res}_{agg_type}_primeKG_w_dis.csv"
 
-    # evaluate_patients_like_me(file, min_dis_count=1)
+    # evaluate_patients_like_me(file, min_dis_count=0)
     # evaluate_patients_like_me(file, min_dis_count=3)
     # evaluate_patients_like_me(file, min_dis_count=10)
 
     disease_char_file = (
-        dir / "checkpoints.disease_characterization_hauner_scores.csv"
+        dir / "checkpoints.disease_characterization_scores_phen_gen_primeKG.csv"
     )
     evaluate_disease_characterization(disease_char_file,)
     # evaluate_patients_like_me("SHEPHERD/data/results_with_genes/checkpoints.patients_like_me_scores.csv")
