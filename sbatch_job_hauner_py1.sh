@@ -26,7 +26,7 @@ source /home/vagrant/miniconda3/etc/profile.d/conda.sh
 # source ~/anaconda3/etc/profile.d/conda.sh
 
 conda activate shepherd
-# bash install_pyg.sh
+bash install_updated_pyg.sh
 
 
 export PYTHONPATH="/home/vagrant/dev/Julian/cfr_shepherd:$PYTHONPATH"
