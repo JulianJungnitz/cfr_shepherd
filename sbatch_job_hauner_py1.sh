@@ -33,7 +33,7 @@ export PYTHONPATH="/home/vagrant/dev/Julian/cfr_shepherd:$PYTHONPATH"
 export PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True"
 
 
-conda activate shepherd
+conda activate v5_shepherd
 
 
 
