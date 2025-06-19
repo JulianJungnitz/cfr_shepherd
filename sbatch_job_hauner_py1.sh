@@ -25,7 +25,7 @@ set -e
 source /home/vagrant/miniconda3/etc/profile.d/conda.sh
 # source ~/anaconda3/etc/profile.d/conda.sh
 
-conda activate shepherd_v5
+conda activate v5_shepherd
 # bash install_updated_pyg.sh
 
 
