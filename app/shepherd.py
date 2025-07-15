@@ -5,6 +5,7 @@ import subprocess
 
 sys.path.insert(0, "./app")
 import utils as utils
+import app.utils as app_utils
 
 sys.path.insert(0, utils.SHEPHERD_DIR)
 from preprocess_data import create_patients_data_file, generate_spl_matrix
@@ -93,12 +94,12 @@ def run_training_disease_characterization(config, PATIENTS_AGGR_NODES=None, grap
 def move_results_to_output_dir():
     print(
         "Moving results to output directory: res: "
-        + utils.RESULTS_DIR
+        + app_utils.RESULTS_DIR
         + " out: "
-        + utils.OUTPUT_DIR
+        + app_utils.OUTPUT_DIR
     )
-    resDir = utils.RESULTS_DIR
-    outDir = utils.OUTPUT_DIR
+    resDir = app_utils.RESULTS_DIR
+    outDir = app_utils.OUTPUT_DIR
     command = ["cp", "-r", resDir, outDir]
     utils.run_subprocess(command)
 

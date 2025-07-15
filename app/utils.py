@@ -7,7 +7,7 @@ import subprocess
 
 APP_DIR  = os.path.dirname(os.path.realpath(__file__))
 SHEPHERD_DIR = APP_DIR + "/SHEPHERD"
-RESULTS_DIR = SHEPHERD_DIR + "/data/results"
+RESULTS_DIR = "/home/vagrant/dev/Julian/cfr_shepherd_data/results"
 
 SCRATCH_DIR = "/work/scratch/jj56rivo"
 print("APP_DIR: ", APP_DIR)
