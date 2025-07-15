@@ -186,27 +186,47 @@ def main():
 
     RUN_PATIENTS_LIKE_ME = config["shepherd"]["RUN_PATIENTS_LIKE_ME"]
     if RUN_PATIENTS_LIKE_ME:
-        predict_patients_like_me(
-            PATIENTS_AGGR_NODES,
-            graph_shema,
-        )
+        print("Starting patients like me prediction...")
+        try:
+            predict_patients_like_me(
+                PATIENTS_AGGR_NODES,
+                graph_shema,
+            )
+            print("Patients like me prediction completed successfully.")
+        except Exception as e:
+            print(f"Error in patients like me prediction: {e}")
 
     RUN_CAUSAL_GENE_DISCOVERY = config["shepherd"]["RUN_CAUSAL_GENE_DISCOVERY"]
     if RUN_CAUSAL_GENE_DISCOVERY:
-        predict_causal_gene_discovery(
-            graph_shema,
-        )
+        print("Starting causal gene discovery prediction...")
+        try:
+            predict_causal_gene_discovery(
+                graph_shema,
+            )
+            print("Causal gene discovery prediction completed successfully.")
+        except Exception as e:
+            print(f"Error in causal gene discovery prediction: {e}")
 
     RUN_DISEASE_CATEGORIZATION = config["shepherd"]["RUN_DISEASE_CATEGORIZATION"]
     if RUN_DISEASE_CATEGORIZATION:
-        predict_disease_categorization(
-            PATIENTS_AGGR_NODES,
-            graph_shema,
-        )
+        print("Starting disease categorization prediction...")
+        try:
+            predict_disease_categorization(
+                PATIENTS_AGGR_NODES,
+                graph_shema,
+            )
+            print("Disease categorization prediction completed successfully.")
+        except Exception as e:
+            print(f"Error in disease categorization prediction: {e}")
 
     MOVE_RESULTS_TO_OUTPUT_DIR = config["shepherd"]["MOVE_RESULTS_TO_OUTPUT_DIR"]
     if MOVE_RESULTS_TO_OUTPUT_DIR:
-        move_results_to_output_dir()
+        print("Moving results to output directory...")
+        try:
+            move_results_to_output_dir()
+            print("Results moved successfully.")
+        except Exception as e:
+            print(f"Error moving results: {e}")
 
 
 # %%
