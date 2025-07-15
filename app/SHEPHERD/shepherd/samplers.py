@@ -433,8 +433,11 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
                 n_id = n_id
                 )
         if self.hparams['loss'] != 'patient_disease_NCA' and self.hparams['loss'] != 'patient_patient_NCA':
-            if None in list(labels): data['one_hot_labels'] = None
-            else: data['one_hot_labels'] = torch.LongTensor(label_binarize(labels, classes = list(range(max_n_candidates))))
+            if None in list(labels): 
+                # Create empty one_hot_labels tensor instead of None
+                data['one_hot_labels'] = torch.zeros((len(labels), max_n_candidates), dtype=torch.long)
+            else: 
+                data['one_hot_labels'] = torch.LongTensor(label_binarize(labels, classes = list(range(max_n_candidates))))
 
         if self.use_diseases:
             data['disease_one_hot_labels'] = disease_labels 
@@ -513,8 +516,15 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
 
         # add padding to patient phenotype and gene node idx
         data['batch_pheno_nid'] = pad_sequence(phenotype_node_idx, batch_first=True, padding_value=0) 
+        
+        # Always create batch_cand_gene_nid, even if empty
         if len(candidate_gene_node_idx[0]) > 0:
             data['batch_cand_gene_nid'] = pad_sequence(candidate_gene_node_idx, batch_first=True, padding_value=0) 
+        else:
+            # Create empty tensor with appropriate shape for empty candidate genes
+            batch_size = len(candidate_gene_node_idx)
+            data['batch_cand_gene_nid'] = torch.zeros((batch_size, 1), dtype=torch.long)
+            
         data['batch_corr_gene_nid'] = pad_sequence(correct_genes_node_idx, batch_first=True, padding_value=0) 
         if self.use_diseases:
             data['batch_disease_nid'] = pad_sequence(disease_node_idx, batch_first=True, padding_value=0) 
@@ -524,17 +534,14 @@ class PatientNeighborSampler(torch.utils.data.DataLoader):
             data['batch_sim_gene_nid'] = pad_sequence(sim_gene_node_idx, batch_first=True, padding_value=0) 
             data['batch_sim_gene_sims'] = pad_sequence(gene_sims, batch_first=True, padding_value=0)
             # Normalize
-            data['batch_sim_gene_sims'] = data['batch_sim_gene_sims'] / torch.sum(data['batch_sim_gene_sims'], dim=1, keepdim=True)
-        else:
-            if len(candidate_gene_node_idx[0]) > 0:
-                data['batch_cand_gene_nid'] = pad_sequence(candidate_gene_node_idx, batch_first=True, padding_value=0) 
+            data['batch_sim_gene_sims'] = data['batch_sim_gene_sims'] / torch.sum(data['batch_sim_gene_sims'], dim=1, keepdim=True) 
 
         # Convert KG node IDs to batch IDs
         # When performing inference (i.e., predict.py), use the original node IDs because the full KG is used in forward pass of node model
         if self.dataset_type != "predict":
             data['batch_pheno_nid']  = torch.LongTensor(np.vectorize(node2batch.get)(data['batch_pheno_nid']))
-            if len(candidate_gene_node_idx[0]) > 0:
-                data['batch_cand_gene_nid'] = torch.LongTensor(np.vectorize(node2batch.get)(data['batch_cand_gene_nid']))
+            # Always process batch_cand_gene_nid since it always exists now
+            data['batch_cand_gene_nid'] = torch.LongTensor(np.vectorize(node2batch.get)(data['batch_cand_gene_nid']))
             if len(correct_genes_node_idx[0]) > 0:
                 data['batch_corr_gene_nid'] = torch.LongTensor(np.vectorize(node2batch.get)(data['batch_corr_gene_nid']))
             if self.use_diseases:
